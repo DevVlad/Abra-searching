@@ -1,7 +1,4 @@
 import React from 'react';
-// import rest from 'rest';
-// import basicAuth from 'rest/interceptor/basicAuth';
-// import mime from 'rest/interceptor/mime';
 import ApiService from '../services/apiservice.js';
 import RenderList from './renderlist.jsx';
 
@@ -24,7 +21,6 @@ class App extends React.Component{
 
 	//searching, input is array of objects with params
 	handleSoftFilter(){
-		// this.shadow.inputSave = this.refs.input.value;
 		console.log('Applying of soft filter...');
 		const expr = new RegExp('\\b' + this.refs.input.value.split(' ').map(exp => '(' + exp + ')').join('.*\\b'),'i'); 
 		this.shadow.data.kontakt.map(x => {
@@ -51,34 +47,15 @@ class App extends React.Component{
 	}
 
 	//request generator
-	handleRequest(paging, x) {
-		// if (this.shadow.inputSave  === this.refs.input.value) {
-			// let x = this.refs.input.value;	
-			console.log('Request operations in progress for paging: ' + paging + ' ...');
-			ApiService.getRequest({
-				'add-row-count' : true,
-				'start' : paging
-			}, `jmeno like similar '${x}' or prijmeni like similar '${x}' or email like similar '${x}' or mobil like similar '${x}' or tel like similar '${x}'`).then( data => {
-				this.shadow.data = data.winstrom;
-				this.handleDecide(paging, x);
-			});
-		// } 
-				
-		//if not, create syntax for filter on server
-		// let x = this.refs.input.value;
-		// let link = "jmeno%20like%20similar%20'"+x+"'%20or%20prijmeni%20like%20similar%20'"+x+"'%20or%20email%20like%20similar%20'"+x+"'";
-		// let params = 'add-row-count=true&start=' + paging;
-
-		// //GET request
-		// let client = rest
-		// 			.wrap(mime, { accept: 'application/json' })
-		// 			.wrap(basicAuth, { username: 'admin', password: 'adminadmin' });
-		// client({ method: 'GET', path: 'https://nejlepsi.flexibee.eu/c/velka/kontakt/('+link+')?'+params}).then((response)=>{
-		// 	let answer = response.entity.winstrom; 
-		// 	// this.handleDecide(answer, paging);
-		// 	this.state.data = answer.kontakt;		
-		// 	this.handleSoftFilter();
-		// });		
+	handleRequest(paging, x) {	
+		console.log('Request operations in progress for paging: ' + paging + ' ...');
+		ApiService.getRequest({
+			'add-row-count' : true,
+			'start' : paging
+		}, `jmeno like similar '${x}' or prijmeni like similar '${x}' or email like similar '${x}' or mobil like similar '${x}' or tel like similar '${x}'`).then( data => {
+			this.shadow.data = data.winstrom;
+			this.handleDecide(paging, x);
+		});	
 	}
 
 	onSubmit(e){
