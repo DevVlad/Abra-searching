@@ -8,14 +8,10 @@ import reducer from './reducer.jsx';
 require('./App.css');
 */
 
-class App extends React.Component{
+class SearchField extends React.Component{
 	constructor(props){
 		super(props);
-		this.shadow = {
-			data: [], 
-			hint: [],
-			inputSave: ''
-		};
+
 		this.state = {
 			hint: []
 		};
@@ -23,43 +19,42 @@ class App extends React.Component{
 
 	//searching, input is array of objects with params
 	//input, data, hint
-	handleSoftFilter(){
+	handleSoftFilter(inputSave, mainData, hint){
 		console.log('Applying of soft filter...');
-		const expr = new RegExp('\\b' + this.shadow.inputSave.split(' ').map(exp => '(' + exp + ')').join('.*\\b'),'i'); 
-		this.shadow.data.kontakt.map(x => {
-			if ( expr.test(x.jmeno) || expr.test(x.prijmeni) || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)  ) {
-				this.shadow.hint.push(x);
+		const expr = new RegExp('\\b' + inputSave.split(' ').map(exp => '(' + exp + ')').join('.*\\b'),'i'); 
+		mainData.kontakt.map(x => {
+			if ( expr.test(x.jmeno) || expr.test(x.prijmeni) || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel) ) {
+				hint.push(x);
 			}
 		});
-		this.setState({hint: this.shadow.hint});
+		this.setState({hint: hint});
 	}
 
 	//Deciding if soft filter can start
 	//paging, input, data, hint
-	handleDecide(paging, input){
+	handleDecide(paging, input, mainData, hint){
 		console.log('Deciding...');
-		let data = this.shadow.data;
+		let data = mainData;
 		if (parseInt(data['@rowCount']) <= 10 && input === this.refs.input.value) {
-			this.handleSoftFilter();		
+			this.handleSoftFilter(input, data, hint);		
 		} else if (input === this.refs.input.value) {
-			this.handleSoftFilter();
-			if ((this.shadow.hint.length < 10 && paging < parseInt(data['@rowCount'])) && input === this.refs.input.value) {
-				this.handleRequest(paging + data.kontakt.length, input);
+			this.handleSoftFilter(input, data, hint);
+			if ((hint.length < 10 && paging < parseInt(data['@rowCount'])) && input === this.refs.input.value) {
+				this.handleRequest(paging + data.kontakt.length, input, data, hint);
 			} 
 		} 
 	}
 
 	//request generator
 	//paging, input, data, hint
-	handleRequest(paging, x) {	
+	handleRequest(paging, x, mainData, hint) {	
 		console.log('Request operations in progress for paging: ' + paging + ' ...');
 		ApiService.getRequest({
 			'add-row-count' : true,
 			'start' : paging
 		}, `jmeno like similar '${x}' or prijmeni like similar '${x}' or email like similar '${x}' or mobil like similar '${x}' or tel like similar '${x}'`).then( data => {
-			this.shadow.data = data.winstrom;
-			//paging, input, data, hint
-			this.handleDecide(paging, x);
+			mainData = data.winstrom;
+			this.handleDecide(paging, x, mainData, hint);
 		});	
 	}
 
@@ -67,12 +62,11 @@ class App extends React.Component{
 	//initialization of input, data, hint
 	handleChange() {
 		if (this.refs.input.value !== '') {
-			this.shadow.inputSave = this.refs.input.value;
-			console.log('Submiting for input: ' + this.shadow.inputSave);			
-			this.shadow.data = [];
-			this.shadow.hint = [];
-			//paging, input, data, hint
-			this.handleRequest(0, this.shadow.inputSave);	
+			let input = this.refs.input.value;
+			console.log('Submiting for input: ' + input);			
+			let mainData = [];
+			let hint = [];
+			this.handleRequest(0, input, mainData, hint);	
 		} else {
 			console.log('Waiting for input...');
 			this.setState({hint: []});
@@ -83,13 +77,15 @@ class App extends React.Component{
 		const store = createStore(reducer);
 		store.dispatch({
 			type: "SET_STATE",
-			state: {data: [3,0,8],
-					hint: [1,2,3,4,5],
+			state: {data: [],
+					hint: [],
 					forInput: this.refs.input.value
 			}
 		});
-		store.dispatch({type: "SET_FILTER"});
-		// this.setState({hint: store.getState().state.hint});
+		// console.log('state of store after setState: ',store.getState())
+		store.dispatch( {type: "SET_FILTER"} );
+		// console.log('after setFilter state: ', store.getState());
+		store.getState().type === 'SET_FILTER' ? console.log('true - inicializace middleware-thunk') : console.log('false');
 	}
 			
 	render(){
@@ -100,7 +96,7 @@ class App extends React.Component{
 				<form className="myform" role="form">
 					<div className="subDiv">
 						<label className="label">Searching for...</label>
-	                    <input style={{backgroundColor: this.shadow.hint.length === 0 ? "red" : "blue"}} className="input" ref="input" type="text" placeholder="Search" onChange={this.handleChange.bind(this)} />	
+	                    <input className="input" ref="input" type="text" placeholder="Search" onChange={this.handleChange.bind(this)} />	
                     </div>
 				</form>
 				<RenderList data={this.state.hint}></RenderList>
@@ -109,4 +105,4 @@ class App extends React.Component{
 	}
 }
 
-export default App;
+export default SearchField;
