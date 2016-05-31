@@ -23,11 +23,10 @@ class SearchField extends React.Component{
 		console.log('Applying of soft filter...');
 		const expr = new RegExp('\\b' + inputSave.split(' ').map(exp => '(' + exp + ')').join('.*\\b'),'i'); 
 		mainData.kontakt.map(x => {
-			if ( expr.test(x.jmeno) || expr.test(x.prijmeni) || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)  ) {
+			if ( expr.test(x.jmeno) || expr.test(x.prijmeni) || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel) ) {
 				hint.push(x);
 			}
 		});
-		console.log(hint)
 		this.setState({hint: hint});
 	}
 
@@ -55,7 +54,6 @@ class SearchField extends React.Component{
 			'start' : paging
 		}, `jmeno like similar '${x}' or prijmeni like similar '${x}' or email like similar '${x}' or mobil like similar '${x}' or tel like similar '${x}'`).then( data => {
 			mainData = data.winstrom;
-			//paging, input, data, hint
 			this.handleDecide(paging, x, mainData, hint);
 		});	
 	}
@@ -68,7 +66,6 @@ class SearchField extends React.Component{
 			console.log('Submiting for input: ' + input);			
 			let mainData = [];
 			let hint = [];
-			//paging, input, data, hint
 			this.handleRequest(0, input, mainData, hint);	
 		} else {
 			console.log('Waiting for input...');
@@ -80,14 +77,15 @@ class SearchField extends React.Component{
 		const store = createStore(reducer);
 		store.dispatch({
 			type: "SET_STATE",
-			state: {data: [3,0,8],
-					hint: [1,2,3,4,5],
+			state: {data: [],
+					hint: [],
 					forInput: this.refs.input.value
 			}
 		});
-		console.log(store.getState())
-		store.dispatch({type: "SET_FILTER"});
-
+		// console.log('state of store after setState: ',store.getState())
+		store.dispatch( {type: "SET_FILTER"} );
+		// console.log('after setFilter state: ', store.getState());
+		store.getState().type === 'SET_FILTER' ? console.log('true - inicializace middleware-thunk') : console.log('false');
 	}
 			
 	render(){

@@ -19,18 +19,22 @@ let setLoading = (state) => {
   return console.log('....');
 }
 
-let setFilter = (state) => {
+let setFilter = (state, action) => {
   //spousti thunk
-  state.type = state.type.slice(state.type.length).concat('SET_FILTER');
-  return ( 
-    console.log(state)
-  )
+  let x = state.state;
+  let newState = {
+    type: state.type.slice(state.type.length).concat('SET_FILTER'),
+    state: {
+      data: x.data.slice(x.data.length).concat([0,0]),
+      hint: x.hint.slice(x.hint.length).concat([1,1]),
+      forInput: x.forInput
+    }
+  }
+  return newState;
 }
 
 let setState = (state, newState) => {
-  return (
-    state = {...newState, ...state}
-  );
+  return state = {...state, ...newState};
 }
 
 export default (state = 0, action) => {
@@ -38,7 +42,7 @@ export default (state = 0, action) => {
     case 'SET_STATE':
      return setState(state, action);
     case 'SET_FILTER':
-     return setFilter(state);
+     return setFilter(state, action);
     case 'SET_LOADING':
      return setLoading(state);
     case 'SET_LOADED':
