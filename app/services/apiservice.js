@@ -5,7 +5,7 @@ class ApiService {
 	getRequest(query, filter){
 		return new Promise((resolve, reject) => {
 			superagent.get(`https://nejlepsi.flexibee.eu/c/velka/kontakt/(${encodeURIComponent(filter)})`)
-			.set('accept', 'application/json')
+			.set('Accept', 'application/json')
 			.auth('admin', 'adminadmin')
 			.query(query)
 			.end((err, res)=>{
