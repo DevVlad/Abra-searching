@@ -1,8 +1,6 @@
 import React from 'react';
 import ApiService from '../services/apiservice.js';
 import RenderList from './renderlist.jsx';
-import { createStore } from 'redux';
-import reducer from './reducer.jsx';
 
 /*
 require('./App.css');
@@ -78,25 +76,12 @@ class App extends React.Component{
 			this.setState({hint: []});
 		}
 	}
-
-	test() {
-		const store = createStore(reducer);
-		store.dispatch({
-			type: "SET_STATE",
-			state: {data: [3,0,8],
-					hint: [1,2,3,4,5],
-					forInput: this.refs.input.value
-			}
-		});
-		store.dispatch({type: "SET_FILTER"});
-		// this.setState({hint: store.getState().state.hint});
-	}
-			
+		
 	render(){
 		//input react onChange 
 		return (
 			<div className="mainDiv">
-				<h1 className="title" onClick={this.test.bind(this)}>Search field</h1>
+				<h1 className="title" >Search field</h1>
 				<form className="myform" role="form">
 					<div className="subDiv">
 						<label className="label">Searching for...</label>
