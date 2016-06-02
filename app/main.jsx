@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 // import App from './components/App.jsx';
-import SearchField from './components/searchField.jsx';
+import Pokus from './components/pokus.jsx';
+
 
 ReactDOM.render(
-  <SearchField />,
+  <Pokus />,
   document.body.appendChild(document.createElement('div'))
 );
