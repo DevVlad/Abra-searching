@@ -1,24 +1,34 @@
 import ApiService from '../services/apiservice.js';
 
+//fiter = input
 export function setFilter(filter) {
 	return dispatch => {
 		dispatch(init(filter));
+		dispatch(setLoading(false));
 		if (filter !== '') {
-			dispatch(doRequest(filter, 0));
+			dispatch(setLoading(true));
+			dispatch(doRequest(filter, 0));			
 		}
 	}
 }
 
-export function init(filter) {
+function init(filter) {
 	return {
 		type: 'INIT',
 		filter
 	}
 }
 
+function setLoading(loading) {
+	return {
+		type: 'SET_LOADING',
+		loading
+	}
+}
+
 const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
 
-export function doRequest(filter, paging = 0) {
+function doRequest(filter, paging = 0) {
 	return dispatch => {
 		ApiService.getRequest({ 'add-row-count': true, 'start': paging, 'limit': 20 },
 			fields.map(f => `${f} like similar '${filter}'`).join(' or ')
@@ -28,7 +38,7 @@ export function doRequest(filter, paging = 0) {
 	}
 }
 
-export function processRequest(data, filter, paging) {
+function processRequest(data, filter, paging) {
 	return (dispatch, getState) => {
 		if (data.kontakt.length > 0 && getState().filter === filter) {
 			console.log('Applying the filter...');
@@ -47,8 +57,7 @@ export function processRequest(data, filter, paging) {
 	}
 }
 
-export function addHint(list) {
-	console.log('ending',list)
+function addHint(list) {
 	return {
 		type: 'ADD_HINT',
 		hint: list
@@ -61,8 +70,10 @@ function setLimit(list) {
 		const dif = 10 - counter;
 		if (list.length > dif) {
 			const partOfLIst = list.slice(0,-(list.length-dif));
+			dispatch(setLoading(false));
 			dispatch(addHint(partOfLIst));
 		} else if (list.length <= dif) {
+			dispatch(setLoading(false));
 			dispatch(addHint(list));
 		}
 	}

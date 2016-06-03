@@ -1,17 +1,15 @@
 import React from 'react';
 import ApiService from '../services/apiservice.js';
 import RenderList from './renderlist.jsx';
-import reducer from '../reducers/reducer.jsx';
-import { createStore, applyMiddleware } from 'redux';
 import { connect } from 'react-redux';
 import thunk from 'redux-thunk';
-import { setFilter, setLoading, setLoaded, addHint, setInit } from '../actions/actions.jsx'
+import { setFilter } from '../actions/actions.jsx'
 
 /*
 require('./App.css');
 */
 
-class Pokus extends React.Component{
+class App extends React.Component{
 	constructor(props){
 		super(props);
 	}
@@ -24,22 +22,26 @@ class Pokus extends React.Component{
 		//input react onChange 
 		return (
 			<div className="mainDiv">
-				<h1 className="title">Contact list {this.props.filter}</h1>
+				<h1 className="title">Contact list search for:  {this.props.filter}</h1>
 				<form className="myform" role="form">
 					<div className="subDiv">
 						<label className="label">Searching for...</label>
 	                    <input className="input" ref="input" type="text" placeholder="Search" onChange={this.filterChange.bind(this)}/>
                     </div>
 				</form>
-				<RenderList data={this.props.hint}></RenderList>
+				<RenderList data={this.props.hint} loading={this.props.loading}></RenderList>
 			</div>
 		)
 	}
 }
 
 export default connect(state => {
-	return state; // { hint: state.hint };
-})(Pokus);
+	return { 
+		filter: state.filter,
+		hint: state.hint,
+		loading: state.loading
+	};
+})(App);
 
 /*
 
