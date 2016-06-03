@@ -3,11 +3,17 @@ import React from 'react';
 class ResultList extends React.Component {
 
 	renderList() {
-		return this.props.data.map((item, key) => {
+		if (this.props.loading === true) {
 			return (
-				<li key={key}>{item.jmeno} {item.prijmeni} {item.email}</li>
+				<h2>Loading...</h2>
 			);
-		});
+		}else {
+			return this.props.data.map((item, key) => {
+				return (
+					<li key={key}>{item.jmeno} {item.prijmeni} {item.email}</li>
+				);
+			});
+		}	
 	}
 
 	render() {

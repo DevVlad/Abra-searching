@@ -6,11 +6,11 @@ const initialState = {
 export default function reducer(state = initialState, action) {
   switch (action.type) {
 	  case 'INIT':
-	  return {
-		  ...state,
-		  filter: action.filter,
-		  hint: []
-	  };
+  	  return {
+  		  ...state,
+  		  filter: action.filter,
+  		  hint: []
+  	  };
 
 	  case 'ADD_HINT':
 		  return {
@@ -18,12 +18,12 @@ export default function reducer(state = initialState, action) {
 			  hint: state.hint.concat(action.hint)
 		  };
 
-    // case 'SET_LOADING':
-    //   return Object.assign({}, state, {type: action.type, hint: action.hint});//{...state, type: action.type};
-    //
-    // case 'SET_LOADED':
-    //   return Object.assign({}, state, {type: action.type, completed: true});//{...state, ...{type: action.type, completed: true}};
-    //
+    case 'SET_LOADING':
+      return {
+        ...state, 
+        loading: action.loading
+      };
+
     default:
       return state;
   }
