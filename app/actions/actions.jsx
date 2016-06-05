@@ -30,6 +30,7 @@ function setLoading(loading) {
 const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
 
 function doRequest(filter, paging = 0) {
+	console.log('Sending request for paging ' + paging + ' and filter ' + filter);
 	return dispatch => {
 		ApiService.getRequest({ 'add-row-count': true, 'start': paging, 'limit': 20 },
 			fields.map(f => `${f} like similar '${filter}'`).join(' or ')
@@ -72,6 +73,7 @@ function processRequest(data, filter, paging) {
 }
 
 function addHint(list) {
+	console.log('Add hints to list...');
 	return {
 		type: 'ADD_HINT',
 		hint: list
