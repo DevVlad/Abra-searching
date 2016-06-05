@@ -1,9 +1,8 @@
 import React from 'react';
-import ApiService from '../services/apiservice.js';
 import RenderList from './renderlist.jsx';
 import { connect } from 'react-redux';
-import thunk from 'redux-thunk';
-import { setFilter } from '../actions/actions.jsx'
+import { setFilter } from '../actions/actions.jsx';
+import Immutable from 'immutable';
 
 /*
 require('./App.css');
@@ -16,6 +15,27 @@ class App extends React.Component{
 
 	filterChange(e) {
 		this.props.dispatch(setFilter(e.target.value));
+		
+		// let obj = {
+		// 	filter: e.target.value,
+		// 	hint: [{jmeno: 'ales', prijmeni: 'Novak'}, {jmeno: 'eva', prijmeni: 'hola'}],
+		// 	loading: true
+		// };
+		
+		// const map = Immutable.fromJS(obj);
+		// let map2 = map;
+		// console.log('pred: ', map2.toJS());
+		// const pom = false;
+		// const pom2 = [{jmeno: 'alena', prijmeni: 'Jezni'}, {jmeno: 'eva', prijmeni: 'hrozna'}];
+		// const o = Immutable.fromJS(pom2);
+		// map2 = map2.updateIn(['loading'], x => pom);
+		// map2 = map2.updateIn(['hint'], list => list.concat(Immutable.fromJS(pom2)));
+		// console.log('po: ', map2.toJS(), map2);
+
+		// let map = Immutable.fromJS(obj);
+		// let map2 = map.updateIn(['a', 'b', 'c'], x => x+1);
+		// console.log(map2.toJS())
+		// console.log(map2.getIn(['a', 'val']))
 	}
 			
 	render(){
@@ -35,11 +55,13 @@ class App extends React.Component{
 	}
 }
 
+// export default connect(mapStateToProps)(App);
 export default connect(state => {
+	let newState = state.toJS(); 
 	return { 
-		filter: state.filter,
-		hint: state.hint,
-		loading: state.loading
+		filter: newState.filter,
+		hint: newState.hint,
+		loading: newState.loading
 	};
 })(App);
 
