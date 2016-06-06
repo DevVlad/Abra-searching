@@ -40,11 +40,11 @@ function doRequest(filter, paging = 0) {
 }
 
 function getHint(iState) {
-	return iState.toJS().hint;
+	return iState.toJS().filter.hint;
 }
 
 function getFilter(iState) {
-	return iState.toJS().filter;
+	return iState.toJS().filter.filter;
 }
 
 function processRequest(data, filter, paging) {
