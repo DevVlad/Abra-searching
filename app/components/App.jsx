@@ -32,8 +32,8 @@ class App extends React.Component{
 export default connect(state => {
 	let newState = state.toJS(); 
 	return { 
-		filter: newState.filter,
-		hint: newState.hint,
-		loading: newState.loading
+		filter: newState.filter.filter,
+		hint: newState.filter.hint,
+		loading: newState.loading.loading
 	};
 })(App);
