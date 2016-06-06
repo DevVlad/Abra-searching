@@ -1,7 +1,6 @@
 import ApiService from '../services/apiservice.js';
 import Immutable from 'immutable';
 
-//fiter = input
 export function setFilter(filter) {
 	return dispatch => {
 		dispatch(init(filter));
@@ -40,9 +39,6 @@ function doRequest(filter, paging = 0) {
 	}
 }
 
-/*
-getHint and getFilter - functions to obtain mutable state
-*/
 function getHint(iState) {
 	return iState.toJS().hint;
 }
@@ -53,7 +49,6 @@ function getFilter(iState) {
 
 function processRequest(data, filter, paging) {
 	return (dispatch, getState) => {
-		// if (data.kontakt.length > 0 && getState().toJS().filter === filter) {
 		if (data.kontakt.length > 0 && getFilter(getState()) === filter) { 
 			console.log('Applying the filter...');
 			const expr = new RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i');
@@ -63,7 +58,6 @@ function processRequest(data, filter, paging) {
 			dispatch(setLimit(list));
 			const count = paging + data.kontakt.length;
 			const totalCount = parseInt(data['@rowCount']);
-			// const hintCount = getState().toJS().hint.length;
 			const hintCount = getHint(getState()).length;
 			if (totalCount > count && hintCount < 10) {
 				dispatch(doRequest(filter, paging + data.kontakt.length));
@@ -82,7 +76,6 @@ function addHint(list) {
 
 function setLimit(list) {
 	return (dispatch, getState) => {
-		// const counter = getState().toJS().hint.length;
 		const counter = getHint(getState()).length;
 		const dif = 10 - counter;
 		if (list.length > dif) {

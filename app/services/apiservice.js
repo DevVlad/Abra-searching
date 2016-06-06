@@ -19,5 +19,5 @@ class ApiService {
 	}
 
 }
-//singleton
+
 export default new ApiService;
