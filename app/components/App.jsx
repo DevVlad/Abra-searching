@@ -3,7 +3,8 @@ import RenderList from './renderlist.jsx';
 import { connect } from 'react-redux';
 import { setFilter } from '../actions/actions.jsx';
 // import { getFilter, getHint, getLoading } from '../reducers/reducer.jsx';
-import { getFilter, getHint, getLoading } from '../selectors/selectors.jsx';
+// import { getFilterState, getHintState, getLoadingState, stateSelector } from '../selectors/selectors.jsx';
+import { getFilter, getHint, getLoading, stateSelector } from '../selectors/selectors.jsx';
 
 class App extends React.Component{
 	constructor(props){
@@ -31,13 +32,12 @@ class App extends React.Component{
 }
 
 function mapStateToProps(state) {
-	console.log('a ','F: ', state.toJS().filter.filter, 'S: ', state.toJS().filter.hint, 'L: ', state.toJS().loading.loading);
-	console.log('b ','F: ', getFilter(state), 'S: ', getHint(state).toJS(), 'L: ',getLoading(state));
-	return {
-		filter: getFilter(state),
-		hint: getHint(state),
-		loading: getLoading(state)
-	};
+	return stateSelector(state);
+	// return {
+	// 	filter: getFilter(state),
+	// 	hint: getHint(state),
+	// 	loading: getLoading(state)
+	// };
 }
 const appSelector = connect(mapStateToProps)(App)
 export default appSelector;

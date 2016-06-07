@@ -4,7 +4,7 @@ import { getFilter, getHint } from '../selectors/selectors.jsx';
 
 export function setFilter(filter) {
 	return dispatch => {
-		dispatch(init(filter)); 
+		dispatch(init(filter));
 		dispatch(setLoading(false)); 
 		if (filter !== '') {
 			dispatch(setLoading(true));
