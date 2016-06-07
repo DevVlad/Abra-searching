@@ -10,14 +10,11 @@ const initialStateFilter = Immutable.fromJS(
 
 function reducerFilter(state = initialStateFilter, action) {
     switch (action.type) {
-      case 'INIT': 
-        let stateInit = state.updateIn(['filter'], x => action.filter);
-        stateInit = stateInit.updateIn(['hint'], x => Immutable.fromJS([]));
-        return stateInit;
+      case 'INIT':
+        return state.set('filter', action.filter).set('hint', Immutable.fromJS([]));
 
       case 'ADD_HINT':
-        let stateAddHint = state.updateIn(['hint'], list => list.concat(Immutable.fromJS(action.hint)));
-        return stateAddHint;
+        return state.updateIn(['hint'], list => list.concat(Immutable.fromJS(action.hint)));
 
       default:
         return state;
@@ -33,8 +30,8 @@ const initialStateLoading = Immutable.fromJS(
 function reducerLoading(state = initialStateLoading, action) {
   switch (action.type) {
     case 'SET_LOADING':
-      let stateLoading = state.updateIn(['loading'], x => action.loading);
-      return stateLoading;
+      return state.set('loading', action.loading);
+
     default:
       return state;
   }
@@ -42,9 +39,25 @@ function reducerLoading(state = initialStateLoading, action) {
 
 const reducer = combineImmutableReducers(
   {
-    filter: reducerFilter,
+    filterState: reducerFilter,
     loading: reducerLoading
   } 
 );
+
+function getFilterSelector(state) {
+	return state.get('filterState');
+}
+
+export function getHint(state) {
+	return getFilterSelector(state).get('hint');
+}
+
+export function getFilter(state) {
+	return getFilterSelector(state).get('filter');
+}
+
+export function getLoading(iState) {
+	return iState.getIn(['loading', 'loading']);
+}
 
 export default reducer;

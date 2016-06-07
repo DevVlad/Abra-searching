@@ -1,5 +1,6 @@
 import ApiService from '../services/apiservice.js';
 import Immutable from 'immutable';
+import { getFilter, getHint } from '../reducers/reducer.jsx';
 
 export function setFilter(filter) {
 	return dispatch => {
@@ -39,14 +40,6 @@ function doRequest(filter, paging = 0) {
 	}
 }
 
-function getHint(iState) {
-	return iState.toJS().filter.hint;
-}
-
-function getFilter(iState) {
-	return iState.toJS().filter.filter;
-}
-
 function processRequest(data, filter, paging) {
 	return (dispatch, getState) => {
 		if (data.kontakt.length > 0 && getFilter(getState()) === filter) { 
@@ -58,7 +51,7 @@ function processRequest(data, filter, paging) {
 			dispatch(setLimit(list));
 			const count = paging + data.kontakt.length;
 			const totalCount = parseInt(data['@rowCount']);
-			const hintCount = getHint(getState()).length;
+			const hintCount = getHint(getState()).size;
 			if (totalCount > count && hintCount < 10) {
 				dispatch(doRequest(filter, paging + data.kontakt.length));
 			}
@@ -76,7 +69,7 @@ function addHint(list) {
 
 function setLimit(list) {
 	return (dispatch, getState) => {
-		const counter = getHint(getState()).length;
+		const counter = getHint(getState()).size;
 		const dif = 10 - counter;
 		if (list.length > dif) {
 			const partOfLIst = list.slice(0,-(list.length-dif));

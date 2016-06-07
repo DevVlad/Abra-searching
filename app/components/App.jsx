@@ -3,6 +3,7 @@ import RenderList from './renderlist.jsx';
 import { connect } from 'react-redux';
 import { setFilter } from '../actions/actions.jsx';
 import Immutable from 'immutable';
+import { getFilter, getHint, getLoading } from '../reducers/reducer.jsx';
 
 class App extends React.Component{
 	constructor(props){
@@ -23,17 +24,16 @@ class App extends React.Component{
 	                    <input className="input" ref="input" type="text" placeholder="Search" onChange={this.filterChange.bind(this)}/>
                     </div>
 				</form>
-				<RenderList data={this.props.hint} loading={this.props.loading}></RenderList>
+				<RenderList data={this.props.hint.toJS()} loading={this.props.loading}></RenderList>
 			</div>
 		)
 	}
 }
 
 export default connect(state => {
-	let newState = state.toJS(); 
-	return { 
-		filter: newState.filter.filter,
-		hint: newState.filter.hint,
-		loading: newState.loading.loading
+	return {
+		filter: getFilter(state),
+		hint: getHint(state),
+		loading: getLoading(state)
 	};
 })(App);
