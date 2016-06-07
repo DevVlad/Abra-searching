@@ -39,29 +39,29 @@ function reducerLoading(state = initialStateLoading, action) {
 
 const reducer = combineImmutableReducers(
   {
-    filterState: reducerFilter,
+    filter: reducerFilter,
     loading: reducerLoading
   } 
 );
 
-function getFilterSelector(state) {
-	return state.get('filterState');
-}
+// function getFilterSelector(state) {
+// 	return state.get('filter');
+// }
 
-export function getHint(state) {
-	return getFilterSelector(state).get('hint');
-}
+// export function getHint(state) {
+// 	return getFilterSelector(state).get('hint');
+// }
 
-export function getFilter(state) {
-	return getFilterSelector(state).get('filter');
-}
+// export function getFilter(state) {
+// 	return getFilterSelector(state).get('filter');
+// }
 
-function getLoadingSelector(state) {
-  return state.get('loading');
-}
+// function getLoadingSelector(state) {
+//   return state.get('loading');
+// }
 
-export function getLoading(state) {
-	return getLoadingSelector(state).get('loading');
-}
+// export function getLoading(state) {
+// 	return getLoadingSelector(state).get('loading');
+// }
 
 export default reducer;

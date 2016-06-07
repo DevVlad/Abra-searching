@@ -1,13 +1,14 @@
 import ApiService from '../services/apiservice.js';
-import { getFilter, getHint } from '../reducers/reducer.jsx';
+// import { getFilter, getHint } from '../reducers/reducer.jsx';
+import { getFilter, getHint } from '../selectors/selectors.jsx';
 
 export function setFilter(filter) {
 	return dispatch => {
-		dispatch(init(filter));
-		dispatch(setLoading(false));
+		dispatch(init(filter)); console.log('init')
+		dispatch(setLoading(false)); console.log('loading def')
 		if (filter !== '') {
-			dispatch(setLoading(true));
-			dispatch(doRequest(filter, 0));			
+			dispatch(setLoading(true)); console.log('loading true')
+			dispatch(doRequest(filter, 0));
 		}
 	}
 }
