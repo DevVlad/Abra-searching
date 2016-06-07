@@ -56,8 +56,12 @@ export function getFilter(state) {
 	return getFilterSelector(state).get('filter');
 }
 
-export function getLoading(iState) {
-	return iState.getIn(['loading', 'loading']);
+function getLoadingSelector(state) {
+  return state.get('loading');
+}
+
+export function getLoading(state) {
+	return getLoadingSelector(state).get('loading');
 }
 
 export default reducer;

@@ -2,7 +2,6 @@ import React from 'react';
 import RenderList from './renderlist.jsx';
 import { connect } from 'react-redux';
 import { setFilter } from '../actions/actions.jsx';
-import Immutable from 'immutable';
 import { getFilter, getHint, getLoading } from '../reducers/reducer.jsx';
 
 class App extends React.Component{

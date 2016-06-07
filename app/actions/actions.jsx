@@ -1,5 +1,4 @@
 import ApiService from '../services/apiservice.js';
-import Immutable from 'immutable';
 import { getFilter, getHint } from '../reducers/reducer.jsx';
 
 export function setFilter(filter) {
