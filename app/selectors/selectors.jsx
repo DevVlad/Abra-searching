@@ -7,7 +7,7 @@ const getLoadingState = (state) => state.get('loading').get('loading');
 export const stateSelector = createSelector(
 	[ getFilterState, getHintState, getLoadingState ],
 	(filter, hint , loading) => {
-		console.log('selector ',filter, hint.toJS(), loading);
+		console.log('selector ', filter, hint.toJS(), loading);
 		return {
 			filter: filter,
 			hint: hint,
@@ -20,15 +20,6 @@ export const stateSelector = createSelector(
 const getFilterSelector = (state) => state.get('filter');
 const getLoadingSelector = (state) => state.get('loading');
 
-export const getFilter = createSelector(getFilterSelector, x => {
-	// console.log('filter');
-	return x.get('filter');
-});
-export const getHint = createSelector(getFilterSelector, x => {
-	// console.log('filter');
-	return x.get('hint');
-});
-export const getLoading = createSelector(getLoadingSelector, x => {
-	// console.log('loading');
-	return x.get('loading');
-})
+export const getFilter = createSelector(getFilterSelector, x => x.get('filter'));
+export const getHint = createSelector(getFilterSelector, x => x.get('hint'));
+export const getLoading = createSelector(getLoadingSelector, x => x.get('loading'));

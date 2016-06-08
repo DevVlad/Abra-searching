@@ -4,10 +4,10 @@ import { getFilter, getHint } from '../selectors/selectors.jsx';
 
 export function setFilter(filter) {
 	return dispatch => {
-		dispatch(init(filter));
-		dispatch(setLoading(false)); 
+		dispatch(init(filter));	console.log('init')
+		dispatch(setLoading(false));	console.log('setL false')
 		if (filter !== '') {
-			dispatch(setLoading(true));
+			dispatch(setLoading(true));	console.log('setL true')
 			dispatch(doRequest(filter, 0));
 		}
 	}
@@ -42,7 +42,7 @@ function doRequest(filter, paging = 0) {
 
 function processRequest(data, filter, paging) {
 	return (dispatch, getState) => {
-		if (data.kontakt.length > 0 && getFilter(getState()) === filter) { 
+		if (data.kontakt.length > 0 && getFilter(getState()) === filter) {
 			console.log('Applying the filter...');
 			const expr = new RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i');
 			const list = data.kontakt.filter(x =>
@@ -73,10 +73,10 @@ function setLimit(list) {
 		const dif = 10 - counter;
 		if (list.length > dif) {
 			const partOfLIst = list.slice(0,-(list.length-dif));
-			dispatch(setLoading(false));
+			dispatch(setLoading(false));	console.log('setL false')
 			dispatch(addHint(partOfLIst));
 		} else if (list.length <= dif) {
-			dispatch(setLoading(false));
+			dispatch(setLoading(false));	console.log('setL false')
 			dispatch(addHint(list));
 		}
 	}
