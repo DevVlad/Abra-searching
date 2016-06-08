@@ -1,11 +1,17 @@
 import ApiService from '../services/apiservice.js';
 // import { getFilter, getHint } from '../reducers/reducer.jsx';
 import { getFilter, getHint } from '../selectors/selectors.jsx';
+import Immutable from 'immutable'
 
 export function setFilter(filter) {
 	return dispatch => {
 		dispatch(init(filter));	console.log('init')
 		dispatch(setLoading(false));	console.log('setL false')
+		//test
+		dispatch(addHint(Immutable.fromJS([]))); console.log('test')
+		dispatch(addHint(Immutable.fromJS([1,2,3]))); console.log('test')
+		dispatch(addHint(Immutable.fromJS([]))); console.log('test')
+		dispatch(addHint(Immutable.fromJS([]))); console.log('test')
 		if (filter !== '') {
 			dispatch(setLoading(true));	console.log('setL true')
 			dispatch(doRequest(filter, 0));
@@ -73,7 +79,7 @@ function setLimit(list) {
 		const dif = 10 - counter;
 		if (list.length > dif) {
 			const partOfLIst = list.slice(0,-(list.length-dif));
-			dispatch(setLoading(false));	console.log('setL false')
+			dispatch(setLoading(false)); console.log('setL false')
 			dispatch(addHint(partOfLIst));
 		} else if (list.length <= dif) {
 			dispatch(setLoading(false));	console.log('setL false')
