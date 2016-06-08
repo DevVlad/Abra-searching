@@ -5,15 +5,15 @@ import Immutable from 'immutable'
 
 export function setFilter(filter) {
 	return dispatch => {
-		dispatch(init(filter));	console.log('init')
-		dispatch(setLoading(false));	console.log('setL false')
+		dispatch(init(filter));	// console.log('init')
+		dispatch(setLoading(false));	/// console.log('setL false')
 		//test
-		dispatch(addHint(Immutable.fromJS([]))); console.log('test')
-		dispatch(addHint(Immutable.fromJS([1,2,3]))); console.log('test')
-		dispatch(addHint(Immutable.fromJS([]))); console.log('test')
-		dispatch(addHint(Immutable.fromJS([]))); console.log('test')
+		// dispatch(addHint(Immutable.fromJS([]))); console.log('test')
+		// dispatch(addHint(Immutable.fromJS([1,2,3]))); console.log('test')
+		// dispatch(addHint(Immutable.fromJS([]))); console.log('test')
+		// dispatch(addHint(Immutable.fromJS([]))); console.log('test')
 		if (filter !== '') {
-			dispatch(setLoading(true));	console.log('setL true')
+			dispatch(setLoading(true));	//console.log('setL true')
 			dispatch(doRequest(filter, 0));
 		}
 	}
@@ -36,7 +36,7 @@ function setLoading(loading) {
 const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
 
 function doRequest(filter, paging = 0) {
-	console.log('Sending request for paging ' + paging + ' and filter ' + filter);
+	// console.log('Sending request for paging ' + paging + ' and filter ' + filter);
 	return dispatch => {
 		ApiService.getRequest({ 'add-row-count': true, 'start': paging, 'limit': 20 },
 			fields.map(f => `${f} like similar '${filter}'`).join(' or ')
@@ -49,7 +49,7 @@ function doRequest(filter, paging = 0) {
 function processRequest(data, filter, paging) {
 	return (dispatch, getState) => {
 		if (data.kontakt.length > 0 && getFilter(getState()) === filter) {
-			console.log('Applying the filter...');
+			// console.log('Applying the filter...');
 			const expr = new RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i');
 			const list = data.kontakt.filter(x =>
 				expr.test(x.jmeno) || expr.test(x.prijmeni) || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)
@@ -66,7 +66,7 @@ function processRequest(data, filter, paging) {
 }
 
 function addHint(list) {
-	console.log('Add hints to list...');
+	// console.log('Add hints to list...');
 	return {
 		type: 'ADD_HINT',
 		hint: list
@@ -79,10 +79,10 @@ function setLimit(list) {
 		const dif = 10 - counter;
 		if (list.length > dif) {
 			const partOfLIst = list.slice(0,-(list.length-dif));
-			dispatch(setLoading(false)); console.log('setL false')
+			dispatch(setLoading(false)); // console.log('setL false')
 			dispatch(addHint(partOfLIst));
 		} else if (list.length <= dif) {
-			dispatch(setLoading(false));	console.log('setL false')
+			dispatch(setLoading(false));	// console.log('setL false')
 			dispatch(addHint(list));
 		}
 	}
