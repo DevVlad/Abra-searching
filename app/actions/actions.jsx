@@ -1,19 +1,13 @@
 import ApiService from '../services/apiservice.js';
-// import { getFilter, getHint } from '../reducers/reducer.jsx';
 import { getFilter, getHint } from '../selectors/selectors.jsx';
 import Immutable from 'immutable'
 
 export function setFilter(filter) {
 	return dispatch => {
-		dispatch(init(filter));	// console.log('init')
-		dispatch(setLoading(false));	/// console.log('setL false')
-		//test
-		// dispatch(addHint(Immutable.fromJS([]))); console.log('test')
-		// dispatch(addHint(Immutable.fromJS([1,2,3]))); console.log('test')
-		// dispatch(addHint(Immutable.fromJS([]))); console.log('test')
-		// dispatch(addHint(Immutable.fromJS([]))); console.log('test')
+		dispatch(init(filter));
+		dispatch(setLoading(false));
 		if (filter !== '') {
-			dispatch(setLoading(true));	//console.log('setL true')
+			dispatch(setLoading(true));
 			dispatch(doRequest(filter, 0));
 		}
 	}
