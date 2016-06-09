@@ -1,6 +1,5 @@
 import ApiService from '../services/apiservice.js';
 import { getFilter, getHint } from '../selectors/selectors.jsx';
-import Immutable from 'immutable'
 
 export function setFilter(filter) {
 	return dispatch => {
@@ -73,10 +72,10 @@ function setLimit(list) {
 		const dif = 10 - counter;
 		if (list.length > dif) {
 			const partOfLIst = list.slice(0,-(list.length-dif));
-			dispatch(setLoading(false)); // console.log('setL false')
+			dispatch(setLoading(false));
 			dispatch(addHint(partOfLIst));
 		} else if (list.length <= dif) {
-			dispatch(setLoading(false));	// console.log('setL false')
+			dispatch(setLoading(false));
 			dispatch(addHint(list));
 		}
 	}
