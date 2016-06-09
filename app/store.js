@@ -6,7 +6,7 @@ import Immutable from 'immutable';
 const store = createStore(reducer, applyMiddleware(thunk));
 
 store.subscribe(() => {
-	console.log('--------------------------------');
+	console.log('--------------------------------------------------------------');
 	console.log(store.getState().toJS());
 });
 

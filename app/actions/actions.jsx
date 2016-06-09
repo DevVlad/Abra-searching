@@ -1,11 +1,10 @@
 import ApiService from '../services/apiservice.js';
-// import { getFilter, getHint } from '../reducers/reducer.jsx';
 import { getFilter, getHint } from '../selectors/selectors.jsx';
 
 export function setFilter(filter) {
 	return dispatch => {
-		dispatch(init(filter)); 
-		dispatch(setLoading(false)); 
+		dispatch(init(filter));
+		dispatch(setLoading(false));
 		if (filter !== '') {
 			dispatch(setLoading(true));
 			dispatch(doRequest(filter, 0));
@@ -30,7 +29,7 @@ function setLoading(loading) {
 const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
 
 function doRequest(filter, paging = 0) {
-	console.log('Sending request for paging ' + paging + ' and filter ' + filter);
+	// console.log('Sending request for paging ' + paging + ' and filter ' + filter);
 	return dispatch => {
 		ApiService.getRequest({ 'add-row-count': true, 'start': paging, 'limit': 20 },
 			fields.map(f => `${f} like similar '${filter}'`).join(' or ')
@@ -42,8 +41,8 @@ function doRequest(filter, paging = 0) {
 
 function processRequest(data, filter, paging) {
 	return (dispatch, getState) => {
-		if (data.kontakt.length > 0 && getFilter(getState()) === filter) { 
-			console.log('Applying the filter...');
+		if (data.kontakt.length > 0 && getFilter(getState()) === filter) {
+			// console.log('Applying the filter...');
 			const expr = new RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i');
 			const list = data.kontakt.filter(x =>
 				expr.test(x.jmeno) || expr.test(x.prijmeni) || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)
@@ -60,7 +59,7 @@ function processRequest(data, filter, paging) {
 }
 
 function addHint(list) {
-	console.log('Add hints to list...');
+	// console.log('Add hints to list...');
 	return {
 		type: 'ADD_HINT',
 		hint: list
