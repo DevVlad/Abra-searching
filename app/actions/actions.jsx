@@ -34,7 +34,10 @@ function doRequest(filter, paging = 0) {
 		ApiService.getRequest({ 'add-row-count': true, 'start': paging, 'limit': 20 },
 			fields.map(f => `${f} like similar '${filter}'`).join(' or ')
 		).then(data => {
-			dispatch(processRequest(data.winstrom, filter, paging));
+			if (parseInt(data.winstrom['@rowCount']) === 0 ) {
+				dispatch(setLoading(false));
+				console.log('No data found!');
+			} else dispatch(processRequest(data.winstrom, filter, paging));
 		});
 	}
 }
@@ -42,17 +45,22 @@ function doRequest(filter, paging = 0) {
 function processRequest(data, filter, paging) {
 	return (dispatch, getState) => {
 		if (data.kontakt.length > 0 && getFilter(getState()) === filter) {
-			// console.log('Applying the filter...');
+			// console.log('Applying the filter...', RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i'));
 			const expr = new RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i');
 			const list = data.kontakt.filter(x =>
 				expr.test(x.jmeno) || expr.test(x.prijmeni) || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)
 			);
-			dispatch(setLimit(list));
-			const count = paging + data.kontakt.length;
-			const totalCount = parseInt(data['@rowCount']);
-			const hintCount = getHint(getState()).size;
-			if (totalCount > count && hintCount < 10) {
-				dispatch(doRequest(filter, paging + data.kontakt.length));
+			if (list.length === 0) {
+				console.log('No data found!');
+				dispatch(setLoading(false));
+			} else {
+				dispatch(setLimit(list));
+				const count = paging + data.kontakt.length;
+				const totalCount = parseInt(data['@rowCount']);
+				const hintCount = getHint(getState()).size;
+				if (totalCount > count && hintCount < 10) {
+					dispatch(doRequest(filter, paging + data.kontakt.length));
+				}
 			}
 		}
 	}
