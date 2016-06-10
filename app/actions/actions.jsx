@@ -50,13 +50,13 @@ function processRequest(data, filter, paging) {
 			const list = data.kontakt.filter(x =>
 				expr.test(x.jmeno) || expr.test(x.prijmeni) || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)
 			);
-			if (list.length === 0) {
-				console.log('No data found!');
+			const totalCount = parseInt(data['@rowCount']);
+			if (list.length === 0 && totalCount === 0) {
+				console.log('No data found!',list, data.kontakt,expr);
 				dispatch(setLoading(false));
 			} else {
 				dispatch(setLimit(list));
 				const count = paging + data.kontakt.length;
-				const totalCount = parseInt(data['@rowCount']);
 				const hintCount = getHint(getState()).size;
 				if (totalCount > count && hintCount < 10) {
 					dispatch(doRequest(filter, paging + data.kontakt.length));
