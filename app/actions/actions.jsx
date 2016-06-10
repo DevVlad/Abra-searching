@@ -34,10 +34,12 @@ function doRequest(filter, paging = 0) {
 		ApiService.getRequest({ 'add-row-count': true, 'start': paging, 'limit': 20 },
 			fields.map(f => `${f} like similar '${filter}'`).join(' or ')
 		).then(data => {
-			if (parseInt(data.winstrom['@rowCount']) === 0 ) {
-				dispatch(setLoading(false));
-				console.log('No data found!');
-			} else dispatch(processRequest(data.winstrom, filter, paging));
+			setTimeout(() => {
+				if (parseInt(data.winstrom['@rowCount']) === 0) {
+					dispatch(setLoading(false));
+					console.log('No data found!');
+				} else dispatch(processRequest(data.winstrom, filter, paging));
+			}, 2000);
 		});
 	}
 }
