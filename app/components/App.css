@@ -24,3 +24,13 @@ ul {
   list-style: none;
   height: 57.27px;
 }
+
+div {
+  width: 650px;
+}
+
+#loading {
+  position: absolute;
+  top: 40px;
+  left: 400px;
+}

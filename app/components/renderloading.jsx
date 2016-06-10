@@ -1,14 +1,31 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import $ from 'jquery';
 import { stateSelectorLoading } from '../selectors/selectors.jsx';
-
+import './App.css'
 
 class Loading extends React.Component {
+  anime(l) {
+      l.animate({opacity: '0.4'}, "slow");
+      l.animate({opacity: '0.8'}, "slow");
+      l.animate({opacity: '0.4'}, "slow");
+      l.animate({opacity: '0.8'}, "slow");
+  }
+
+  componentDidUpdate() {
+    console.log('*******',this.loadRef);
+    let pom = this.loadRef;
+    if (pom != undefined) {
+      this.anime($(pom));
+    }
+  }
 
   render(){
     if (this.props.loading === true) {
       return (
-        <h2>Loading...</h2>
+        <div id='loading' ref={(ref) => this.loadRef = ref}>
+          <h2 >Loading...</h2>
+        </div>
       );
     } else return null;
   }

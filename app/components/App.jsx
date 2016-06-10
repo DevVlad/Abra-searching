@@ -21,10 +21,10 @@ class App extends React.Component{
 				<form className="myform" role="form">
 					<div className="subDiv">
 						<label className="label">Searching for...</label>
-	                    <input className="input" ref="input" type="text" placeholder="Search" onChange={this.filterChange.bind(this)}/>
-                    </div>
+	          	<input className="input" ref="input" type="text" placeholder="Search" onChange={this.filterChange.bind(this)}/>
+          </div>
 				</form>
-				<RenderLoading />
+				<RenderLoading / >
 				<RenderList data={this.props.hint.toJS()} />
 			</div>
 		)
