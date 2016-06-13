@@ -13,7 +13,7 @@ class ResultList extends React.Component {
 		});
 		console.log('itemy', items)
 		return (
-			<ReactCSSTransitionGroup component='ul' transitionName="anime" transitionEnterTimeout={5000} transitionLeaveTimeout={10}>
+			<ReactCSSTransitionGroup component='ul' transitionName="anime" transitionEnterTimeout={500} transitionLeaveTimeout={10}>
 				{items}
 			</ReactCSSTransitionGroup>
 		);
