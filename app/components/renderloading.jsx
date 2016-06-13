@@ -5,22 +5,22 @@ import { stateSelectorLoading } from '../selectors/selectors.jsx';
 import './App.css'
 
 class Loading extends React.Component {
-  anime(l) {
-    (function pulse(){
-         l.delay(200).fadeOut('slow').delay(50).fadeIn('slow',pulse);
-     })();
-      // l.animate({opacity: '0.4'}, "slow");
-      // l.animate({opacity: '0.8'}, "slow");
-      // l.animate({opacity: '0.4'}, "slow");
-      // l.animate({opacity: '0.8'}, "slow");
-  }
+	constructor() {
+		super();
+		this.pulse = null;
+	}
 
   componentDidUpdate() {
-    console.log('*******',this.loadRef);
-    let pom = this.loadRef;
-    if (pom != undefined) {
-      this.anime($(pom));
-    }
+	if (this.pulse == null && this.loadRef != undefined) {
+		this.pulse = () => {
+			if (this.loadRef == undefined) {
+				this.pulse = null;
+			} else {
+				$(this.loadRef).delay(200).fadeOut('slow').delay(50).fadeIn('slow', this.pulse);
+			}
+		};
+		this.pulse();
+	}
   }
 
   render(){

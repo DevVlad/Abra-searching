@@ -8,11 +8,12 @@ class ResultList extends React.Component {
 	render() {
 		let items = this.props.data.map((item, key) => {
 					return (
-							<li key={shortid()}> <h4>{item.jmeno} {item.prijmeni}</h4> email: {item.email} mobil: {item.mobil} telefon: {item.tel}</li>
+						<li key={item.id}> <h4>{item.jmeno} {item.prijmeni}</h4> email: {item.email} mobil: {item.mobil} telefon: {item.tel}</li>
 					);
 		});
+		console.log('ResultList: ', items);
 		return (
-			<ReactCSSTransitionGroup component='ul' transitionName="anime" transitionEnterTimeout={1000} transitionLeaveTimeout={1000}>
+			<ReactCSSTransitionGroup component='ul' transitionName="anime" transitionEnterTimeout={8000} transitionLeaveTimeout={8000}>
 				{items}
 			</ReactCSSTransitionGroup>
 		);

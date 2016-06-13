@@ -24,7 +24,7 @@ class App extends React.Component{
 	          	<input className="input" ref="input" type="text" placeholder="Search" onChange={this.filterChange.bind(this)}/>
           </div>
 				</form>
-				<RenderLoading / >
+				<RenderLoading />
 				<RenderList data={this.props.hint.toJS()} />
 			</div>
 		)

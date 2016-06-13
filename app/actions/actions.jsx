@@ -31,7 +31,7 @@ const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
 function doRequest(filter, paging = 0) {
 	// console.log('Sending request for paging ' + paging + ' and filter ' + filter);
 	return dispatch => {
-		ApiService.getRequest({ 'add-row-count': true, 'start': paging, 'limit': 20 },
+		ApiService.getRequest({ 'add-row-count': true, 'start': paging, 'limit': 2 },
 			fields.map(f => `${f} like similar '${filter}'`).join(' or ')
 		).then(data => {
 			setTimeout(() => {
@@ -39,7 +39,7 @@ function doRequest(filter, paging = 0) {
 					dispatch(setLoading(false));
 					console.log('No data found!');
 				} else dispatch(processRequest(data.winstrom, filter, paging));
-			}, 2500);
+			}, 0);
 		});
 	}
 }
@@ -72,6 +72,14 @@ function addHint(list) {
 	// console.log('Add hints to list...');
 	return {
 		type: 'ADD_HINT',
+		hint: list
+	}
+}
+
+function setHint(list) {
+	// console.log('Add hints to list...');
+	return {
+		type: 'SET_HINT',
 		hint: list
 	}
 }

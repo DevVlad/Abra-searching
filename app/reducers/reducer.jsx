@@ -13,6 +13,9 @@ function reducerFilter(state = initialStateFilter, action) {
       case 'INIT':
         return state.set('filter', action.filter).set('hint', Immutable.fromJS([]));
 
+      case 'SET_HINT':
+		 return state.updateIn(['hint'], list => Immutable.fromJS(action.hint));
+
       case 'ADD_HINT':
         return state.updateIn(['hint'], list => list.concat(Immutable.fromJS(action.hint)));
 

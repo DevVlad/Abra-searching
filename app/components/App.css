@@ -1,7 +1,7 @@
 .anime-enter {
   opacity: 0.01;
   height: 0px;
-  transition: all 1s ease-in-out
+  transition: all 8s ease-in-out
 }
 
 
@@ -12,21 +12,12 @@
 
 .anime-leave {
   opacity: 0.01;
-  transition: opacity 1s ease-in-out;
+  transition: opacity 8s ease-in-out;
 }
 
 .anime-leave.anime-leave-active {
   opacity: 0;
 
-}
-
-ul {
-  list-style: none;
-  height: 57.27px;
-}
-
-div {
-  width: 650px;
 }
 
 #loading {
