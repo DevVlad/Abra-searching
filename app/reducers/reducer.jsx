@@ -11,10 +11,10 @@ const initialStateFilter = Immutable.fromJS(
 function reducerFilter(state = initialStateFilter, action) {
     switch (action.type) {
       case 'INIT':
-        return state.set('filter', action.filter).set('hint', Immutable.fromJS([]));
+        return state.set('filter', action.filter);//.set('hint', Immutable.fromJS([]));
 
       case 'SET_HINT':
-		 return state.updateIn(['hint'], list => Immutable.fromJS(action.hint));
+		    return state.updateIn(['hint'], list => Immutable.fromJS(action.hint));
 
       case 'ADD_HINT':
         return state.updateIn(['hint'], list => list.concat(Immutable.fromJS(action.hint)));

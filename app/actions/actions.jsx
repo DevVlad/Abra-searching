@@ -1,5 +1,5 @@
 import ApiService from '../services/apiservice.js';
-import { getFilter, getHint } from '../selectors/selectors.jsx';
+import { getFilter, getHint, getLoading } from '../selectors/selectors.jsx';
 
 export function setFilter(filter) {
 	return dispatch => {
@@ -9,6 +9,7 @@ export function setFilter(filter) {
 			dispatch(setLoading(true));
 			dispatch(doRequest(filter, 0));
 		}
+		if (filter === '') dispatch(setHint([]));
 	}
 }
 
@@ -29,9 +30,8 @@ function setLoading(loading) {
 const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
 
 function doRequest(filter, paging = 0) {
-	// console.log('Sending request for paging ' + paging + ' and filter ' + filter);
 	return dispatch => {
-		ApiService.getRequest({ 'add-row-count': true, 'start': paging, 'limit': 2 },
+		ApiService.getRequest({ 'add-row-count': true, 'start': paging, 'limit': 20 },
 			fields.map(f => `${f} like similar '${filter}'`).join(' or ')
 		).then(data => {
 			setTimeout(() => {
@@ -47,29 +47,28 @@ function doRequest(filter, paging = 0) {
 function processRequest(data, filter, paging) {
 	return (dispatch, getState) => {
 		if (data.kontakt.length > 0 && getFilter(getState()) === filter) {
-			// console.log('Applying the filter...', RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i'));
 			const expr = new RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i');
 			const list = data.kontakt.filter(x =>
 				expr.test(x.jmeno) || expr.test(x.prijmeni) || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)
 			);
 			const totalCount = parseInt(data['@rowCount']);
-			if (list.length === 0 && totalCount === 0) {
-				console.log('No data found!',list, data.kontakt,expr);
+			if (totalCount === 0) {
+				console.log('No data found!');
 				dispatch(setLoading(false));
+				dispatch(setHint([]));
 			} else {
-				dispatch(setLimit(list));
-				const count = paging + data.kontakt.length;
-				const hintCount = getHint(getState()).size;
-				if (totalCount > count && hintCount < 10) {
-					dispatch(doRequest(filter, paging + data.kontakt.length));
-				}
+					dispatch(setLimit(list));
+					const count = paging + data.kontakt.length;
+					const hintCount = getHint(getState()).size;
+					if (totalCount > count && hintCount < 10) {
+						dispatch(doRequest(filter, count));
+					}
 			}
 		}
 	}
 }
 
 function addHint(list) {
-	// console.log('Add hints to list...');
 	return {
 		type: 'ADD_HINT',
 		hint: list
@@ -77,24 +76,47 @@ function addHint(list) {
 }
 
 function setHint(list) {
-	// console.log('Add hints to list...');
 	return {
 		type: 'SET_HINT',
 		hint: list
 	}
 }
 
+// function setLimit(list) {
+// 	return (dispatch, getState) => {
+// 		const counter = getHint(getState()).size;
+// 		const dif = 10 - counter;
+// 		if (list.length > dif) {
+// 			const partOfList = list.slice(0, -(list.length-dif));
+// 			dispatch(setLoading(false));
+// 			dispatch(addHint(partOfList));
+// 		} else if (list.length <= dif) {
+// 			dispatch(setLoading(false));
+// 			dispatch(addHint(list));
+// 		}
+// 	}
+// }
+
 function setLimit(list) {
+	let pom = 0;
 	return (dispatch, getState) => {
-		const counter = getHint(getState()).size;
+		let counter = getHint(getState()).size;
+		let loading = getLoading(getState());
+		if (loading === true) {
+			counter = 0;
+		}
 		const dif = 10 - counter;
 		if (list.length > dif) {
-			const partOfLIst = list.slice(0,-(list.length-dif));
-			dispatch(setLoading(false));
-			dispatch(addHint(partOfLIst));
+			const partOfList = list.slice(0, -(list.length-dif));
+			pom = partOfList;
 		} else if (list.length <= dif) {
+			pom = list;
+		}
+		if (loading === true && list.length > 0) {
 			dispatch(setLoading(false));
-			dispatch(addHint(list));
+			dispatch(setHint(pom));
+		} else {
+			dispatch(addHint(pom));
 		}
 	}
 }
