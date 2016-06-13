@@ -35,10 +35,6 @@ function doRequest(filter, paging = 0) {
 			fields.map(f => `${f} like similar '${filter}'`).join(' or ')
 		).then(data => {
 			setTimeout(() => {
-				// if (parseInt(data.winstrom['@rowCount']) === 0) {
-				// 	dispatch(setLoading(false));
-				// 	console.log('No data found!');
-				// } else
 					dispatch(processRequest(data.winstrom, filter, paging));
 			}, 0);
 		});
@@ -49,11 +45,9 @@ function processRequest(data, filter, paging) {
 	return (dispatch, getState) => {
 		if (getFilter(getState()) === filter) {
 			const expr = new RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i');
-			console.log('processRequest: ', data.kontakt);
 			const list = data.kontakt.filter(x =>
 				expr.test(x.jmeno) || expr.test(x.prijmeni) || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)
 			);
-			console.log('processRequest: ', list);
 			const totalCount = parseInt(data['@rowCount']);
 			if (totalCount === 0) {
 				console.log('No data found!');
@@ -85,20 +79,6 @@ function setHint(list) {
 	}
 }
 
-// function setLimit(list) {
-// 	return (dispatch, getState) => {
-// 		const counter = getHint(getState()).size;
-// 		const dif = 10 - counter;
-// 		if (list.length > dif) {
-// 			const partOfList = list.slice(0, -(list.length-dif));
-// 			dispatch(setLoading(false));
-// 			dispatch(addHint(partOfList));
-// 		} else if (list.length <= dif) {
-// 			dispatch(setLoading(false));
-// 			dispatch(addHint(list));
-// 		}
-// 	}
-// }
 
 function setLimit(list) {
 	let pom = 0;
@@ -115,13 +95,10 @@ function setLimit(list) {
 		} else if (list.length <= dif) {
 			pom = list;
 		}
-		console.log('setLimit: stat', list, pom, counter);
 		if (loading) {
-			console.log('setLimit: setLoading false', pom);
 			dispatch(setLoading(false));
 			dispatch(setHint(pom));
 		} else {
-			console.log('setLimit:', pom);
 			dispatch(addHint(pom));
 		}
 	}

@@ -11,7 +11,6 @@ class ResultList extends React.Component {
 						<li key={item.id}> <h4>{item.jmeno} {item.prijmeni}</h4> email: {item.email} mobil: {item.mobil} telefon: {item.tel}</li>
 					);
 		});
-		console.log('itemy', items)
 		return (
 			<ReactCSSTransitionGroup component='ul' transitionName="anime" transitionEnterTimeout={500} transitionLeaveTimeout={10}>
 				{items}
