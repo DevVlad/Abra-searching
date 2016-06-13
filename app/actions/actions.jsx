@@ -39,7 +39,7 @@ function doRequest(filter, paging = 0) {
 					dispatch(setLoading(false));
 					console.log('No data found!');
 				} else dispatch(processRequest(data.winstrom, filter, paging));
-			}, 2000);
+			}, 2500);
 		});
 	}
 }

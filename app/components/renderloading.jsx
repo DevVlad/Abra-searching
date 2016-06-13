@@ -6,10 +6,13 @@ import './App.css'
 
 class Loading extends React.Component {
   anime(l) {
-      l.animate({opacity: '0.4'}, "slow");
-      l.animate({opacity: '0.8'}, "slow");
-      l.animate({opacity: '0.4'}, "slow");
-      l.animate({opacity: '0.8'}, "slow");
+    (function pulse(){
+         l.delay(200).fadeOut('slow').delay(50).fadeIn('slow',pulse);
+     })();
+      // l.animate({opacity: '0.4'}, "slow");
+      // l.animate({opacity: '0.8'}, "slow");
+      // l.animate({opacity: '0.4'}, "slow");
+      // l.animate({opacity: '0.8'}, "slow");
   }
 
   componentDidUpdate() {
