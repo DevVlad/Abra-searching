@@ -44,9 +44,10 @@ function doRequest(filter, paging = 0) {
 function processRequest(data, filter, paging) {
 	return (dispatch, getState) => {
 		if (getFilter(getState()) === filter) {
-			const expr = new RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i');
+			// const expr = new RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i');
+			const expr = new RegExp('\\b^' + filter.split(' ').map(exp => '(' + exp + ')').join('.*[a-zá-ž].*\\b'), 'i');
 			const list = data.kontakt.filter(x =>
-				expr.test(x.jmeno) || expr.test(x.prijmeni) || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)
+				expr.test(x.jmeno) || expr.test(x.prijmeni) //|| expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)
 			);
 			const totalCount = parseInt(data['@rowCount']);
 			if (totalCount === 0) {

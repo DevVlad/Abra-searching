@@ -1,6 +1,7 @@
 import React from 'react';
 import RenderList from './renderlist.jsx';
 import RenderLoading from './renderloading.jsx';
+import RenderWhisperer from './renderwhisperer.jsx';
 import { connect } from 'react-redux';
 import { setFilter } from '../actions/actions.jsx';
 import { stateSelectorList } from '../selectors/selectors.jsx';
@@ -21,11 +22,13 @@ class App extends React.Component{
 				<form className="myform" role="form">
 					<div className="subDiv">
 						<label className="label">Searching for...</label>
-	          	<input className="input" ref="input" type="text" placeholder="Search" onChange={this.filterChange.bind(this)}/>
+	          	<input className="input" type="text" placeholder="Search" onChange={this.filterChange.bind(this)} />
           </div>
 				</form>
+
 				<RenderLoading />
 				<RenderList data={this.props.hint.toJS()} />
+				<RenderWhisperer />
 			</div>
 		)
 	}
