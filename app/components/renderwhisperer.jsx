@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import $ from 'jquery';
-import select from 'selection-range';
 import RenderList from './renderlist.jsx';
 import RenderLoading from './renderloading.jsx';
 import RenderWhisperer from './renderwhisperer.jsx';
@@ -37,13 +36,16 @@ class Whisperer extends React.Component{
 	}
 
 	render(){
+    console.log('prdel')
     let whisper = '';
     let rest = '';
     if (this.props.hint.toJS().length > 0){
+      console.log('prdel',this.props.hint.toJS() )
       let pom = (this.props.hint.toJS()[0])
       rest = this.getWhisperLine([pom.jmeno, pom.prijmeni], this.props.filter).join(' ');
       whisper = this.props.filter + rest;
-      this.inputRef.setSelectionRange(this.props.filter.length, this.inputRef.value.length);
+      console.log('prdel',this.inputRef.value, this.props.filter.length, whisper.length)
+      this.inputRef.setSelectionRange(this.props.filter.length, whisper.length);
     }
 
 		return (
