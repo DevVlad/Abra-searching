@@ -5,14 +5,25 @@ import RenderList from './renderlist.jsx';
 import RenderLoading from './renderloading.jsx';
 import RenderWhisperer from './renderwhisperer.jsx';
 import { setFilter } from '../actions/actions.jsx';
-import { stateSelectorList } from '../selectors/selectors.jsx';
+import { stateSelectorList, stateSelectorFirstRecord } from '../selectors/selectors.jsx';
 import './App.css'
 
 class Whisperer extends React.Component{
 	constructor(props){
 		super(props);
     this.inputRef ='';
+    this.whisper = this.props.filter;
+    this.bool = true;
 	}
+
+  componentWillUpdate() {
+    this.inputRef.value = this.props.filter;
+  }
+
+  componentDidUpdate() {
+    if (this.bool) this.inputRef.setSelectionRange(this.props.filter.length, this.whisper.length);
+    // console.log('sdshsfosdjfs',document.getElementById('whisperInput').value)
+  }
 
   getWhisperLine(whisper, filter) {
     if (whisper[0] !== '' && [...whisper[0]][0].toLowerCase() === [...filter][0]) {
@@ -33,19 +44,25 @@ class Whisperer extends React.Component{
 
 	filterChange(e) {
 		this.props.dispatch(setFilter(e.target.value));
+    this.inputRef.value = this.props.filter;
 	}
 
-	render(){
-    console.log('prdel')
-    let whisper = '';
+  handleKeyDown(e) {
+    if (e.keyCode === 8) {
+      this.bool = false;
+      console.log('pppp',this.whisper,[...this.whisper].slice(0,this.whisper.length-1).join(''))
+      this.whisper = [...this.whisper].slice(0,this.whisper.length-1).join('');
+    } else {
+      this.bool = true;
+    }
+  }
+
+	render() {
     let rest = '';
-    if (this.props.hint.toJS().length > 0){
-      console.log('prdel',this.props.hint.toJS() )
-      let pom = (this.props.hint.toJS()[0])
+    if (this.props.hint.size > 0 && this.bool) {
+      let pom = this.props.hint.toJS();
       rest = this.getWhisperLine([pom.jmeno, pom.prijmeni], this.props.filter).join(' ');
-      whisper = this.props.filter + rest;
-      console.log('prdel',this.inputRef.value, this.props.filter.length, whisper.length)
-      this.inputRef.setSelectionRange(this.props.filter.length, whisper.length);
+      this.whisper = this.props.filter + rest;
     }
 
 		return (
@@ -53,7 +70,14 @@ class Whisperer extends React.Component{
   			<form role="formWhisperer">
   				<div>
   					<label className="labelWhisperer">Whisper for...</label>
-  	          <input id="whisperInput" ref={(ref) => this.inputRef = ref} type="text" value={whisper} placeholder="Search" onChange={this.filterChange.bind(this)} />
+  	          <input
+                id="whisperInput" ref={(ref) => this.inputRef = ref}
+                type="text"
+                value={this.whisper}
+                placeholder="Search"
+                onKeyDown={this.handleKeyDown.bind(this)}
+                onChange={this.filterChange.bind(this)}
+              />
           </div>
   			</form>
       </div>
@@ -62,7 +86,7 @@ class Whisperer extends React.Component{
 }
 
 function mapStateToProps(state) {
-	return stateSelectorList(state);
+  return stateSelectorFirstRecord(state)
 }
 
 const appConnect = connect(mapStateToProps)(Whisperer);
