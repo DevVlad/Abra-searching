@@ -5,24 +5,26 @@ import RenderList from './renderlist.jsx';
 import RenderLoading from './renderloading.jsx';
 import RenderWhisperer from './renderwhisperer.jsx';
 import { setFilter } from '../actions/actions.jsx';
-import { stateSelectorList, stateSelectorFirstRecord } from '../selectors/selectors.jsx';
+import { stateSelectorFirstRecord } from '../selectors/selectors.jsx';
 import './App.css'
 
 class Whisperer extends React.Component{
 	constructor(props){
 		super(props);
-    this.inputRef ='';
+    this.inputRef = '';
     this.whisper = this.props.filter;
-    this.bool = true;
+    this.rest = '';
+    this.backspaceBool = false;
 	}
 
-  componentWillUpdate() {
-    this.inputRef.value = this.props.filter;
-  }
-
   componentDidUpdate() {
-    if (this.bool) this.inputRef.setSelectionRange(this.props.filter.length, this.whisper.length);
-    // console.log('sdshsfosdjfs',document.getElementById('whisperInput').value)
+    if (this.backspaceBool === false) this.inputRef.setSelectionRange(this.props.filter.length, this.whisper.length);
+    if (this.rest === '') {
+      return
+    } else {
+      this.backspaceBool = false;
+    }
+    console.log(this.backspaceBool)
   }
 
   getWhisperLine(whisper, filter) {
@@ -43,28 +45,33 @@ class Whisperer extends React.Component{
   }
 
 	filterChange(e) {
-		this.props.dispatch(setFilter(e.target.value));
-    this.inputRef.value = this.props.filter;
+    this.props.dispatch(setFilter(e.target.value));
 	}
 
   handleKeyDown(e) {
     if (e.keyCode === 8) {
-      this.bool = false;
-      console.log('pppp',this.whisper,[...this.whisper].slice(0,this.whisper.length-1).join(''))
-      this.whisper = [...this.whisper].slice(0,this.whisper.length-1).join('');
+      this.rest = '';
+      this.whisper = this.props.filter;
+      this.backspaceBool = true;
+      this.setState({});
+    } else if (e.keyCode === 46) {
+      this.rest = '';
+      this.whisper = this.props.filter;
+      this.backspaceBool = true;
+      this.setState({});
     } else {
-      this.bool = true;
+      this.backspaceBool = false;
+      console.log(e.target.value)
     }
   }
 
 	render() {
-    let rest = '';
-    if (this.props.hint.size > 0 && this.bool) {
+    if (this.props.hint.size > 0 && this.backspaceBool === false) {
       let pom = this.props.hint.toJS();
-      rest = this.getWhisperLine([pom.jmeno, pom.prijmeni], this.props.filter).join(' ');
-      this.whisper = this.props.filter + rest;
+      let filter = this.props.filter;
+      this.rest = this.getWhisperLine([pom.jmeno, pom.prijmeni], filter).join(' ');
+      this.whisper = filter + this.rest;
     }
-
 		return (
       <div id="whisper">
   			<form role="formWhisperer">
