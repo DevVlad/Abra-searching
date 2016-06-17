@@ -32,5 +32,11 @@ div {
 #loading {
   position: absolute;
   top: 40px;
+  left: 700px;
+}
+
+#whisper {
+  position: absolute;
+  top: 65px;
   left: 400px;
 }
