@@ -2,6 +2,7 @@ import React from 'react';
 import RenderList from './renderlist.jsx';
 import RenderLoading from './renderloading.jsx';
 import RenderWhisperer from './renderwhisperer.jsx';
+import WhispererNew from './renderwhisperernew.jsx';
 import { connect } from 'react-redux';
 import { setFilter } from '../actions/actions.jsx';
 import { stateSelectorList } from '../selectors/selectors.jsx';
@@ -25,7 +26,7 @@ class App extends React.Component{
 	          	<input className="input" type="text" placeholder="Search" onChange={this.filterChange.bind(this)} />
           </div>
 				</form>
-
+				<WhispererNew />
 				<RenderLoading />
 				<RenderList data={this.props.hint.toJS()} />
 				<RenderWhisperer />

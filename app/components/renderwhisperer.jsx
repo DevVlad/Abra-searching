@@ -1,9 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import $ from 'jquery';
-import RenderList from './renderlist.jsx';
-import RenderLoading from './renderloading.jsx';
-import RenderWhisperer from './renderwhisperer.jsx';
 import { setFilter } from '../actions/actions.jsx';
 import { stateSelectorFirstRecord } from '../selectors/selectors.jsx';
 import './App.css'
