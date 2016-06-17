@@ -24,7 +24,6 @@ class Whisperer extends React.Component{
     } else {
       this.backspaceBool = false;
     }
-    console.log(this.backspaceBool)
   }
 
   getWhisperLine(whisper, filter) {
@@ -61,7 +60,6 @@ class Whisperer extends React.Component{
       this.setState({});
     } else {
       this.backspaceBool = false;
-      console.log(e.target.value)
     }
   }
 
