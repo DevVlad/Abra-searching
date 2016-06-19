@@ -3,12 +3,20 @@ import { connect } from 'react-redux';
 import { setFilter } from '../actions/actions.jsx';
 import { stateSelectorList } from '../selectors/selectors.jsx';
 import './App.css'
+import $ from 'jquery';
+import select2 from 'select2';
 
 class WhispererNew extends React.Component{
 	constructor(props){
 		super(props);
     this.list = [];
 	}
+
+  componentDidMount() {
+    $("#id_label_multiple").select2({
+      placeholder: "Search..."
+    });
+  }
 
   componentDidUpdate() {
     if (this.props.hint.size > 0) {
@@ -23,10 +31,6 @@ class WhispererNew extends React.Component{
     this.props.dispatch(setFilter(e.target.value));
 	}
 
-  handleLink() {
-    console.log('prdel')
-  }
-
 	render() {
 
 		return (
@@ -37,10 +41,12 @@ class WhispererNew extends React.Component{
               type="text"
               placeholder="Search"
               onChange={this.filterChange.bind(this)}
+              list="pokus"
             />
-          <div id='whispererDisplay'>
-            {this.props.hint.toJS().map(item=>{return <div onClick={this.handleLink.bind(this)}>{item.prijmeni} {item.jmeno}</div>})}
-          </div>
+            <datalist id="pokus">
+              {this.props.hint.toJS().map(item=>{return <option id={'a'+item.id}>{item.prijmeni} {item.jmeno}</option>})}
+            </datalist>
+            
   			</form>
       </div>
 		)
