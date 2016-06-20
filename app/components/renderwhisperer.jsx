@@ -14,7 +14,7 @@ class Whisperer extends React.Component{
 	}
 
   componentDidUpdate() {
-    if (this.backspaceBool === false) this.inputRef.setSelectionRange(this.props.filter.length, this.whisper.length);
+    //if (this.backspaceBool === false) this.inputRef.setSelectionRange(this.props.filter.length, this.whisper.length);
   }
 
 	getWhisperLine(whisper, filter) {

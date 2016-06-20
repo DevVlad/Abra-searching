@@ -18,13 +18,13 @@ class WhispererNew extends React.Component{
 	}
 
 	handleSelect(e) {
+		console.log('WhispererNew: handleSelect', e);
 		this.inputValue = e.target[e.target.selectedIndex].text;
 		this.props.dispatch(setFilter(this.props.hint.toJS()[e.target.selectedIndex].prijmeni));
-		console.log()
 	}
 
 	handleOnChange(e) {
-		console.log(e, document.getElementsByClassName('select2-search__field'))
+			console.log('WhispererNew: handleChange', e);
 	}
 
 	render() {
@@ -37,6 +37,10 @@ class WhispererNew extends React.Component{
 			}
 		});
 
+		if (this.success && this.list && this.list.length > 0) {
+			this.success({ results: this.list });
+		}
+
 		return (
       <div id="whisperNew">
   			<form role="formWhispererNew">
@@ -46,17 +50,25 @@ class WhispererNew extends React.Component{
             type="text"
 						value={this.inputValue}
             placeholder="Search"
-            onChange={this.filterChange.bind(this)}
+
 						ref={(ref) => this.inputRef = ref}
-          />
+          />{/*onChange={this.filterChange.bind(this)}  data={this.list}*/}
 				<Select2
 					id="select2Whisper"
 					ref={(ref) => this.selectRef = ref}
-					data={this.list}
+
 					onSelect={this.handleSelect.bind(this)}
 					onChange={this.handleOnChange.bind(this)}
 				  options={{
-					  placeholder: 'search...'
+					  placeholder: 'search...',
+					  ajax: {
+					    transport: (params, success) => {
+					        console.log('ajax: transport', params, success);
+					        this.success = success;
+							this.filterChange({target: {value:params.data.q}});
+					    }
+					  }
+
 					}}
 				/>
   			</form>
