@@ -11,14 +11,24 @@ import './App.css'
 class WhispererNew extends React.Component{
 	constructor(props){
 		super(props);
-    this.list = [];
 	}
 
 	filterChange(e) {
     this.props.dispatch(setFilter(e.target.value));
 	}
 
+	handleSelect(e) {
+		this.inputValue = e.target[e.target.selectedIndex].text;
+		this.props.dispatch(setFilter(this.props.hint.toJS()[e.target.selectedIndex].prijmeni));
+		console.log()
+	}
+
+	handleOnChange(e) {
+		console.log(e, document.getElementsByClassName('select2-search__field'))
+	}
+
 	render() {
+		this.inputValue = this.props.filter;
 		this.list = [];
 		this.list = this.props.hint.toJS().map(item => {
 			return {
@@ -34,16 +44,19 @@ class WhispererNew extends React.Component{
           <input
 						id='inputNew'
             type="text"
+						value={this.inputValue}
             placeholder="Search"
             onChange={this.filterChange.bind(this)}
 						ref={(ref) => this.inputRef = ref}
           />
 				<Select2
 					id="select2Whisper"
+					ref={(ref) => this.selectRef = ref}
 					data={this.list}
+					onSelect={this.handleSelect.bind(this)}
+					onChange={this.handleOnChange.bind(this)}
 				  options={{
-					  placeholder: 'search...',
-						dropdownParent: '#inputNew'
+					  placeholder: 'search...'
 					}}
 				/>
   			</form>
