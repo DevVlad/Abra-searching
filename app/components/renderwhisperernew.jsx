@@ -18,13 +18,13 @@ class WhispererNew extends React.Component{
 	}
 
 	handleSelect(e) {
-		console.log('WhispererNew: handleSelect', e);
+		// console.log('WhispererNew: handleSelect', e);
 		this.inputValue = e.target[e.target.selectedIndex].text;
 		this.props.dispatch(setFilter(this.props.hint.toJS()[e.target.selectedIndex].prijmeni));
 	}
 
 	handleOnChange(e) {
-			console.log('WhispererNew: handleChange', e);
+			// console.log('WhispererNew: handleChange', e);
 	}
 
 	render() {
@@ -63,12 +63,11 @@ class WhispererNew extends React.Component{
 					  placeholder: 'search...',
 					  ajax: {
 					    transport: (params, success) => {
-					        console.log('ajax: transport', params, success);
+					        // console.log('ajax: transport', params, success);
 					        this.success = success;
-							this.filterChange({target: {value:params.data.q}});
+									this.filterChange({target: {value:params.data.q}});
 					    }
 					  }
-
 					}}
 				/>
   			</form>
