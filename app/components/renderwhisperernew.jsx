@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { setFilter } from '../actions/actions.jsx';
 import { stateSelectorList } from '../selectors/selectors.jsx';
 import Select2 from 'react-select2-wrapper';
+import 'react-select2-wrapper/css/select2.css';
 
 import './App.css'
 
