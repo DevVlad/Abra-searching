@@ -63,7 +63,8 @@ class Whisperer extends React.Component{
   				<div>
   					<label className="labelWhisperer">Whisper for...</label>
   	          <input
-                id="whisperInput" ref={(ref) => this.inputRef = ref}
+                id="whisperInput"
+								ref={(ref) => this.inputRef = ref}
                 type="text"
                 value={this.whisper}
                 placeholder="Search"

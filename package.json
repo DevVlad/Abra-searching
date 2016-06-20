@@ -23,10 +23,10 @@
     "react-addons-css-transition-group": "^15.1.0",
     "react-dom": "15.x",
     "react-redux": "^4.4.5",
+    "react-select2-wrapper": "^0.6.1",
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0",
     "reselect": "^2.5.1",
-    "select2": "^4.0.3",
     "shortid": "^2.2.6",
     "superagent": "^2.0.0-alpha.3"
   },

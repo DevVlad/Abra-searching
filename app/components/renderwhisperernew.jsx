@@ -2,9 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { setFilter } from '../actions/actions.jsx';
 import { stateSelectorList } from '../selectors/selectors.jsx';
+import Select2 from 'react-select2-wrapper';
+
 import './App.css'
-import $ from 'jquery';
-import select2 from 'select2';
+
 
 class WhispererNew extends React.Component{
 	constructor(props){
@@ -12,41 +13,38 @@ class WhispererNew extends React.Component{
     this.list = [];
 	}
 
-  componentDidMount() {
-    $("#id_label_multiple").select2({
-      placeholder: "Search..."
-    });
-  }
-
-  componentDidUpdate() {
-    if (this.props.hint.size > 0) {
-      let pom = this.props.hint.toJS().map(item => {
-        return <div class="item" data-value={item.id}>{item.prijmeni, item.jmeno}</div>
-      })
-      this.list = pom;
-    }
-  }
-
 	filterChange(e) {
     this.props.dispatch(setFilter(e.target.value));
 	}
 
 	render() {
+		this.list = [];
+		this.list = this.props.hint.toJS().map(item => {
+			return {
+				'text': [item.prijmeni, item.jmeno].join(' '),
+				'id': item.id
+			}
+		});
 
 		return (
       <div id="whisperNew">
   			<form role="formWhispererNew">
   				<label className="labelWhispererNew">WhisperNew for...</label>
-            <input
-              type="text"
-              placeholder="Search"
-              onChange={this.filterChange.bind(this)}
-              list="pokus"
-            />
-            <datalist id="pokus">
-              {this.props.hint.toJS().map(item=>{return <option key={'a'+item.id}>{item.prijmeni} {item.jmeno}</option>})}
-            </datalist>
-            
+          <input
+						id='inputNew'
+            type="text"
+            placeholder="Search"
+            onChange={this.filterChange.bind(this)}
+						ref={(ref) => this.inputRef = ref}
+          />
+				<Select2
+					id="select2Whisper"
+					data={this.list}
+				  options={{
+					  placeholder: 'search...',
+						dropdownParent: '#inputNew'
+					}}
+				/>
   			</form>
       </div>
 		)
