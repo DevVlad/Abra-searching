@@ -44,7 +44,7 @@ class WhispererNew extends React.Component{
               list="pokus"
             />
             <datalist id="pokus">
-              {this.props.hint.toJS().map(item=>{return <option id={'a'+item.id}>{item.prijmeni} {item.jmeno}</option>})}
+              {this.props.hint.toJS().map(item=>{return <option key={'a'+item.id}>{item.prijmeni} {item.jmeno}</option>})}
             </datalist>
             
   			</form>
