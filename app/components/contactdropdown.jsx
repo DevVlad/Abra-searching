@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { setFilter } from '../actions/actions.jsx';
-import { getFilter, getHint, getLoading } from '../selectors/selectors.jsx';
-import { DropdownList, Multiselect } from 'react-widgets';
+import { stateSelectorListAlias } from '../selectors/selectors.jsx';
+import { DropdownList } from 'react-widgets';
 
 import './App.css';
 import 'react-widgets/lib/less/react-widgets.less';
@@ -21,7 +21,7 @@ class ContactDropdown extends React.Component{
   }
 
   handleOnSearch(e) {
-    this.props.dispatch(setFilter(e, this.props.alias));
+    this.props.dispatch(setFilter(e));
   }
 
 	render() {
@@ -52,14 +52,8 @@ class ContactDropdown extends React.Component{
 }
 
 function mapStateToProps(state, props) {
-  let obj = {};
-  obj[props.alias] = {
-    filter: getFilter(state, props),
-    hint: getHint(state, props),
-    loading: getLoading(state, props)
-  };
-  console.log(obj)
-  return obj;
+  console.log('ContactDropdown', state.toJS(), props,'kkk: ',state.set(props.alias, stateSelectorListAlias(state, props)).toJS())
+  return stateSelectorListAlias(state, props);
 }
 
 const appConnect = connect(mapStateToProps)(ContactDropdown);
