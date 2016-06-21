@@ -40,3 +40,17 @@ div {
   top: 65px;
   left: 400px;
 }
+
+#select2Whisper {
+  width: 200px;
+  height: auto;
+}
+.select2-results__options {
+  height: auto;
+}
+
+#whisperWidgets {
+  position: absolute;
+  top: 65px;
+  left: 550px;
+}

@@ -1,9 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import $ from 'jquery';
-import RenderList from './renderlist.jsx';
-import RenderLoading from './renderloading.jsx';
-import RenderWhisperer from './renderwhisperer.jsx';
 import { setFilter } from '../actions/actions.jsx';
 import { stateSelectorFirstRecord } from '../selectors/selectors.jsx';
 import './App.css'
@@ -18,52 +14,42 @@ class Whisperer extends React.Component{
 	}
 
   componentDidUpdate() {
-    if (this.backspaceBool === false) this.inputRef.setSelectionRange(this.props.filter.length, this.whisper.length);
-    if (this.rest === '') {
-      return
-    } else {
-      this.backspaceBool = false;
-    }
+    //if (this.backspaceBool === false) this.inputRef.setSelectionRange(this.props.filter.length, this.whisper.length);
   }
 
-  getWhisperLine(whisper, filter) {
-    if (whisper[0] !== '' && [...whisper[0]][0].toLowerCase() === [...filter][0]) {
-      let name = whisper[0];
-      let lastName = whisper[1];
-      name = [...name].slice([...filter].length, name.length).join('');
-      return [name, lastName];
-    } else if (whisper[1] !== '' && [...whisper[1]][0].toLowerCase() === [...filter][0]) {
-      let lastName = whisper[1];
-      lastName = [...lastName].slice([...filter].length, lastName.length).join('');
-      if (whisper[0] === '') {
-        return [lastName];
-      }else {
-        return [lastName, whisper[0]];
-      }
-    }
-  }
+	getWhisperLine(whisper, filter) {
+		if (whisper[0] !== '' && [...whisper[0]][0].toLowerCase() === [...filter][0]) {
+			let name = whisper[0];
+			let lastName = whisper[1];
+			name = [...name].slice([...filter].length, name.length).join('');
+			return [name, lastName];
+		} else if (whisper[1] !== '' && [...whisper[1]][0].toLowerCase() === [...filter][0]) {
+			let lastName = whisper[1];
+			lastName = [...lastName].slice([...filter].length, lastName.length).join('');
+			if (whisper[0] === '') {
+				return [lastName];
+			} else {
+				return [lastName, whisper[0]];
+			}
+		} else {
+			return [];
+		}
+	}
 
 	filterChange(e) {
-    this.props.dispatch(setFilter(e.target.value));
+		if (this.props.filter !== e.target.value) {
+			this.props.dispatch(setFilter(e.target.value));
+		} else {
+			this.setState({});
+		}
 	}
 
   handleKeyDown(e) {
-    if (e.keyCode === 8) {
-      this.rest = '';
-      this.whisper = this.props.filter;
-      this.backspaceBool = true;
-      this.setState({});
-    } else if (e.keyCode === 46) {
-      this.rest = '';
-      this.whisper = this.props.filter;
-      this.backspaceBool = true;
-      this.setState({});
-    } else {
-      this.backspaceBool = false;
-    }
+	  this.backspaceBool = e.keyCode === 8 || e.keyCode === 46;
   }
 
 	render() {
+	this.whisper = this.props.filter;
     if (this.props.hint.size > 0 && this.backspaceBool === false) {
       let pom = this.props.hint.toJS();
       let filter = this.props.filter;
@@ -76,11 +62,12 @@ class Whisperer extends React.Component{
   				<div>
   					<label className="labelWhisperer">Whisper for...</label>
   	          <input
-                id="whisperInput" ref={(ref) => this.inputRef = ref}
+                id="whisperInput"
+								ref={(ref) => this.inputRef = ref}
                 type="text"
                 value={this.whisper}
                 placeholder="Search"
-                onKeyDown={this.handleKeyDown.bind(this)}
+	              onKeyDown={this.handleKeyDown.bind(this)}
                 onChange={this.filterChange.bind(this)}
               />
           </div>

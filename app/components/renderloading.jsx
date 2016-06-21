@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import $ from 'jquery';
 import { stateSelectorLoading } from '../selectors/selectors.jsx';
 import './App.css'
 
@@ -16,7 +15,7 @@ class Loading extends React.Component {
 			if (this.loadRef == undefined) {
 				this.pulse = null;
 			} else {
-				$(this.loadRef).delay(200).fadeOut('slow').delay(50).fadeIn('slow', this.pulse);
+				//$(this.loadRef).delay(200).fadeOut('slow').delay(50).fadeIn('slow', this.pulse);
 			}
 		};
 		this.pulse();
