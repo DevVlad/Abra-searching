@@ -48,3 +48,9 @@ div {
 .select2-results__options {
   height: auto;
 }
+
+#whisperWidgets {
+  position: absolute;
+  top: 65px;
+  left: 550px;
+}

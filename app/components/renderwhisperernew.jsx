@@ -56,7 +56,6 @@ class WhispererNew extends React.Component{
 				<Select2
 					id="select2Whisper"
 					ref={(ref) => this.selectRef = ref}
-
 					onSelect={this.handleSelect.bind(this)}
 					onChange={this.handleOnChange.bind(this)}
 				  options={{

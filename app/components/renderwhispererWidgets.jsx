@@ -1,31 +1,50 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { setFilter } from '../actions/actions.jsx';
-import { stateSelectorList } from '../selectors/selectors.jsx';
-import { DropdownList } from 'react-widgets';
+import { stateSelectorList, stateSelectorFirstRecord } from '../selectors/selectors.jsx';
+import { DropdownList, Multiselect } from 'react-widgets';
 
-import './App.css'
-
-// import 'react-widgets/lib/less/react-widgets.less';
+import './App.css';
+import 'react-widgets/lib/less/react-widgets.less';
 
 class whisperWidgets extends React.Component{
 	constructor(props){
 		super(props);
 	}
 
-  handleOnChange() {
-    console.log('prdel')
+  handleOnSelect(e, v) {
+    console.log('selcted: ', e);
+  }
+
+  handleFilter(optionsItem, valueOfFilter) {
+    return optionsItem;
+  }
+
+  handleOnChange(e) {
+    this.props.dispatch(setFilter(e));
   }
 
 	render() {
+    this.list = [];
+    this.list = this.props.hint.toJS().map(item => {
+      return {
+        'text': [item.prijmeni, item.jmeno].join(' '),
+        'id': item.id,
+        'body': {...item}
+      }
+    });
 
 		return (
       <div id="whisperWidgets">
-  			<h1>dfnsdofsdfo</h1>
-        <input />
+  			<h1>react-widgets</h1>
         <DropdownList
-          data={['p','d']}
-          onChange={this.handleOnChange()}
+          placeholder='Search...'
+          valueField='id' textField='text'
+          data={this.list}
+          caseSensitive={false}
+          onSelect={this.handleOnSelect.bind(this)}
+          filter={this.handleFilter.bind(this)}
+          onSearch={this.handleOnChange.bind(this)}
         />
       </div>
 		)
