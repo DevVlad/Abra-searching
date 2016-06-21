@@ -1,47 +1,49 @@
 import ApiService from '../services/apiservice.js';
 import { getFilter, getHint, getLoading } from '../selectors/selectors.jsx';
 
-export function setFilter(filter) {
+export function setFilter(filter, alias) {
 	return dispatch => {
-		dispatch(init(filter));
-		dispatch(setLoading(false));
+		dispatch(init(filter, alias));
+		dispatch(setLoading(false, alias));
 		if (filter !== '') {
-			dispatch(setLoading(true));
-			dispatch(doRequest(filter, 0));
+			dispatch(setLoading(true,alias));
+			dispatch(doRequest(filter, 0, alias));
 		}
-		if (filter === '') dispatch(setHint([]));
+		if (filter === '') dispatch(setHint([], alias));
 	}
 }
 
-function init(filter) {
+function init(filter, alias) {
 	return {
 		type: 'INIT',
-		filter
+		filter,
+		alias
 	}
 }
 
-function setLoading(loading) {
+function setLoading(loading, alias) {
 	return {
 		type: 'SET_LOADING',
-		loading
+		loading,
+		alias
 	}
 }
 
 const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
 
-function doRequest(filter, paging = 0) {
+function doRequest(filter, paging = 0, alias) {
 	return dispatch => {
 		ApiService.getRequest({ 'add-row-count': true, 'start': paging, 'limit': 20 },
 			fields.map(f => `${f} like similar '${filter}'`).join(' or ')
 		).then(data => {
 			setTimeout(() => {
-					dispatch(processRequest(data.winstrom, filter, paging));
+					dispatch(processRequest(data.winstrom, filter, paging, alias));
 			}, 0);
 		});
 	}
 }
 
-function processRequest(data, filter, paging) {
+function processRequest(data, filter, paging, alias) {
 	return (dispatch, getState) => {
 		if (getFilter(getState()) === filter) {
 			// const expr = new RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i');
@@ -52,36 +54,38 @@ function processRequest(data, filter, paging) {
 			const totalCount = parseInt(data['@rowCount']);
 			if (totalCount === 0) {
 				console.log('No data found!');
-				dispatch(setLoading(false));
-				dispatch(setHint([]));
+				dispatch(setLoading(false, alias));
+				dispatch(setHint([], alias));
 			} else {
-					dispatch(setLimit(list));
+					dispatch(setLimit(list), alias);
 					const count = paging + data.kontakt.length;
 					const hintCount = getHint(getState()).size;
 					if (totalCount > count && hintCount < 10) {
-						dispatch(doRequest(filter, count));
+						dispatch(doRequest(filter, count, alias));
 					}
 			}
 		}
 	}
 }
 
-function addHint(list) {
+function addHint(list, alias) {
 	return {
 		type: 'ADD_HINT',
-		hint: list
+		hint: list,
+		alias
 	}
 }
 
-function setHint(list) {
+function setHint(list,alias) {
 	return {
 		type: 'SET_HINT',
-		hint: list
+		hint: list,
+		alias
 	}
 }
 
 
-function setLimit(list) {
+function setLimit(list,alias) {
 	let pom = 0;
 	return (dispatch, getState) => {
 		let counter = getHint(getState()).size;
@@ -97,10 +101,10 @@ function setLimit(list) {
 			pom = list;
 		}
 		if (loading) {
-			dispatch(setLoading(false));
-			dispatch(setHint(pom));
+			dispatch(setLoading(false, alias));
+			dispatch(setHint(pom, alias));
 		} else {
-			dispatch(addHint(pom));
+			dispatch(addHint(pom, alias));
 		}
 	}
 }

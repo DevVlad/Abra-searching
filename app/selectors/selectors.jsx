@@ -1,6 +1,14 @@
 import { createSelector } from 'reselect';
 import Immutable from 'immutable';
 
+const getAliasSelectorFilter = (state, props) => state.getIn([props.alias, 'filter']);
+const getAliasSelectorLoading = (state, props) => state.getIn([props.alias, 'loading']);
+
+export const getFilterAlias = createSelector(getAliasSelectorFilter, x => x.get('filter'));
+export const getHintAlias = createSelector(getAliasSelectorFilter, x => x.get('hint'));
+export const getLoadingAlias = createSelector(getAliasSelectorLoading, x => x.get('loading'));
+
+
 const getFilterSelector = (state) => state.get('filter');
 const getLoadingSelector = (state) => state.get('loading');
 
