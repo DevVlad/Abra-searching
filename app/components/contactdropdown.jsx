@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { setFilter } from '../actions/actions.jsx';
-import { stateSelectorListAlias } from '../selectors/selectors.jsx';
+import { stateSelectorListAlias, stateSelectorList } from '../selectors/selectors.jsx';
 import { DropdownList } from 'react-widgets';
 
 import './App.css';
@@ -13,7 +13,8 @@ class ContactDropdown extends React.Component{
 	}
 
   componentDidMount() {
-    console.log('didMount',this.props)
+    this.name = this.props.alias;
+    console.log('didMount',this.name)
   }
 
   handleOnSelect(e, v) {
@@ -21,12 +22,12 @@ class ContactDropdown extends React.Component{
   }
 
   handleOnSearch(e) {
-    this.props.dispatch(setFilter(e));
+    this.props.dispatch(setFilter(e, this.name));
   }
 
 	render() {
     this.list = [];
-    this.list = this.props.hint.toJS().map(item => {
+    this.list = this.props[this.props.alias].hint.toJS().map(item => {
       return {
         'text': [item.prijmeni, item.jmeno].join(' '),
         'id': item.id,
@@ -52,7 +53,8 @@ class ContactDropdown extends React.Component{
 }
 
 function mapStateToProps(state, props) {
-  console.log('ContactDropdown', state.toJS(), props,'kkk: ',state.set(props.alias, stateSelectorListAlias(state, props)).toJS())
+  console.log('ContactDropdownState', state.toJS());
+  console.log('ContactDropdown2', stateSelectorListAlias(state, props));
   return stateSelectorListAlias(state, props);
 }
 

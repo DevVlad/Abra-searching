@@ -48,7 +48,6 @@ class App extends React.Component{
 }
 
 function mapStateToProps(state) {
-	console.log('App', state.toJS())
 	return stateSelectorList(state);
 }
 
