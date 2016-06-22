@@ -21,12 +21,19 @@ function reducerFilter(state = initialStateFilter, action) {
     }
 }
 
-const initialStateLoading = Immutable.fromJS({});
+const initialStateLoading = Immutable.fromJS({counter: 0});
 
 function reducerLoading(state = initialStateLoading, action) {
   switch (action.type) {
     case 'SET_LOADING':
-      return state.setIn([action.alias, 'loading'], action.loading);
+      let obj = state;
+      let counter = state.get('counter');
+      if (action.loading === true) {
+        obj = state.set('counter', counter+1);
+      } else {
+        if (counter > 0) obj = state.set('counter', counter-1);
+      }
+      return obj.setIn([action.alias, 'loading'], action.loading);
 
     default:
       return state;

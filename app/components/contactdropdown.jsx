@@ -14,7 +14,6 @@ class ContactDropdown extends React.Component{
 
   componentDidMount() {
     this.name = this.props.alias;
-    console.log('didMount',this.name)
   }
 
   handleOnSelect(e, v) {
@@ -53,8 +52,6 @@ class ContactDropdown extends React.Component{
 }
 
 function mapStateToProps(state, props) {
-  console.log('ContactDropdown2', stateSelectorListAlias(state, props.alias));
-  console.log('ContactDropdownState', state.toJS());
   return stateSelectorListAlias(state, props.alias);
 }
 

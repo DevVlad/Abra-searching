@@ -46,7 +46,6 @@ function doRequest(filter, paging = 0, alias) {
 
 function processRequest(data, filter, paging, alias) {
 	return (dispatch, getState) => {
-		console.log('pokus', getState().toJS(), getFilterAlias(getState(), alias))
 		// if (getFilter(getState()) === filter) {
 		if (getFilterAlias(getState(), alias) === filter) {
 			// const expr = new RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i');

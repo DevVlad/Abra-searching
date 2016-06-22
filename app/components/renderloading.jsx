@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { stateSelectorLoading } from '../selectors/selectors.jsx';
+import { stateLoadingCounter } from '../selectors/selectors.jsx';
 import './App.css'
 
 class Loading extends React.Component {
@@ -23,7 +23,7 @@ class Loading extends React.Component {
   }
 
   render(){
-    if (this.props.loading === true) {
+    if (this.props.counter > 0) {
       return (
         <div id='loading' ref={(ref) => this.loadRef = ref}>
           <h2 >Loading...</h2>
@@ -35,7 +35,7 @@ class Loading extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return stateSelectorLoading(state);
+  return stateLoadingCounter(state);
 }
 const appConnect = connect(mapStateToProps)(Loading)
 export default appConnect;

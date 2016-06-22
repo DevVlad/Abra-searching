@@ -23,6 +23,7 @@ class App extends React.Component{
 			<div className="mainDiv">
 				<ContactDropdown alias='a'/>
 				<ContactDropdown alias='b'/>
+				<RenderLoading />
 			</div>
 		)
 	}

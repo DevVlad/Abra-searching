@@ -5,6 +5,7 @@ export const selectorAll = (state) => state.toJS();
 
 const getAliasF = (state, alias) => state.getIn(['filter', alias]);
 const getAliasL = (state, alias) => state.getIn(['loading', alias]);
+const getLoadingCounter = (state) => state.getIn(['loading', 'counter']);
 //
 export const stateSelectorListAlias = (state, alias) => {
 	let obj = {};
@@ -15,9 +16,15 @@ export const stateSelectorListAlias = (state, alias) => {
 	return obj;
 };
 
-export const stateSelectorLoadingAlias = (state, props) => {
+export const stateLoadingCounter = (state) => {
 	return {
-		loading: getLoadingAlias(state, props)
+		counter: getLoadingCounter(state)
+	}
+};
+
+export const stateSelectorLoadingAlias = (state, alias) => {
+	return {
+		loading: getLoadingAlias(state, alias),
 	};
 };
 
@@ -28,6 +35,7 @@ export const getFilterAlias = createSelector(getAliasF, x => {
 		return x.get('filter');
 	}
 });
+
 export const getHintAlias = createSelector(getAliasF, x => {
 	if (x === undefined) {
 		return Immutable.fromJS([]);
@@ -35,6 +43,7 @@ export const getHintAlias = createSelector(getAliasF, x => {
 		return x.get('hint');
 	}
 });
+
 export const getLoadingAlias = createSelector(getAliasL, x => {
 	if (x === undefined) {
 		return false;
@@ -42,37 +51,3 @@ export const getLoadingAlias = createSelector(getAliasL, x => {
 		return x.get('loading');
 	}
 });
-
-
-
-// const getFilterSelector = (state) => state.get('filter');
-// const getLoadingSelector = (state) => state.get('loading');
-//
-// export const stateSelectorList = (state) => {
-// 	return {
-// 		filter: getFilter(state),
-// 		hint: getHint(state)
-// 	};
-// };
-//
-// export const stateSelectorLoading = (state) => {
-// 	return {
-// 		loading: getLoading(state)
-// 	};
-// };
-//
-// export const stateSelectorFirstRecord = (state) => {
-// 	return {
-// 		filter: getFilter(state),
-// 		hint: getFirstRecord(state)
-// 	};
-// };
-//
-// export const getFilter = createSelector(getFilterSelector, x => x.get('filter'));
-// export const getHint = createSelector(getFilterSelector, x => x.get('hint'));
-// export const getLoading = createSelector(getLoadingSelector, x => x.get('loading'));
-// export const getFirstRecord = createSelector(getFilterSelector, x => {
-// 	if ( x.get('hint').size > 0) {
-// 		return x.get('hint').first();
-// 	} else return Immutable.fromJS({});
-// });
