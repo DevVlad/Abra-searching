@@ -53,9 +53,9 @@ class ContactDropdown extends React.Component{
 }
 
 function mapStateToProps(state, props) {
+  console.log('ContactDropdown2', stateSelectorListAlias(state, props.alias));
   console.log('ContactDropdownState', state.toJS());
-  console.log('ContactDropdown2', stateSelectorListAlias(state, props));
-  return stateSelectorListAlias(state, props);
+  return stateSelectorListAlias(state, props.alias);
 }
 
 const appConnect = connect(mapStateToProps)(ContactDropdown);

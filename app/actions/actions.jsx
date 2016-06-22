@@ -1,8 +1,9 @@
 import ApiService from '../services/apiservice.js';
-import { getFilter, getHint, getLoading } from '../selectors/selectors.jsx';
+import { getFilter, getHint, getLoading, getFilterAlias, getHintAlias, getLoadingAlias } from '../selectors/selectors.jsx';
 
 export function setFilter(filter, alias) {
 	return dispatch => {
+		dispatch(setHint([], alias));
 		dispatch(init(filter, alias));
 		dispatch(setLoading(false, alias));
 		if (filter !== '') {
@@ -45,11 +46,13 @@ function doRequest(filter, paging = 0, alias) {
 
 function processRequest(data, filter, paging, alias) {
 	return (dispatch, getState) => {
-		if (getFilter(getState()) === filter) {
+		console.log('pokus', getState().toJS(), getFilterAlias(getState(), alias))
+		// if (getFilter(getState()) === filter) {
+		if (getFilterAlias(getState(), alias) === filter) {
 			// const expr = new RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i');
 			const expr = new RegExp('\\b^' + filter.split(' ').map(exp => '(' + exp + ')').join('.*[a-zá-ž].*\\b'), 'i');
 			const list = data.kontakt.filter(x =>
-				expr.test(x.jmeno) || expr.test(x.prijmeni) || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)
+				expr.test(x.jmeno) || expr.test(x.prijmeni)// || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)
 			);
 			const totalCount = parseInt(data['@rowCount']);
 			if (totalCount === 0) {
@@ -59,7 +62,7 @@ function processRequest(data, filter, paging, alias) {
 			} else {
 					dispatch(setLimit(list, alias));
 					const count = paging + data.kontakt.length;
-					const hintCount = getHint(getState()).size;
+					const hintCount = getHintAlias(getState(), alias).size;
 					if (totalCount > count && hintCount < 10) {
 						dispatch(doRequest(filter, count, alias));
 					}
@@ -88,8 +91,8 @@ function setHint(list, alias) {
 function setLimit(list, alias) {
 	let pom = 0;
 	return (dispatch, getState) => {
-		let counter = getHint(getState()).size;
-		let loading = getLoading(getState());
+		let counter = getHintAlias(getState(), alias).size;
+		let loading = getLoadingAlias(getState(), alias);
 		if (loading) {
 			counter = 0;
 		}
