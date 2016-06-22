@@ -7,7 +7,7 @@ import WhisperWidgets from './renderwhispererWidgets.jsx';
 import ContactDropdown from './contactdropdown.jsx';
 import { connect } from 'react-redux';
 import { setFilter } from '../actions/actions.jsx';
-import { stateSelectorListAlias, selectorAll } from '../selectors/selectors.jsx';
+import { stateSelectorListAlias, stateProgress } from '../selectors/selectors.jsx';
 
 class App extends React.Component{
 	constructor(props){
@@ -49,8 +49,7 @@ class App extends React.Component{
 }
 
 // function mapStateToProps(state) {
-// 	console.log('alllllll', state.toJS())
-// 	return selectorAll(state);
+// 	return stateProgress(state);
 // }
 //
 // const appConnect = connect(mapStateToProps)(App);

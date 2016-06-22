@@ -16,34 +16,38 @@ function reducerFilter(state = initialStateFilter, action) {
       case 'ADD_HINT':
         return state.updateIn([action.alias, 'hint'], list => list.concat(Immutable.fromJS(action.hint)));
 
+      case 'SET_LOADING':
+        return state.setIn([action.alias, 'loading'], action.loading);
+
       default:
         return state;
     }
-}
+};
 
 const initialStateLoading = Immutable.fromJS({counter: 0});
 
-function reducerLoading(state = initialStateLoading, action) {
+function reducerProgress(state = initialStateLoading, action) {
   switch (action.type) {
-    case 'SET_LOADING':
-      let obj = state;
+    case 'SET_PROGRESS':
       let counter = state.get('counter');
-      if (action.loading === true) {
-        obj = state.set('counter', counter+1);
+      console.log('setprogressreducer')
+      if (action.bool) {
+        return state.set('counter', counter+1);
+      } else if (counter > 0) {
+        return state.set('counter', counter-1);
       } else {
-        if (counter > 0) obj = state.set('counter', counter-1);
+        return state.set('counter', 0);
       }
-      return obj.setIn([action.alias, 'loading'], action.loading);
 
     default:
       return state;
   }
-}
+};
 
 const reducer = combineImmutableReducers(
   {
     filter: reducerFilter,
-    loading: reducerLoading
+    progress: reducerProgress
   }
 );
 

@@ -1,5 +1,5 @@
 import ApiService from '../services/apiservice.js';
-import { getFilter, getHint, getLoading, getFilterAlias, getHintAlias, getLoadingAlias } from '../selectors/selectors.jsx';
+import { getFilterAlias, getHintAlias, getLoadingAlias } from '../selectors/selectors.jsx';
 
 export function setFilter(filter, alias) {
 	return dispatch => {
@@ -7,12 +7,23 @@ export function setFilter(filter, alias) {
 		dispatch(init(filter, alias));
 		dispatch(setLoading(false, alias));
 		if (filter !== '') {
+			dispatch(setProgress(true));
 			dispatch(setLoading(true, alias));
 			dispatch(doRequest(filter, 0, alias));
 		}
-		if (filter === '') dispatch(setHint([], alias));
+		if (filter === '') {
+			dispatch(setProgress(false));
+			dispatch(setHint([], alias));
+		}
 	}
-}
+};
+
+export function setProgress(bool) {
+	return {
+		type: 'SET_PROGRESS',
+		bool
+	}
+};
 
 function init(filter, alias) {
 	return {
@@ -20,7 +31,7 @@ function init(filter, alias) {
 		filter,
 		alias
 	}
-}
+};
 
 function setLoading(loading, alias) {
 	return {
@@ -28,7 +39,7 @@ function setLoading(loading, alias) {
 		loading,
 		alias
 	}
-}
+};
 
 const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
 
@@ -42,13 +53,11 @@ function doRequest(filter, paging = 0, alias) {
 			}, 0);
 		});
 	}
-}
+};
 
 function processRequest(data, filter, paging, alias) {
 	return (dispatch, getState) => {
-		// if (getFilter(getState()) === filter) {
 		if (getFilterAlias(getState(), alias) === filter) {
-			// const expr = new RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i');
 			const expr = new RegExp('\\b^' + filter.split(' ').map(exp => '(' + exp + ')').join('.*[a-zá-ž].*\\b'), 'i');
 			const list = data.kontakt.filter(x =>
 				expr.test(x.jmeno) || expr.test(x.prijmeni)// || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)
@@ -58,7 +67,9 @@ function processRequest(data, filter, paging, alias) {
 				console.log('No data found!');
 				dispatch(setLoading(false, alias));
 				dispatch(setHint([], alias));
+				dispatch(setProgress(false));
 			} else {
+					if (paging + 20 > totalCount)  dispatch(setProgress(false));
 					dispatch(setLimit(list, alias));
 					const count = paging + data.kontakt.length;
 					const hintCount = getHintAlias(getState(), alias).size;
@@ -66,9 +77,11 @@ function processRequest(data, filter, paging, alias) {
 						dispatch(doRequest(filter, count, alias));
 					}
 			}
+		} else {
+			dispatch(setProgress(false));
 		}
 	}
-}
+};
 
 function addHint(list, alias) {
 	return {
@@ -76,7 +89,7 @@ function addHint(list, alias) {
 		hint: list,
 		alias
 	}
-}
+};
 
 function setHint(list, alias) {
 	return {
@@ -84,7 +97,7 @@ function setHint(list, alias) {
 		hint: list,
 		alias
 	}
-}
+};
 
 
 function setLimit(list, alias) {
@@ -108,5 +121,6 @@ function setLimit(list, alias) {
 		} else {
 			dispatch(addHint(pom, alias));
 		}
+		if (getHintAlias(getState(),alias).size === 10) dispatch(setProgress(false));
 	}
-}
+};

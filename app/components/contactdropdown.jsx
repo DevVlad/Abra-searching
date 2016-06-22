@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { setFilter } from '../actions/actions.jsx';
+import { setFilter, setProgress } from '../actions/actions.jsx';
 import { stateSelectorListAlias, stateSelectorList } from '../selectors/selectors.jsx';
 import { DropdownList } from 'react-widgets';
 
@@ -41,6 +41,7 @@ class ContactDropdown extends React.Component{
           placeholder='Search...'
           valueField='id' textField='text'
           data={this.list}
+          busy={this.props[this.props.alias].loading}
           caseSensitive={false}
           onSelect={this.handleOnSelect.bind(this)}
           filter={item => item}

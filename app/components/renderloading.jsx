@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { stateLoadingCounter } from '../selectors/selectors.jsx';
+import { stateSelectorProgress } from '../selectors/selectors.jsx';
 import './App.css'
 
 class Loading extends React.Component {
@@ -35,7 +35,8 @@ class Loading extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return stateLoadingCounter(state);
+	console.log('dofsdofjosdfjosf', stateSelectorProgress(state))
+  return stateSelectorProgress(state);
 }
 const appConnect = connect(mapStateToProps)(Loading)
 export default appConnect;
