@@ -6,6 +6,13 @@ export const selectorAll = (state) => state.toJS();
 const getAliasF = (state, alias) => state.getIn(['filter', alias]);
 const getProgress = (state) => state.getIn(['progress', 'counter']);
 
+export const stateSelectorFirstRecordAlias = (state, alias) => {
+	return {
+		filter: getFilterAlias(state, alias),
+		firstRecord: getFirstRecord(state, alias)
+	}
+};
+
 export const stateSelectorListAlias = (state, alias) => {
 	let obj = {};
 	obj[alias] = {
@@ -22,9 +29,17 @@ export const stateSelectorProgress = (state) => {
 	}
 };
 
+export const getFirstRecord = createSelector(getAliasF, x => {
+	if (x === undefined || x.get('hint').size === 0) {
+		return Immutable.fromJS({});
+	} else {
+		return x.get('hint').first();
+	}
+});
+
 export const getFilterAlias = createSelector(getAliasF, x => {
 	if (x === undefined) {
-		return 'init';
+		return '';
 	} else {
 		return x.get('filter');
 	}

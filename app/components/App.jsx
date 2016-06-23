@@ -21,8 +21,10 @@ class App extends React.Component{
 	render(){
 		return (
 			<div className="mainDiv">
-				<ContactDropdown alias='a'/>
-				<ContactDropdown alias='b'/>
+				<ContactDropdown alias='a' />
+				<ContactDropdown alias='b' />
+				<RenderWhisperer alias='w' />
+				<RenderWhisperer alias='w2' />
 				<RenderLoading />
 			</div>
 		)

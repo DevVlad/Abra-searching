@@ -32,7 +32,7 @@ class ContactDropdown extends React.Component{
 
 		return (
       <div id="ContactDropdown">
-  			<h1>ContactDropdown</h1>
+  			<h1>ContactDropdown {this.props.alias}</h1>
         <DropdownList
           placeholder='Search...'
           valueField='id' textField='text'

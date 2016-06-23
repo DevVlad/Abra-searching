@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { setFilter } from '../actions/actions.jsx';
-import { stateSelectorFirstRecord } from '../selectors/selectors.jsx';
+import { stateSelectorFirstRecord, stateSelectorFirstRecordAlias } from '../selectors/selectors.jsx';
 import './App.css'
 
 class Whisperer extends React.Component{
@@ -14,7 +14,7 @@ class Whisperer extends React.Component{
 	}
 
   componentDidUpdate() {
-    //if (this.backspaceBool === false) this.inputRef.setSelectionRange(this.props.filter.length, this.whisper.length);
+    if (this.backspaceBool === false) this.inputRef.setSelectionRange(this.props.filter.length, this.whisper.length);
   }
 
 	getWhisperLine(whisper, filter) {
@@ -38,7 +38,7 @@ class Whisperer extends React.Component{
 
 	filterChange(e) {
 		if (this.props.filter !== e.target.value) {
-			this.props.dispatch(setFilter(e.target.value));
+			this.props.dispatch(setFilter(e.target.value, this.props.alias));
 		} else {
 			this.setState({});
 		}
@@ -49,9 +49,9 @@ class Whisperer extends React.Component{
   }
 
 	render() {
-	this.whisper = this.props.filter;
-    if (this.props.hint.size > 0 && this.backspaceBool === false) {
-      let pom = this.props.hint.toJS();
+		this.whisper = this.props.filter;
+    if (this.props.firstRecord.size > 0 && this.backspaceBool === false) {
+      let pom = this.props.firstRecord.toJS();
       let filter = this.props.filter;
       this.rest = this.getWhisperLine([pom.jmeno, pom.prijmeni], filter).join(' ');
       this.whisper = filter + this.rest;
@@ -77,8 +77,8 @@ class Whisperer extends React.Component{
 	}
 }
 
-function mapStateToProps(state) {
-  return stateSelectorFirstRecord(state)
+function mapStateToProps(state, props) {
+  return stateSelectorFirstRecordAlias(state, props.alias);
 }
 
 const appConnect = connect(mapStateToProps)(Whisperer);

@@ -35,11 +35,11 @@ div {
   left: 700px;
 }
 
-#whisper {
+/*#whisper {
   position: absolute;
-  top: 65px;
-  left: 400px;
-}
+  top: 400px;
+  left: 40px;
+}*/
 
 #select2Whisper {
   width: 200px;
