@@ -1,9 +1,7 @@
 import Immutable from 'immutable';
 import combineImmutableReducers from './combineImmutableReducers.jsx';
 
-const initialStateFilter = Immutable.fromJS({
-
-});
+const initialStateFilter = Immutable.fromJS({});
 
 function reducerFilter(state = initialStateFilter, action) {
     switch (action.type) {

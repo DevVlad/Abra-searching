@@ -1,23 +1,6 @@
 import ApiService from '../services/apiservice.js';
 import { getFilterAlias, getHintAlias, getLoadingAlias } from '../selectors/selectors.jsx';
 
-export function setFilter(filter, alias) {
-	return dispatch => {
-		dispatch(setHint([], alias));
-		dispatch(init(filter, alias));
-		dispatch(setLoading(false, alias));
-		if (filter !== '') {
-			dispatch(setProgress(true));
-			dispatch(setLoading(true, alias));
-			dispatch(doRequest(filter, 0, alias));
-		}
-		if (filter === '') {
-			dispatch(setProgress(false));
-			dispatch(setHint([], alias));
-		}
-	}
-};
-
 export function setProgress(bool) {
 	return {
 		type: 'SET_PROGRESS',
@@ -38,6 +21,39 @@ function setLoading(loading, alias) {
 		type: 'SET_LOADING',
 		loading,
 		alias
+	}
+};
+
+function addHint(list, alias) {
+	return {
+		type: 'ADD_HINT',
+		hint: list,
+		alias
+	}
+};
+
+function setHint(list, alias) {
+	return {
+		type: 'SET_HINT',
+		hint: list,
+		alias
+	}
+};
+
+export function setFilter(filter, alias) {
+	return dispatch => {
+		dispatch(setHint([], alias));
+		dispatch(init(filter, alias));
+		dispatch(setLoading(false, alias));
+		if (filter !== '') {
+			dispatch(setProgress(true));
+			dispatch(setLoading(true, alias));
+			dispatch(doRequest(filter, 0, alias));
+		}
+		if (filter === '') {
+			dispatch(setProgress(false));
+			dispatch(setHint([], alias));
+		}
 	}
 };
 
@@ -82,23 +98,6 @@ function processRequest(data, filter, paging, alias) {
 		}
 	}
 };
-
-function addHint(list, alias) {
-	return {
-		type: 'ADD_HINT',
-		hint: list,
-		alias
-	}
-};
-
-function setHint(list, alias) {
-	return {
-		type: 'SET_HINT',
-		hint: list,
-		alias
-	}
-};
-
 
 function setLimit(list, alias) {
 	let pom = 0;
