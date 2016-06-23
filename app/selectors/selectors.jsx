@@ -1,34 +1,62 @@
 import { createSelector } from 'reselect';
 import Immutable from 'immutable';
 
-const getFilterSelector = (state) => state.get('filter');
-const getLoadingSelector = (state) => state.get('loading');
+export const selectorAll = (state) => state.toJS();
 
-export const stateSelectorList = (state) => {
+const getAliasF = (state, alias) => state.getIn(['filter', alias]);
+const getProgress = (state) => state.getIn(['progress', 'counter']);
+
+export const stateSelectorFirstRecordAlias = (state, alias) => {
 	return {
-		filter: getFilter(state),
-		hint: getHint(state),
-	};
+		filter: getFilterAlias(state, alias),
+		firstRecord: getFirstRecord(state, alias)
+	}
 };
 
-export const stateSelectorLoading = (state) => {
-	return {
-		loading: getLoading(state)
+export const stateSelectorListAlias = (state, alias) => {
+	let obj = {};
+	obj[alias] = {
+		filter: getFilterAlias(state, alias),
+		hint: getHintAlias(state, alias),
+		loading: getLoadingAlias(state, alias)
 	};
+	return obj;
 };
 
-export const stateSelectorFirstRecord = (state) => {
+export const stateSelectorProgress = (state) => {
 	return {
-		filter: getFilter(state),
-		hint: getFirstRecord(state)
-	};
+		counter: getProgress(state)
+	}
 };
 
-export const getFilter = createSelector(getFilterSelector, x => x.get('filter'));
-export const getHint = createSelector(getFilterSelector, x => x.get('hint'));
-export const getLoading = createSelector(getLoadingSelector, x => x.get('loading'));
-export const getFirstRecord = createSelector(getFilterSelector, x => {
-	if ( x.get('hint').size > 0) {
+export const getFirstRecord = createSelector(getAliasF, x => {
+	if (x === undefined || x.get('hint').size === 0) {
+		return Immutable.fromJS({});
+	} else {
 		return x.get('hint').first();
-	} else return Immutable.fromJS({});
+	}
+});
+
+export const getFilterAlias = createSelector(getAliasF, x => {
+	if (x === undefined) {
+		return '';
+	} else {
+		return x.get('filter');
+	}
+});
+
+export const getHintAlias = createSelector(getAliasF, x => {
+	if (x === undefined) {
+		return Immutable.fromJS([]);
+	} else {
+		return x.get('hint');
+	}
+});
+
+export const getLoadingAlias = createSelector(getAliasF, x => {
+	if (x === undefined) {
+		return false;
+	} else {
+		return x.get('loading');
+	}
 });

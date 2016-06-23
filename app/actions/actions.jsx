@@ -1,95 +1,122 @@
 import ApiService from '../services/apiservice.js';
-import { getFilter, getHint, getLoading } from '../selectors/selectors.jsx';
+import { getFilterAlias, getHintAlias, getLoadingAlias } from '../selectors/selectors.jsx';
 
-export function setFilter(filter) {
-	return dispatch => {
-		dispatch(init(filter));
-		dispatch(setLoading(false));
-		if (filter !== '') {
-			dispatch(setLoading(true));
-			dispatch(doRequest(filter, 0));
-		}
-		if (filter === '') dispatch(setHint([]));
+export function setProgress(bool) {
+	return {
+		type: 'SET_PROGRESS',
+		bool
 	}
-}
+};
 
-function init(filter) {
+function init(filter, alias) {
 	return {
 		type: 'INIT',
-		filter
+		filter,
+		alias
 	}
-}
+};
 
-function setLoading(loading) {
+function setLoading(loading, alias) {
 	return {
 		type: 'SET_LOADING',
-		loading
+		loading,
+		alias
 	}
-}
+};
+
+function addHint(list, alias) {
+	return {
+		type: 'ADD_HINT',
+		hint: list,
+		alias
+	}
+};
+
+function setHint(list, alias) {
+	return {
+		type: 'SET_HINT',
+		hint: list,
+		alias
+	}
+};
+
+export function setFilter(filter, alias) {
+	return dispatch => {
+		dispatch(setHint([], alias));
+		dispatch(init(filter, alias));
+		dispatch(setLoading(false, alias));
+		if (filter !== '') {
+			console.log('setprogressreducer')
+			dispatch(setProgress(true));
+			dispatch(setLoading(true, alias));
+			dispatch(doRequest(filter, 0, alias));
+		}
+		if (filter === '') {
+			dispatch(setHint([], alias));
+			console.log('setprogressreducer')
+			dispatch(setProgress(false));
+		}
+	}
+};
 
 const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
 
-function doRequest(filter, paging = 0) {
+function doRequest(filter, paging = 0, alias) {
 	return dispatch => {
 		ApiService.getRequest({ 'add-row-count': true, 'start': paging, 'limit': 20 },
 			fields.map(f => `${f} like similar '${filter}'`).join(' or ')
 		).then(data => {
 			setTimeout(() => {
-					dispatch(processRequest(data.winstrom, filter, paging));
+					dispatch(processRequest(data.winstrom, filter, paging, alias));
 			}, 0);
 		});
 	}
-}
+};
 
-function processRequest(data, filter, paging) {
+function processRequest(data, filter, paging, alias) {
 	return (dispatch, getState) => {
-		if (getFilter(getState()) === filter) {
-			// const expr = new RegExp('\\b' + filter.split(' ').map(exp => '(' + exp + ')').join('.*\\b'), 'i');
+		if (getFilterAlias(getState(), alias) === filter) {
 			const expr = new RegExp('\\b^' + filter.split(' ').map(exp => '(' + exp + ')').join('.*[a-zá-ž].*\\b'), 'i');
 			const list = data.kontakt.filter(x =>
-				expr.test(x.jmeno) || expr.test(x.prijmeni) || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)
+				expr.test(x.jmeno) || expr.test(x.prijmeni)// || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)
 			);
 			const totalCount = parseInt(data['@rowCount']);
 			if (totalCount === 0) {
 				console.log('No data found!');
-				dispatch(setLoading(false));
-				dispatch(setHint([]));
+				dispatch(setLoading(false, alias));
+				dispatch(setHint([], alias));
+				console.log('setprogressreducer')
+				dispatch(setProgress(false));
 			} else {
-					dispatch(setLimit(list));
+					if (paging + 20 > totalCount)  {
+						//dispatch(setProgress(false));console.log('setprogressreducer')
+						dispatch(setLimit(list, alias, true));
+					} else {
+						dispatch(setLimit(list, alias, false));
+					}
+					// dispatch(setLimit(list, alias));
 					const count = paging + data.kontakt.length;
-					const hintCount = getHint(getState()).size;
+					const hintCount = getHintAlias(getState(), alias).size;
 					if (totalCount > count && hintCount < 10) {
-						dispatch(doRequest(filter, count));
+						dispatch(doRequest(filter, count, alias));
 					}
 			}
+		} else {
+			console.log('setprogressreducer')
+			dispatch(setProgress(false));
 		}
 	}
-}
+};
 
-function addHint(list) {
-	return {
-		type: 'ADD_HINT',
-		hint: list
-	}
-}
-
-function setHint(list) {
-	return {
-		type: 'SET_HINT',
-		hint: list
-	}
-}
-
-
-function setLimit(list) {
-	let pom = 0;
+function setLimit(list, alias, boolLast) {
 	return (dispatch, getState) => {
-		let counter = getHint(getState()).size;
-		let loading = getLoading(getState());
+		let counter = getHintAlias(getState(), alias).size;
+		let loading = getLoadingAlias(getState(), alias);
 		if (loading) {
 			counter = 0;
 		}
 		const dif = 10 - counter;
+		let pom = 0;
 		if (list.length > dif) {
 			const partOfList = list.slice(0, -(list.length-dif));
 			pom = partOfList;
@@ -97,10 +124,12 @@ function setLimit(list) {
 			pom = list;
 		}
 		if (loading) {
-			dispatch(setLoading(false));
-			dispatch(setHint(pom));
-		} else {
-			dispatch(addHint(pom));
+			dispatch(setLoading(false, alias));
+			dispatch(setHint(pom, alias));
+		} else if(pom.length > 0) {
+			console.log('addhint')
+			dispatch(addHint(pom, alias));
 		}
+		if (getHintAlias(getState(),alias).size === 10 || boolLast) {dispatch(setProgress(false));console.log('setprogressreducer');}
 	}
-}
+};
