@@ -8,13 +8,13 @@ module.exports = {
     hot: true,
     inline: true,
     progress: true,
-    contentBase: './app',
+    contentBase: './my-duck',
     port: 8080
   },
   entry: [
     'webpack/hot/dev-server',
     'webpack-dev-server/client?http://localhost:8080',
-    path.resolve(__dirname, 'app/main.jsx')
+    path.resolve(__dirname, 'my-duck/main.jsx')
   ],
   output: {
     path: __dirname + '/build',
@@ -28,7 +28,7 @@ module.exports = {
       { test: /\.gif$/, loader: 'url-loader?mimetype-image/png' },
       { test: /\.woff(2)?(\?v=[0-9].[0-9].[0-9])?$/, loader: 'url-loader?mimetype-application/font-woff' },
       { test: /\.(ttf|eot|svg)(\?v=[0-9].[0-9].[0-9])?$/, loader: 'file-loader?name=[name].[ext]' },
-      { test: /\.js[x]?$/, include: path.resolve(__dirname, 'app'), exclude: /node_modules/, loader: 'babel-loader' },
+      { test: /\.js[x]?$/, include: path.resolve(__dirname, 'my-duck'), exclude: /node_modules/, loader: 'babel-loader' },
     ]
   },
   resolve: {
