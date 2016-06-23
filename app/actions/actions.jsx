@@ -25,7 +25,6 @@ function setLoading(loading, alias) {
 };
 
 function addHint(list, alias) {
-	debugger;
 	return {
 		type: 'ADD_HINT',
 		hint: list,
@@ -47,13 +46,15 @@ export function setFilter(filter, alias) {
 		dispatch(init(filter, alias));
 		dispatch(setLoading(false, alias));
 		if (filter !== '') {
+			console.log('setprogressreducer')
 			dispatch(setProgress(true));
 			dispatch(setLoading(true, alias));
 			dispatch(doRequest(filter, 0, alias));
 		}
 		if (filter === '') {
-			dispatch(setProgress(false));
 			dispatch(setHint([], alias));
+			console.log('setprogressreducer')
+			dispatch(setProgress(false));
 		}
 	}
 };
@@ -84,10 +85,16 @@ function processRequest(data, filter, paging, alias) {
 				console.log('No data found!');
 				dispatch(setLoading(false, alias));
 				dispatch(setHint([], alias));
+				console.log('setprogressreducer')
 				dispatch(setProgress(false));
 			} else {
-					if (paging + 20 > totalCount)  dispatch(setProgress(false));
-					dispatch(setLimit(list, alias));
+					if (paging + 20 > totalCount)  {
+						//dispatch(setProgress(false));console.log('setprogressreducer')
+						dispatch(setLimit(list, alias, true));
+					} else {
+						dispatch(setLimit(list, alias, false));
+					}
+					// dispatch(setLimit(list, alias));
 					const count = paging + data.kontakt.length;
 					const hintCount = getHintAlias(getState(), alias).size;
 					if (totalCount > count && hintCount < 10) {
@@ -95,12 +102,13 @@ function processRequest(data, filter, paging, alias) {
 					}
 			}
 		} else {
+			console.log('setprogressreducer')
 			dispatch(setProgress(false));
 		}
 	}
 };
 
-function setLimit(list, alias) {
+function setLimit(list, alias, boolLast) {
 	return (dispatch, getState) => {
 		let counter = getHintAlias(getState(), alias).size;
 		let loading = getLoadingAlias(getState(), alias);
@@ -119,8 +127,9 @@ function setLimit(list, alias) {
 			dispatch(setLoading(false, alias));
 			dispatch(setHint(pom, alias));
 		} else if(pom.length > 0) {
+			console.log('addhint')
 			dispatch(addHint(pom, alias));
 		}
-		if (getHintAlias(getState(),alias).size === 10) dispatch(setProgress(false));
+		if (getHintAlias(getState(),alias).size === 10 || boolLast) {dispatch(setProgress(false));console.log('setprogressreducer');}
 	}
 };

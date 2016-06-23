@@ -28,14 +28,13 @@ function reducerProgress(state = initialStateLoading, action) {
   switch (action.type) {
     case 'SET_PROGRESS':
       let counter = state.get('counter');
-      console.log('setprogressreducer')
       if (action.bool) {
         return state.set('counter', counter+1);
       } else if (counter > 0) {
         return state.set('counter', counter-1);
-      } else {
-        return state.set('counter', 0);
-      }
+      } //else {
+        // return state.set('counter', 0);
+      //}
 
     default:
       return state;
