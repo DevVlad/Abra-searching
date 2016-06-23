@@ -11,8 +11,8 @@ const store = createStore(reducer, compose(
 
 
 store.subscribe(() => {
-	console.log('--------------------------------------------------------------');
-	console.log(store.getState().toJS());
+	// console.log('--------------------------------------------------------------');
+	// console.log(store.getState().toJS());
 });
 
 export default store;

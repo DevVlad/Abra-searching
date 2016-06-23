@@ -13,11 +13,15 @@ class ContactDropdown extends React.Component{
 	}
 
   handleOnSelect(e, v) {
-    console.log('selected: ', e);
+    console.log('selected: ', this.props.alias, e);
   }
 
   handleOnSearch(e) {
-    this.props.dispatch(setFilter(e, this.props.alias));
+    console.log('search: ', this.props.alias, 'elem: ',e.length)
+    if (e.length > 0) {
+      this.props.dispatch(setFilter(e, this.props.alias));
+    }
+    // this.props.dispatch(setFilter(e, this.props.alias));
   }
 
 	render() {

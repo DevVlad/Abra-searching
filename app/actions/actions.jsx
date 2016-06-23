@@ -25,6 +25,7 @@ function setLoading(loading, alias) {
 };
 
 function addHint(list, alias) {
+	debugger;
 	return {
 		type: 'ADD_HINT',
 		hint: list,
@@ -100,7 +101,6 @@ function processRequest(data, filter, paging, alias) {
 };
 
 function setLimit(list, alias) {
-	let pom = 0;
 	return (dispatch, getState) => {
 		let counter = getHintAlias(getState(), alias).size;
 		let loading = getLoadingAlias(getState(), alias);
@@ -108,6 +108,7 @@ function setLimit(list, alias) {
 			counter = 0;
 		}
 		const dif = 10 - counter;
+		let pom = 0;
 		if (list.length > dif) {
 			const partOfList = list.slice(0, -(list.length-dif));
 			pom = partOfList;
@@ -117,7 +118,7 @@ function setLimit(list, alias) {
 		if (loading) {
 			dispatch(setLoading(false, alias));
 			dispatch(setHint(pom, alias));
-		} else {
+		} else if(pom.length > 0) {
 			dispatch(addHint(pom, alias));
 		}
 		if (getHintAlias(getState(),alias).size === 10) dispatch(setProgress(false));
