@@ -60,7 +60,7 @@ class Whisperer extends React.Component{
       <div id="whisper">
   			<form role="formWhisperer">
   				<div>
-  					<label className="labelWhisperer">Whisper for...</label>
+  					<label className="labelWhisperer">Whisper for...{this.props.alias}</label>
   	          <input
                 id="whisperInput"
 								ref={(ref) => this.inputRef = ref}
