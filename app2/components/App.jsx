@@ -1,20 +1,21 @@
 import React from 'react';
+import ContactDropdown from './contactdropdown.jsx';
+import { connect } from 'react-redux';
 
 class App extends React.Component{
 	constructor(props){
 		super(props);
 	}
 
-	filterChange(e) {
-		this.props.dispatch(setFilter(e.target.value));
-	}
-
 	render(){
 		return (
 			<div className="mainDiv">
-				<h1> Hello! </h1>
+				<ContactDropdown alias='a' />
+				<ContactDropdown alias='b' />
 			</div>
 		)
 	}
+
 }
+
 export default App;

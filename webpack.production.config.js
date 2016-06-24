@@ -6,7 +6,7 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
   devtool: 'cheap-source-map',
   entry: [
-    path.resolve(__dirname, 'my-duck/main.jsx'),
+    path.resolve(__dirname, 'app2/main.jsx'),
   ],
   output: {
     path: __dirname + '/build',
@@ -15,8 +15,8 @@ module.exports = {
   },
   module: {
     loaders:[
-      { test: /\.css$/, include: path.resolve(__dirname, 'my-duck'), loader: 'style-loader!css-loader' },
-      { test: /\.js[x]?$/, include: path.resolve(__dirname, 'my-duck'), exclude: /node_modules/, loader: 'babel-loader' }
+      { test: /\.css$/, include: path.resolve(__dirname, 'app2'), loader: 'style-loader!css-loader' },
+      { test: /\.js[x]?$/, include: path.resolve(__dirname, 'app2'), exclude: /node_modules/, loader: 'babel-loader' }
     ]
   },
   resolve: {
@@ -30,8 +30,8 @@ module.exports = {
       }
     }),
     new CopyWebpackPlugin([
-      { from: './my-duck/index.html', to: 'index.html' },
-      { from: './my-duck/main.css', to: 'main.css' }
+      { from: './app2/index.html', to: 'index.html' },
+      { from: './app2/main.css', to: 'main.css' }
     ]),
   ]
 };
