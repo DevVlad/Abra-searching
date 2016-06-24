@@ -1,6 +1,8 @@
 import React from 'react';
-import ContactDropdown from './contactdropdown.jsx';
 import { connect } from 'react-redux';
+
+import ContactDropdown from './contactdropdown.jsx';
+import Loading from './loading.jsx'
 
 class App extends React.Component{
 	constructor(props){
@@ -12,6 +14,7 @@ class App extends React.Component{
 			<div className="mainDiv">
 				<ContactDropdown alias='a' />
 				<ContactDropdown alias='b' />
+				<Loading />
 			</div>
 		)
 	}

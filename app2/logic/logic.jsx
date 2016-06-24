@@ -2,6 +2,7 @@ import ApiService from '../services/apiservice.js';
 import { getFilterAlias, getHintAlias, getLoadingAlias } from '../selectors/selectors.jsx';
 
 import * as actionsDDC from '../redux/ducks/dropDownContact.jsx';
+import * as actionsP from '../redux/ducks/progress.jsx';
 
 export function setFilter(filter, alias) {
 	return dispatch => {
@@ -9,15 +10,13 @@ export function setFilter(filter, alias) {
 		dispatch(actionsDDC.init(filter, alias));
 		dispatch(actionsDDC.setLoading(false, alias));
 		if (filter !== '') {
-			// console.log('setprogressreducer')
-			// dispatch(setProgress(true));
+			dispatch(actionsP.setProgress(true));
 			dispatch(actionsDDC.setLoading(true, alias));
 			dispatch(doRequest(filter, 0, alias));
 		}
 		if (filter === '') {
 			dispatch(actionsDDC.setHint([], alias));
-			// console.log('setprogressreducer')
-			// dispatch(setProgress(false));
+			dispatch(actionsP.setProgress(false));
 		}
 	}
 };
@@ -48,8 +47,7 @@ function processRequest(data, filter, paging, alias) {
 				console.log('No data found!');
 				dispatch(actionsDDC.setLoading(false, alias));
 				dispatch(actionsDDC.setHint([], alias));
-				// console.log('setprogressreducer')
-				// dispatch(setProgress(false));
+				dispatch(actionsP.setProgress(false));
 			} else {
 					if (paging + 20 > totalCount)  {
 						dispatch(setLimit(list, alias, true));
@@ -63,8 +61,7 @@ function processRequest(data, filter, paging, alias) {
 					}
 			}
 		} else {
-			// console.log('setprogressreducer')
-			// dispatch(setProgress(false));
+			dispatch(actionsP.setProgress(false));
 		}
 	}
 };
@@ -88,9 +85,8 @@ function setLimit(list, alias, boolLast) {
 			dispatch(actionsDDC.setLoading(false, alias));
 			dispatch(actionsDDC.setHint(pom, alias));
 		} else if(pom.length > 0) {
-			// console.log('addhint')
 			dispatch(actionsDDC.addHint(pom, alias));
 		}
-		// if (getHintAlias(getState(),alias).size === 10 || boolLast) {dispatch(setProgress(false));console.log('setprogressreducer');}
+		if (getHintAlias(getState(),alias).size === 10 || boolLast) dispatch(actionsP.setProgress(false));
 	}
 };

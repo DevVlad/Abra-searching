@@ -3,12 +3,13 @@ import thunk from 'redux-thunk';
 import Immutable from 'immutable';
 
 import reducerFilter from './ducks/dropDownContact.jsx';
+import reducerProgress from './ducks/progress.jsx';
 import combineImmutableReducers from './combineImmutableReducers.jsx';
 
 const reducer = combineImmutableReducers(
   {
-    filter: reducerFilter//,
-    // progress: reducerProgress
+    filter: reducerFilter,
+    progress: reducerProgress
   }
 );
 

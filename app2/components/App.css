@@ -28,3 +28,9 @@ ul {
 div {
   width: 650px;
 }
+
+#loading {
+  position: absolute;
+  top: 40px;
+  left: 700px;
+}

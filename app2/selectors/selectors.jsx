@@ -4,7 +4,7 @@ import Immutable from 'immutable';
 export const selectorAll = (state) => state.toJS();
 
 const getAliasF = (state, alias) => state.getIn(['filter', alias]);
-const getProgress = (state) => state.getIn(['progress', 'counter']);
+const getProgressState = (state) => state.getIn(['progress', 'counter']);
 
 export const stateSelectorListAlias = (state, alias) => {
 	let obj = {};
@@ -45,3 +45,5 @@ export const getLoadingAlias = createSelector(getAliasF, x => {
 		return x.get('loading');
 	}
 });
+
+export const getProgress = createSelector(getProgressState, x => x);
