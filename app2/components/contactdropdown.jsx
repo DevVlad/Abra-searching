@@ -10,19 +10,18 @@ import 'react-widgets/lib/less/react-widgets.less';
 class ContactDropdown extends React.Component{
 	constructor(props){
 		super(props);
-	}
+	};
 
   handleOnSelect(e, v) {
     console.log('selected: ', this.props.alias, e);
-  }
+  };
 
   handleOnSearch(e) {
     console.log('search: ', this.props.alias, 'elem: ',e.length)
     if (e.length > 0) {
       this.props.dispatch(setFilter(e, this.props.alias));
     }
-    // this.props.dispatch(setFilter(e, this.props.alias));
-  }
+  };
 
 	render() {
     this.list = [];

@@ -9,7 +9,7 @@ class Loading extends React.Component {
 	constructor() {
 		super();
 		this.pulse = null;
-	}
+	};
 
   componentDidUpdate() {
 		if (this.pulse == null && this.loadRef != undefined) {
@@ -22,7 +22,7 @@ class Loading extends React.Component {
 			};
 			this.pulse();
 		}
-  }
+  };
 
   render(){
     if (this.props.counter > 0) {
@@ -32,12 +32,13 @@ class Loading extends React.Component {
         </div>
       );
     } else return null;
-  }
+  };
 
-}
+};
 
 function mapStateToProps(state) {
   return stateSelectorProgress(state);
-}
+};
+
 const appConnect = connect(mapStateToProps)(Loading)
 export default appConnect;
