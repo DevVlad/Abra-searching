@@ -1,4 +1,5 @@
 import Immutable from 'immutable';
+import superagent from 'superagent';
 
 /*
 * ACTIONS
@@ -73,4 +74,32 @@ export default function reducer (state = initialStateFilter, action) {
     default:
       return state;
   }
+};
+
+/*
+*	SERVICE
+*/
+
+export function request(filter, paging) {
+	let query = {
+		'add-row-count': true,
+		'start': paging,
+		'limit': 20
+	};
+	const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
+	const inp = fields.map(f => `${f} like similar '${filter}'`).join(' or ');
+
+	return new Promise((resolve, reject) => {
+		superagent.get(`https://nejlepsi.flexibee.eu/c/velka/kontakt/(${encodeURIComponent(inp)})`)
+		.set('Accept', 'application/json')
+		.auth('admin', 'adminadmin')
+		.query(query)
+		.end((err, res)=>{
+			if (!err) {
+				resolve(res.body);
+			} else {
+				console.log('Error ApiService - ContactDropdown: ', err);
+			}
+		})
+	});
 };

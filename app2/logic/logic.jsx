@@ -21,18 +21,25 @@ export function setFilter(filter, alias) {
 	}
 };
 
-const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
+// const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
+//
+// function doRequest(filter, paging = 0, alias) {
+// 	return dispatch => {
+// 		// let data = REQUEST({ 'add-row-count': true, 'start': paging, 'limit': 20 }, fields);
+// 		ApiService.getRequest({ 'add-row-count': true, 'start': paging, 'limit': 20 },
+// 			fields.map(f => `${f} like similar '${filter}'`).join(' or ')
+// 		).then(data => {
+// 			setTimeout(() => {
+// 					dispatch(processRequest(data.winstrom, filter, paging, alias));
+// 			}, 0);
+// 		});
+// 	}
+// };
 
 function doRequest(filter, paging = 0, alias) {
-	return dispatch => {
-		ApiService.getRequest({ 'add-row-count': true, 'start': paging, 'limit': 20 },
-			fields.map(f => `${f} like similar '${filter}'`).join(' or ')
-		).then(data => {
-			setTimeout(() => {
-					dispatch(processRequest(data.winstrom, filter, paging, alias));
-			}, 0);
-		});
-	}
+	return (dispatch) => {
+		actionsDDC.request(filter, paging).then(data => dispatch(processRequest(data.winstrom, filter, paging, alias)));
+	};
 };
 
 function processRequest(data, filter, paging, alias) {

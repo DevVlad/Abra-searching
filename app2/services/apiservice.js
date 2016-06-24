@@ -10,14 +10,15 @@ class ApiService {
 			.query(query)
 			.end((err, res)=>{
 				if (!err) {
-                       resolve(res.body);
-                } else {
-                    console.log('Error: ', err);
-                }
+      		resolve(res.body);
+					console.log('prdelprdel', res.body)
+        } else {
+          console.log('Error ApiService - ContactDropdown: ', err);
+        }
 			})
 		});
-	}
+	};
 
-}
+};
 
 export default new ApiService;

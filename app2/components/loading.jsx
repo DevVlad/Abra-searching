@@ -40,5 +40,5 @@ function mapStateToProps(state) {
   return stateSelectorProgress(state);
 };
 
-const appConnect = connect(mapStateToProps)(Loading)
+const appConnect = connect(mapStateToProps)(Loading);
 export default appConnect;

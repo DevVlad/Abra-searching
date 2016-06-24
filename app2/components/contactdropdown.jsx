@@ -17,7 +17,6 @@ class ContactDropdown extends React.Component{
   };
 
   handleOnSearch(e) {
-    console.log('search: ', this.props.alias, 'elem: ',e.length)
     if (e.length > 0) {
       this.props.dispatch(setFilter(e, this.props.alias));
     }
@@ -30,7 +29,7 @@ class ContactDropdown extends React.Component{
         'text': [item.prijmeni, item.jmeno].join(' '),
         'id': item.id,
         'body': {...item}
-      }
+      };
     });
 
 		return (
@@ -48,12 +47,13 @@ class ContactDropdown extends React.Component{
         />
       </div>
 		)
-	}
-}
+	};
+
+};
 
 function mapStateToProps(state, props) {
 	return stateSelectorListAlias(state, props.alias);
-}
+};
 
 const appConnect = connect(mapStateToProps)(ContactDropdown);
 export default appConnect;
