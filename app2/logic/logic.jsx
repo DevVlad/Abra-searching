@@ -7,9 +7,11 @@ import * as actionsP from '../redux/ducks/progress/progress.jsx';
 
 export function setFilter(filter, alias, paging, resultsToDisplay) {
 	return dispatch => {
-		dispatch(actionsDDC.setHint([], alias, paging, false));
-		dispatch(actionsDDC.init(filter, alias));
-		dispatch(actionsDDC.setLoading(false, alias));
+		if (paging === 0) {
+			dispatch(actionsDDC.setHint([], alias, paging, false));
+			dispatch(actionsDDC.init(filter, alias));
+			dispatch(actionsDDC.setLoading(false, alias));
+		}
 		if (filter !== '') {
 			dispatch(actionsP.setProgress(true));
 			dispatch(actionsDDC.setLoading(true, alias));
@@ -77,7 +79,7 @@ function setLimit(list, alias, boolLast, toDisplayLimit, paging, nextLoading) {
 		}
 		if (loading) {
 			dispatch(actionsDDC.setLoading(false, alias));
-			dispatch(actionsDDC.setHint(pom, alias, paging, nextLoading));
+			if (paging === 0) dispatch(actionsDDC.setHint(pom, alias, paging, nextLoading));
 		} else if(pom.length > 0) {
 			dispatch(actionsDDC.addHint(pom, alias, paging, nextLoading));
 		}
