@@ -20,9 +20,9 @@ export const stateSelectorListAlias = (state, alias) => {
 
 const getNextRequestInfo = createSelector(getAliasF, x => {
 	if (x === undefined) {
-		return [{},{}];
+		return [false, 0];
 	} else {
-		return [x.get('nextLoading'), x.get('lastPaging')];
+		return [x.get('nextRequestPossible'), x.get('lastPaging')];
 	}
 });
 

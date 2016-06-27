@@ -3,9 +3,9 @@ import { getFilterAlias, getHintAlias, getLoadingAlias } from '../redux/ducks/dr
 import * as actionsDDC from '../redux/ducks/dropDownContact/dropDownContact.jsx';
 import * as actionsP from '../redux/ducks/progress/progress.jsx';
 
-const toDisplayLimit = 10;
+// const toDisplayLimit = 10;
 
-export function setFilter(filter, alias, paging) {
+export function setFilter(filter, alias, paging, resultsToDisplay) {
 	return dispatch => {
 		dispatch(actionsDDC.setHint([], alias, paging, false));
 		dispatch(actionsDDC.init(filter, alias));
@@ -13,7 +13,7 @@ export function setFilter(filter, alias, paging) {
 		if (filter !== '') {
 			dispatch(actionsP.setProgress(true));
 			dispatch(actionsDDC.setLoading(true, alias));
-			dispatch(doRequest(filter, paging, alias));
+			dispatch(doRequest(filter, paging, alias, resultsToDisplay));
 		}
 		if (filter === '') {
 			dispatch(actionsDDC.setHint([], alias, paging, true));
@@ -22,13 +22,13 @@ export function setFilter(filter, alias, paging) {
 	}
 };
 
-function doRequest(filter, paging, alias) {
+function doRequest(filter, paging, alias, resultsToDisplay) {
 	return (dispatch) => {
-		actionsDDC.request(filter, paging).then(data => dispatch(processRequest(data.winstrom, filter, paging, alias)));
+		actionsDDC.request(filter, paging).then(data => dispatch(processRequest(data.winstrom, filter, paging, alias, resultsToDisplay)));
 	};
 };
 
-function processRequest(data, filter, paging, alias) {
+function processRequest(data, filter, paging, alias, resultsToDisplay) {
 	return (dispatch, getState) => {
 		if (getFilterAlias(getState(), alias) === filter) {
 			const expr = new RegExp('\\b^' + filter.split(' ').map(exp => '(' + exp + ')').join('.*[a-zá-ž].*\\b'), 'i');
@@ -42,6 +42,7 @@ function processRequest(data, filter, paging, alias) {
 				dispatch(actionsDDC.setHint([], alias, paging, totalCount > paging+ data.kontakt.length));
 				dispatch(actionsP.setProgress(false));
 			} else {
+					let toDisplayLimit = resultsToDisplay;
 					if (paging + 20 > totalCount)  {
 						dispatch(setLimit(list, alias, true, toDisplayLimit, paging, totalCount > paging+ data.kontakt.length));
 					} else {
@@ -50,7 +51,7 @@ function processRequest(data, filter, paging, alias) {
 					const count = paging + data.kontakt.length;
 					const hintCount = getHintAlias(getState(), alias).size;
 					if (totalCount > count && hintCount < toDisplayLimit) {
-						dispatch(doRequest(filter, count, alias));
+						dispatch(doRequest(filter, count, alias, resultsToDisplay));
 					}
 			}
 		} else {

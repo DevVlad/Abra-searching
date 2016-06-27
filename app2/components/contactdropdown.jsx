@@ -12,6 +12,8 @@ import 'react-widgets/lib/less/react-widgets.less';
 class ContactDropdown extends React.Component{
 	constructor(props){
 		super(props);
+		this.navigate = 0;
+		this.toDisplayLimit = 10;
 	};
 
   handleOnSelect(e, v) {
@@ -20,9 +22,20 @@ class ContactDropdown extends React.Component{
 
   handleOnSearch(e) {
     if (e.length > 0) {
-      this.props.dispatch(setFilter(e, this.props.alias, 0));
+      this.props.dispatch(setFilter(e, this.props.alias, 0, this.toDisplayLimit));
     }
   };
+
+	handleOnKeyDown(e) {
+		if (e.keyCode === 40) this.navigate = this.navigate + 1;
+		if (e.keyCode === 38) this.navigate = this.navigate - 1;
+		let pom = this.props[this.props.alias];
+		console.log(pom, this.navigate)
+		if (this.navigate === 9) {
+			this.toDisplayLimit = this.toDisplayLimit + 10;
+			this.props.dispatch(setFilter(pom.filter, this.props.alias, pom.lastPaging, this.toDisplayLimit))
+		};
+	}
 
 	render() {
     this.list = [];
@@ -35,10 +48,9 @@ class ContactDropdown extends React.Component{
     });
 
 		let element = '';
-		if ( this.list.length > 9) {
+		if (this.list.length > 9) {
 			element = '#'+this.props.alias+'__listbox__option__' + 9;
 			if ($(element)[0] !== undefined) {
-				console.log($(element)[0])
 			};
 		};
 
@@ -66,6 +78,7 @@ class ContactDropdown extends React.Component{
           onSelect={this.handleOnSelect.bind(this)}
           filter={item => item}
           onSearch={this.handleOnSearch.bind(this)}
+					onKeyDown={this.handleOnKeyDown.bind(this)}
         />
       </div>
 		)
