@@ -14,6 +14,7 @@ class ContactDropdown extends React.Component{
 		super(props);
 		this.navigate = 0;
 		this.toDisplayLimit = 10;
+		this.active = '';
 	};
 
   handleOnSelect(e, v) {
@@ -22,20 +23,21 @@ class ContactDropdown extends React.Component{
 
   handleOnSearch(e) {
     if (e.length > 0) {
+			this.toDisplayLimit = 10;
       this.props.dispatch(setFilter(e, this.props.alias, 0, this.toDisplayLimit));
     }
   };
 
-	handleOnKeyDown(e) {
-		if (e.keyCode === 40) this.navigate = this.navigate + 1;
-		if (e.keyCode === 38) this.navigate = this.navigate - 1;
+	handleOnMove(e) {
+		console.log(e.id)
+		// TODO: div with id=alias => aria-activedescendant=e.id
 		let pom = this.props[this.props.alias];
-		console.log(pom, this.navigate)
-		if (this.navigate === 9) {
+		if ( e ===  $('#' + this.props.alias+'__listbox')[0].lastChild && pom.nextRequestPossible) {
 			this.toDisplayLimit = this.toDisplayLimit + 10;
-			this.props.dispatch(setFilter(pom.filter, this.props.alias, pom.lastPaging, this.toDisplayLimit))
-		};
-	}
+			this.props.dispatch(setFilter(pom.filter, this.props.alias, pom.lastPaging, this.toDisplayLimit));
+			this.navigate = 0;
+		}
+	};
 
 	render() {
     this.list = [];
@@ -46,18 +48,6 @@ class ContactDropdown extends React.Component{
         'body': {...item}
       };
     });
-
-		let element = '';
-		if (this.list.length > 9) {
-			element = '#'+this.props.alias+'__listbox__option__' + 9;
-			if ($(element)[0] !== undefined) {
-			};
-		};
-
-		// let ele = '#'+this.props.alias;
-		// if ( this.list.length > 9) {
-		// 	console.log($(ele)[0])
-		// }
 
 		$('.rw-list').scroll(function () {
       if ($(this)[0].scrollHeight - $(this).scrollTop() <= $(this).outerHeight()) {
@@ -78,7 +68,8 @@ class ContactDropdown extends React.Component{
           onSelect={this.handleOnSelect.bind(this)}
           filter={item => item}
           onSearch={this.handleOnSearch.bind(this)}
-					onKeyDown={this.handleOnKeyDown.bind(this)}
+					onMove={this.handleOnMove.bind(this)}
+					aria-activedescendant={this.active}
         />
       </div>
 		)
