@@ -6,7 +6,6 @@ export const selectorAll = (state) => state.toJS();
 const getAliasF = (state, alias) => state.getIn(['filter', alias]);
 
 // HINTS & FILTER & LOADING
-
 export const stateSelectorListAlias = (state, alias) => {
 	let obj = {};
 	obj[alias] = {
@@ -66,31 +65,3 @@ export const getFirstRecord = createSelector(getAliasF, x => {
 		return x.get('hint').first();
 	}
 });
-
-// // GET X OF HINTS
-//
-// export const stateSelectorPartOfListAlias = (state, alias, paging) => {
-// 	let obj = {};
-// 	obj[alias] = {
-// 		filter: getFilterAlias(state, alias),
-// 		hint: getPartOfHintAlias(state, alias, paging),
-// 		loading: getLoadingAlias(state, alias)
-// 	};
-// 	return obj;
-// };
-//
-// const getPartOfHintAlias = createSelector(getAliasFPart, x => {
-// 	let obj = {};
-// 	if (x === undefined) {
-// 		return Immutable.fromJS({});
-// 	} else {
-// 		return x.get('hint');
-// 	}
-// });
-//
-// function getAliasFPart(state, alias, paging) {
-// 	let obj = state.getIn(['filter', alias]);
-// 	obj === undefined ? null : console.log(obj.toJS(), paging)
-//
-// 	return state.getIn(['filter', alias]);
-// }

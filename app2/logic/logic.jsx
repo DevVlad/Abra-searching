@@ -1,42 +1,26 @@
-// import ApiService from '../services/apiservice.js';
 import { getFilterAlias, getHintAlias, getLoadingAlias } from '../redux/ducks/dropDownContact/selectors.jsx';
 
 import * as actionsDDC from '../redux/ducks/dropDownContact/dropDownContact.jsx';
 import * as actionsP from '../redux/ducks/progress/progress.jsx';
 
-// const toDisplayLimit = 10;
+const toDisplayLimit = 10;
 
 export function setFilter(filter, alias, paging) {
 	return dispatch => {
-		dispatch(actionsDDC.setHint([], alias, paging));
+		dispatch(actionsDDC.setHint([], alias, paging, false));
 		dispatch(actionsDDC.init(filter, alias));
 		dispatch(actionsDDC.setLoading(false, alias));
 		if (filter !== '') {
 			dispatch(actionsP.setProgress(true));
 			dispatch(actionsDDC.setLoading(true, alias));
-			dispatch(doRequest(filter, 0, alias, paging));
+			dispatch(doRequest(filter, paging, alias));
 		}
 		if (filter === '') {
-			dispatch(actionsDDC.setHint([], alias, paging));
+			dispatch(actionsDDC.setHint([], alias, paging, true));
 			dispatch(actionsP.setProgress(false));
 		}
 	}
 };
-
-// const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
-//
-// function doRequest(filter, paging = 0, alias) {
-// 	return dispatch => {
-// 		// let data = REQUEST({ 'add-row-count': true, 'start': paging, 'limit': 20 }, fields);
-// 		ApiService.getRequest({ 'add-row-count': true, 'start': paging, 'limit': 20 },
-// 			fields.map(f => `${f} like similar '${filter}'`).join(' or ')
-// 		).then(data => {
-// 			setTimeout(() => {
-// 					dispatch(processRequest(data.winstrom, filter, paging, alias));
-// 			}, 0);
-// 		});
-// 	}
-// };
 
 function doRequest(filter, paging, alias) {
 	return (dispatch) => {
@@ -49,21 +33,19 @@ function processRequest(data, filter, paging, alias) {
 		if (getFilterAlias(getState(), alias) === filter) {
 			const expr = new RegExp('\\b^' + filter.split(' ').map(exp => '(' + exp + ')').join('.*[a-zá-ž].*\\b'), 'i');
 			const list = data.kontakt.filter(x =>
-				expr.test(x.jmeno) || expr.test(x.prijmeni)// || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)
+				expr.test(x.jmeno) || expr.test(x.prijmeni) || expr.test(x.email) || expr.test(x.mobil) || expr.test(x.tel)
 			);
 			const totalCount = parseInt(data['@rowCount']);
-			const toDisplayLimit = 10;
-			console.log(totalCount > toDisplayLimit)
 			if (totalCount === 0) {
 				console.log('No data found!');
 				dispatch(actionsDDC.setLoading(false, alias));
-				dispatch(actionsDDC.setHint([], alias), paging);
+				dispatch(actionsDDC.setHint([], alias, paging, totalCount > paging+ data.kontakt.length));
 				dispatch(actionsP.setProgress(false));
 			} else {
 					if (paging + 20 > totalCount)  {
-						dispatch(setLimit(list, alias, true, toDisplayLimit, paging, totalCount > toDisplayLimit));
+						dispatch(setLimit(list, alias, true, toDisplayLimit, paging, totalCount > paging+ data.kontakt.length));
 					} else {
-						dispatch(setLimit(list, alias, false, toDisplayLimit, paging, totalCount > toDisplayLimit));
+						dispatch(setLimit(list, alias, false, toDisplayLimit, paging, totalCount > paging+ data.kontakt.length));
 					}
 					const count = paging + data.kontakt.length;
 					const hintCount = getHintAlias(getState(), alias).size;
@@ -94,7 +76,7 @@ function setLimit(list, alias, boolLast, toDisplayLimit, paging, nextLoading) {
 		}
 		if (loading) {
 			dispatch(actionsDDC.setLoading(false, alias));
-			dispatch(actionsDDC.setHint(pom, alias, paging));
+			dispatch(actionsDDC.setHint(pom, alias, paging, nextLoading));
 		} else if(pom.length > 0) {
 			dispatch(actionsDDC.addHint(pom, alias, paging, nextLoading));
 		}

@@ -5,18 +5,10 @@ import superagent from 'superagent';
 * ACTIONS
 */
 
-export const SET_PROGRESS = 'SET_PROGRESS';
 export const INIT = 'INIT';
 export const SET_LOADING = 'SET_LOADING';
 export const ADD_HINT = 'ADD_HINT';
 export const SET_HINT = 'SET_HINT';
-
-export function setProgress(bool) {
-	return {
-		type: 'SET_PROGRESS',
-		bool
-	};
-};
 
 export function init(filter, alias) {
 	return {
@@ -44,12 +36,13 @@ export function addHint(list, alias, paging, bool) {
 	};
 };
 
-export function setHint(list, alias, paging) {
+export function setHint(list, alias, paging, bool) {
 	return {
 		type: 'SET_HINT',
 		hint: list,
 		alias,
-		paging
+		paging,
+		bool
 	};
 };
 
@@ -67,7 +60,8 @@ export default function reducer (state = initialStateFilter, action) {
 
     case SET_HINT:
       return state.setIn([action.alias, 'hint'], Immutable.fromJS(action.hint))
-									.setIn([action.alias, 'lastPaging'], action.paging);
+									.setIn([action.alias, 'lastPaging'], action.paging)
+									.setIn([action.alias, 'nextRequestPossible'], action.bool);
 
     case ADD_HINT:
       return state.updateIn([action.alias, 'hint'], list => list.concat(Immutable.fromJS(action.hint)))
