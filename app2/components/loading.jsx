@@ -1,7 +1,8 @@
 import React from 'react';
 import $ from 'jquery';
 import { connect } from 'react-redux';
-import { stateSelectorProgress } from '../selectors/selectors.jsx';
+// import { stateSelectorProgress } from '../selectors/selectors.jsx';
+import { stateSelectorProgress } from '../redux/ducks/progress/selectors.jsx';
 
 import './App.css';
 

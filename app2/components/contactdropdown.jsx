@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { setFilter } from '../logic/logic.jsx';
-import { stateSelectorListAlias, stateSelectorList } from '../selectors/selectors.jsx';
+import { stateSelectorListAlias, stateSelectorList } from '../redux/ducks/dropDownContact/selectors.jsx';
 import { DropdownList } from 'react-widgets';
 
 import './App.css';

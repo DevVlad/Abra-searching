@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { setFilter } from '../logic/logic.jsx';
-import { stateSelectorFirstRecordAlias } from '../selectors/selectors.jsx';
+import { stateSelectorFirstRecordAlias } from '../redux/ducks/dropDownContact/selectors.jsx';
 import './App.css'
 
 class Whisperer extends React.Component{

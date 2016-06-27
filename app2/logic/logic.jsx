@@ -1,8 +1,8 @@
 // import ApiService from '../services/apiservice.js';
-import { getFilterAlias, getHintAlias, getLoadingAlias } from '../selectors/selectors.jsx';
+import { getFilterAlias, getHintAlias, getLoadingAlias } from '../redux/ducks/dropDownContact/selectors.jsx';
 
-import * as actionsDDC from '../redux/ducks/dropDownContact.jsx';
-import * as actionsP from '../redux/ducks/progress.jsx';
+import * as actionsDDC from '../redux/ducks/dropDownContact/dropDownContact.jsx';
+import * as actionsP from '../redux/ducks/progress/progress.jsx';
 
 export function setFilter(filter, alias) {
 	return dispatch => {
