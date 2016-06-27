@@ -24,10 +24,6 @@ class ContactDropdown extends React.Component{
     }
   };
 
-	handleFocus() {
-		console.log('ffsdfsdfsdfsdf');
-	}
-
 	render() {
     this.list = [];
     this.list = this.props[this.props.alias].hint.toJS().map(item => {
@@ -39,14 +35,17 @@ class ContactDropdown extends React.Component{
     });
 
 		let element = '';
-		if ( this.list.length < 10) {
-			element = '';
-		} else {
-			element = '#rw_1__listbox__option__' + 9;
+		if ( this.list.length > 9) {
+			element = '#'+this.props.alias+'__listbox__option__' + 9;
 			if ($(element)[0] !== undefined) {
-				$(element)[0].focus(this.handleFocus.bind(this));
-			}
-		}
+				console.log($(element)[0])
+			};
+		};
+
+		// let ele = '#'+this.props.alias;
+		// if ( this.list.length > 9) {
+		// 	console.log($(ele)[0])
+		// }
 
 		$('.rw-list').scroll(function () {
       if ($(this)[0].scrollHeight - $(this).scrollTop() <= $(this).outerHeight()) {
@@ -58,6 +57,7 @@ class ContactDropdown extends React.Component{
       <div id="ContactDropdown">
   			<h1>ContactDropdown {this.props.alias}</h1>
         <DropdownList
+					id={this.props.alias}
           placeholder='Search...'
           valueField='id' textField='text'
           data={this.list}
