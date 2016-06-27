@@ -5,29 +5,25 @@ export const selectorAll = (state) => state.toJS();
 
 const getAliasF = (state, alias) => state.getIn(['filter', alias]);
 
+// HINTS & FILTER & LOADING
+
 export const stateSelectorListAlias = (state, alias) => {
 	let obj = {};
 	obj[alias] = {
 		filter: getFilterAlias(state, alias),
 		hint: getHintAlias(state, alias),
-		loading: getLoadingAlias(state, alias)
+		loading: getLoadingAlias(state, alias),
+		nextRequestPossible: getNextRequestInfo(state, alias)[0],
+		lastPaging: getNextRequestInfo(state, alias)[1]
 	};
 	return obj;
 };
 
-export const stateSelectorFirstRecordAlias = (state, alias) => {
-	return {
-		filter: getFilterAlias(state, alias),
-		firstRecord: getFirstRecord(state, alias)
-	}
-};
-
-
-export const getFirstRecord = createSelector(getAliasF, x => {
-	if (x === undefined || x.get('hint').size === 0) {
-		return Immutable.fromJS({});
+const getNextRequestInfo = createSelector(getAliasF, x => {
+	if (x === undefined) {
+		return [{},{}];
 	} else {
-		return x.get('hint').first();
+		return [x.get('nextLoading'), x.get('lastPaging')];
 	}
 });
 
@@ -54,3 +50,47 @@ export const getLoadingAlias = createSelector(getAliasF, x => {
 		return x.get('loading');
 	}
 });
+
+// FIRST RECORD & FILTER
+export const stateSelectorFirstRecordAlias = (state, alias) => {
+	return {
+		filter: getFilterAlias(state, alias),
+		firstRecord: getFirstRecord(state, alias)
+	}
+};
+
+export const getFirstRecord = createSelector(getAliasF, x => {
+	if (x === undefined || x.get('hint').size === 0) {
+		return Immutable.fromJS({});
+	} else {
+		return x.get('hint').first();
+	}
+});
+
+// // GET X OF HINTS
+//
+// export const stateSelectorPartOfListAlias = (state, alias, paging) => {
+// 	let obj = {};
+// 	obj[alias] = {
+// 		filter: getFilterAlias(state, alias),
+// 		hint: getPartOfHintAlias(state, alias, paging),
+// 		loading: getLoadingAlias(state, alias)
+// 	};
+// 	return obj;
+// };
+//
+// const getPartOfHintAlias = createSelector(getAliasFPart, x => {
+// 	let obj = {};
+// 	if (x === undefined) {
+// 		return Immutable.fromJS({});
+// 	} else {
+// 		return x.get('hint');
+// 	}
+// });
+//
+// function getAliasFPart(state, alias, paging) {
+// 	let obj = state.getIn(['filter', alias]);
+// 	obj === undefined ? null : console.log(obj.toJS(), paging)
+//
+// 	return state.getIn(['filter', alias]);
+// }

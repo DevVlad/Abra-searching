@@ -34,19 +34,22 @@ export function setLoading(loading, alias) {
 	};
 };
 
-export function addHint(list, alias) {
+export function addHint(list, alias, paging, bool) {
 	return {
 		type: 'ADD_HINT',
 		hint: list,
-		alias
+		alias,
+		paging,
+		bool
 	};
 };
 
-export function setHint(list, alias) {
+export function setHint(list, alias, paging) {
 	return {
 		type: 'SET_HINT',
 		hint: list,
-		alias
+		alias,
+		paging
 	};
 };
 
@@ -63,10 +66,13 @@ export default function reducer (state = initialStateFilter, action) {
       return state.setIn([action.alias, 'filter'], action.filter);
 
     case SET_HINT:
-      return state.setIn([action.alias, 'hint'], Immutable.fromJS(action.hint));
+      return state.setIn([action.alias, 'hint'], Immutable.fromJS(action.hint))
+									.setIn([action.alias, 'lastPaging'], action.paging);
 
     case ADD_HINT:
-      return state.updateIn([action.alias, 'hint'], list => list.concat(Immutable.fromJS(action.hint)));
+      return state.updateIn([action.alias, 'hint'], list => list.concat(Immutable.fromJS(action.hint)))
+									.setIn([action.alias, 'lastPaging'], action.paging)
+									.setIn([action.alias, 'nextRequestPossible'], action.bool);
 
     case SET_LOADING:
       return state.setIn([action.alias, 'loading'], action.loading);

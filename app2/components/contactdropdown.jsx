@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import $ from 'jquery';
+
 import { setFilter } from '../logic/logic.jsx';
-import { stateSelectorListAlias, stateSelectorList } from '../redux/ducks/dropDownContact/selectors.jsx';
+import { stateSelectorListAlias, stateSelectorPartOfListAlias } from '../redux/ducks/dropDownContact/selectors.jsx';
 import { DropdownList } from 'react-widgets';
 
 import './App.css';
@@ -18,9 +20,13 @@ class ContactDropdown extends React.Component{
 
   handleOnSearch(e) {
     if (e.length > 0) {
-      this.props.dispatch(setFilter(e, this.props.alias));
+      this.props.dispatch(setFilter(e, this.props.alias, 0));
     }
   };
+
+	handleFocus() {
+		console.log('prdel')
+	}
 
 	render() {
     this.list = [];
@@ -31,6 +37,22 @@ class ContactDropdown extends React.Component{
         'body': {...item}
       };
     });
+
+		let element = '';
+		if ( this.list.length < 10) {
+			element = '';
+		} else {
+			element = '#rw_1__listbox__option__' + 9;
+			if ($(element)[0] !== undefined) {
+				$(element)[0].focus(this.handleFocus.bind(this));
+			}
+		}
+
+		$('.rw-list').scroll(function () {
+      if ($(this)[0].scrollHeight - $(this).scrollTop() <= $(this).outerHeight()) {
+				 console.log("end of scroll");
+      }
+		});
 
 		return (
       <div id="ContactDropdown">
