@@ -20,13 +20,14 @@
 
 }
 
-ul {
+/*ul {
   list-style: none;
   height: 57.27px;
-}
+}*/
 
 div {
-  width: 650px;
+  /*width: 650px;*/
+  overflow-x: hidden;
 }
 
 #loading {

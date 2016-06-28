@@ -5,6 +5,7 @@ import Immutable from 'immutable';
 import reducerFilter from './ducks/dropDownContact/dropDownContact.jsx';
 import reducerProgress from './ducks/progress/progress.jsx';
 import combineImmutableReducers from './combineImmutableReducers.jsx';
+import * as d from './ducks/dropDownContact/dropDownContact.jsx';
 
 const reducer = combineImmutableReducers(
   {

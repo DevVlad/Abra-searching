@@ -14,9 +14,7 @@ class App extends React.Component{
 		return (
 			<div className="mainDiv">
 				<ContactDropdown alias='a' />
-				<ContactDropdown alias='b' />
-				<Whisperer alias='w1' />
-				<Whisperer alias='w2' />
+				<ContactDropdown alias='aa' />
 				<Loading />
 			</div>
 		)
