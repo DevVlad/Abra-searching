@@ -17,12 +17,14 @@ class ContactDropdown extends React.Component{
 
 	handleInput(e) {
 		this.props.dispatch(DropdownField.setList(e, this.props.alias, 0, 10));
+		this.props.dispatch(DropdownField.setCondition(e, this.props.alias))
 	};
 
 	handleOnSelect(e) {
 		console.log('onSelect',e)
 		this.props.dispatch(DropdownField.setValueOfEntityToText(e.text, this.props.alias));
 		this.props.dispatch(DropdownField.setIdOfSelectedItem(e.id, this.props.alias));
+		this.props.dispatch(DropdownField.setCondition(e.text, this.props.alias))
 	};
 
 	render() {

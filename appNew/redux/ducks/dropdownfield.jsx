@@ -12,6 +12,7 @@ const ADD_HINT = 'ADD_HINT';
 const SET_HINT = 'SET_HINT';
 const SET_ENTITY_TO_TEXT = 'SET_ENTITY_TO_TEXT';
 const SET_ID_OF_SELECTED_ITEM = 'SET_ID_OF_SELECTED_ITEM';
+const SET_CONDITION = 'SET_CONDITION';
 
 export function setLoading(loading, alias) {
 	return {
@@ -67,6 +68,20 @@ export function setIdOfSelectedItem(id, alias) {
 		type: 'SET_ID_OF_SELECTED_ITEM',
 		alias,
 		id
+	};
+};
+
+export function setCondition(text, alias) {
+	let condition = {
+		type: 'comp',
+		operator: 'like similar',
+		left: 'jmeno',
+		right: text
+	};
+	return {
+		type: 'SET_CONDITION',
+		alias,
+		condition
 	};
 };
 
@@ -164,10 +179,15 @@ export function reducer (state = initialStateFilter, action) {
       return state.setIn([action.alias, 'loading'], action.loading);
 
 		case SET_ENTITY_TO_TEXT:
-			return state.setIn([action.alias, 'entityToText'], action.object);
+			return state.setIn([action.alias, 'entityToText'], action.object)
+									.setIn([action.alias, 'nextRequestPossible'], false);
 
-			case SET_ID_OF_SELECTED_ITEM:
+		case SET_ID_OF_SELECTED_ITEM:
 			return state.setIn([action.alias, 'entityId'], action.id)
+									.setIn([action.alias, 'nextRequestPossible'], false);
+
+		case SET_CONDITION:
+			return state.setIn([action.alias, 'filterToCondition'], Immutable.fromJS(action.condition))
 
     default:
       return state;
