@@ -23,22 +23,30 @@ class ContactDropdown extends React.Component{
 	handleOnSelect(e) {
 		console.log('onSelect',e)
 		this.props.dispatch(DropdownField.setValueOfEntityToText(e.text, this.props.alias));
-		this.props.dispatch(DropdownField.setIdOfSelectedItem(e.id, this.props.alias));
 		this.props.dispatch(DropdownField.setCondition(e.text, this.props.alias))
+		if (this.props.onChange) {
+			this.props.onChange(e.id);
+		}
 	};
 
 	render() {
-		this.list = [{}];
+		let list = [];
 		if (this.props.hint !== undefined) {
-			this.list = this.props.hint.toJS().map(item => {
-	      return {
-	        'text': [item.prijmeni, item.jmeno].join(' '),
-	        'id': item.id,
-	        'body': {...item}
-	      };
-	    });
-		};
-		if (this.props.entityId !== undefined && this.props.entityToText === '') this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
+			list = this.props.hint.toJS().map(item => {
+				return {
+					'id': item.id,
+					'text': this.props.entityToText ? this.props.entityToText(item) : item.id
+				};
+			});
+		}
+		let text = '';
+		if (this.props.entityId) {
+			if (this.props.entity) {
+				text = this.props.entityToText(this.props.entity);
+			} else {
+				this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
+			}
+		}
 		if (typeof this.props.entityToText === 'object') {
 			this.toDisplay = [this.props.entityToText.jmeno, this.props.entityToText.prijmeni].join(' ');
 		} else {
@@ -56,7 +64,7 @@ class ContactDropdown extends React.Component{
 						openOnFocus={ true }
 						searchText={this.toDisplay}
 						menuStyle = { { maxHeight: '300px' } }
-						dataSource={ this.list }
+						dataSource={ list }
 						dataSourceConfig={ {  text: 'text', value: 'text'  } }
 						onUpdateInput={ this.handleInput.bind(this) }
 						onNewRequest={ this.handleOnSelect.bind(this) }

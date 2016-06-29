@@ -11,12 +11,11 @@ const SET_LOADING = 'SET_LOADING';
 const ADD_HINT = 'ADD_HINT';
 const SET_HINT = 'SET_HINT';
 const SET_ENTITY_TO_TEXT = 'SET_ENTITY_TO_TEXT';
-const SET_ID_OF_SELECTED_ITEM = 'SET_ID_OF_SELECTED_ITEM';
 const SET_CONDITION = 'SET_CONDITION';
 
 export function setLoading(loading, alias) {
 	return {
-		type: 'SET_LOADING',
+		type: SET_LOADING,
 		loading,
 		alias
 	};
@@ -60,14 +59,6 @@ export function setEntityToText(object, alias) {
 		type: 'SET_ENTITY_TO_TEXT',
 		alias,
 		object
-	};
-};
-
-export function setIdOfSelectedItem(id, alias) {
-	return {
-		type: 'SET_ID_OF_SELECTED_ITEM',
-		alias,
-		id
 	};
 };
 
@@ -180,10 +171,6 @@ export function reducer (state = initialStateFilter, action) {
 
 		case SET_ENTITY_TO_TEXT:
 			return state.setIn([action.alias, 'entityToText'], action.object)
-									.setIn([action.alias, 'nextRequestPossible'], false);
-
-		case SET_ID_OF_SELECTED_ITEM:
-			return state.setIn([action.alias, 'entityId'], action.id)
 									.setIn([action.alias, 'nextRequestPossible'], false);
 
 		case SET_CONDITION:
