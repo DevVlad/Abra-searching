@@ -9,6 +9,8 @@ export const INIT = 'INIT';
 export const SET_LOADING = 'SET_LOADING';
 export const ADD_HINT = 'ADD_HINT';
 export const SET_HINT = 'SET_HINT';
+export const SET_INIT_VALUE = 'SET_INIT_VALUE';
+export const SET_VALUE_OF_INIT = 'SET_VALUE_OF_INIT';
 
 export function init(filter, alias) {
 	return {
@@ -46,13 +48,21 @@ export function setHint(list, alias, paging, bool) {
 	};
 };
 
+export function setValueOfInit(text, alias) {
+	return {
+		type: 'SET_VALUE_OF_INIT',
+		text,
+		alias
+	};
+};
+
 /*
 * REDUCER
 */
 
 const initialStateFilter = Immutable.fromJS({});
 
-export default function reducer (state = initialStateFilter, action) {
+export function reducer (state = initialStateFilter, action) {
   switch (action.type) {
 
     case INIT:
@@ -71,6 +81,9 @@ export default function reducer (state = initialStateFilter, action) {
     case SET_LOADING:
       return state.setIn([action.alias, 'loading'], action.loading);
 
+		case SET_VALUE_OF_INIT:
+			return state.setIn([action.alias, 'valueOfInput'], action.text);
+
     default:
       return state;
   }
@@ -80,17 +93,27 @@ export default function reducer (state = initialStateFilter, action) {
 *	SERVICE
 */
 
-export function request(filter, paging) {
+export function serviceRequest(filter, paging, initId) {
 	let query = {
 		'add-row-count': true,
 		'start': paging,
 		'limit': 20
 	};
-	const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
-	const inp = fields.map(f => `${f} like similar '${filter}'`).join(' or ');
-
+	let spec = '';
+	if (initId > 0) {
+		spec = initId;
+		query = {
+			'add-row-count': true,
+			'start': paging,
+			'limit': 20
+		};
+	} else {
+		const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
+		const inp = fields.map(f => `${f} like similar '${filter}'`).join(' or ');
+		spec = `(${encodeURIComponent(inp)})`;
+	}
 	return new Promise((resolve, reject) => {
-		superagent.get(`https://nejlepsi.flexibee.eu/c/velka/kontakt/(${encodeURIComponent(inp)})`)
+		superagent.get(`https://nejlepsi.flexibee.eu/c/velka/kontakt/${spec}`)
 		.set('Accept', 'application/json')
 		.auth('admin', 'adminadmin')
 		.query(query)
@@ -102,4 +125,5 @@ export function request(filter, paging) {
 			}
 		})
 	});
+
 };

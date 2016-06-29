@@ -26,7 +26,7 @@ export function setFilter(filter, alias, paging, resultsToDisplay) {
 
 function doRequest(filter, paging, alias, resultsToDisplay) {
 	return (dispatch) => {
-		actionsDDC.request(filter, paging).then(data => dispatch(processRequest(data.winstrom, filter, paging, alias, resultsToDisplay)));
+		actionsDDC.serviceRequest(filter, paging, 0).then(data => dispatch(processRequest(data.winstrom, filter, paging, alias, resultsToDisplay)));
 	};
 };
 
@@ -85,4 +85,17 @@ function setLimit(list, alias, boolLast, toDisplayLimit, paging, nextLoading) {
 		}
 		if (getHintAlias(getState(),alias).size === toDisplayLimit || boolLast) dispatch(actionsP.setProgress(false));
 	}
+};
+
+export function setInitValue(id, alias) {
+	return dispatch => {
+		actionsDDC.serviceRequest('', 0, id).then(data => dispatch(entityToText(data.winstrom.kontakt, alias)));
+	};
+};
+
+function entityToText(object, alias) {
+	return dispatch => {
+		const textToDisplay = [object[0].prijmeni, object[0].jmeno].join(' ');
+		dispatch(actionsDDC.setValueOfInit(textToDisplay, alias));
+	};
 };

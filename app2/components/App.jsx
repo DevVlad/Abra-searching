@@ -13,8 +13,15 @@ class App extends React.Component{
 	render(){
 		return (
 			<div className="mainDiv">
-				<ContactDropdown alias='a' />
-				<ContactDropdown alias='aa' />
+				<ContactDropdown
+					alias='a'
+					entityName="kontakt"
+    			entityId="107"
+				/>
+				<ContactDropdown
+					alias='aa'
+					entityName="kontakt"
+				/>
 				<Loading />
 			</div>
 		)

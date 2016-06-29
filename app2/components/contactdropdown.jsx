@@ -5,8 +5,8 @@ import AutoComplete from 'material-ui/AutoComplete';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-import { setFilter } from '../logic/logic.jsx';
-import { stateSelectorListAlias, stateSelectorPartOfListAlias } from '../redux/ducks/dropDownContact/selectors.jsx';
+import { setFilter, setInitValue } from '../logic/logic.jsx';
+import { stateSelectorListAlias } from '../redux/ducks/dropDownContact/selectors.jsx';
 
 import './App.css';
 
@@ -25,14 +25,18 @@ class ContactDropdown extends React.Component{
 	};
 
 	render() {
+		if (this.props.entityId !== undefined && this.props[this.props.alias].filter !== undefined) this.props.dispatch(setInitValue(this.props.entityId, this.props.alias))
     this.list = [];
-    this.list = this.props[this.props.alias].hint.toJS().map(item => {
-      return {
-        'text': [item.prijmeni, item.jmeno].join(' '),
-        'value': item.id,
-        'body': {...item}
-      };
-    });
+		if (this.props[this.props.alias].hint !== undefined) {
+			this.list = this.props[this.props.alias].hint.toJS().map(item => {
+	      return {
+	        'text': [item.prijmeni, item.jmeno].join(' '),
+	        'value': item.id,
+	        'body': {...item}
+	      };
+	    });
+		};
+
 
 		return (
       <div id="ContactDropdown">
@@ -43,6 +47,9 @@ class ContactDropdown extends React.Component{
 						filter={item => item}
 	          placeholder='Search...'
 						openOnFocus={true}
+						searchText={
+							this.props[this.props.alias].initValueOfInput !== undefined ? this.props[this.props.alias].initValueOfInput : ''
+						}
 						menuStyle = {{maxHeight: '300px'}}
 						dataSource={this.list}
 						dataSourceConfig={{ text: 'text', value: 'text' }}
@@ -73,7 +80,7 @@ export default appConnect;
 // import $ from 'jquery';
 //
 // import { setFilter } from '../logic/logic.jsx';
-// import { stateSelectorListAlias, stateSelectorPartOfListAlias } from '../redux/ducks/dropDownContact/selectors.jsx';
+// import { stateSelectorListAlias } from '../redux/ducks/dropDownContact/selectors.jsx';
 // import { DropdownList } from 'react-widgets';
 //
 // import './App.css';

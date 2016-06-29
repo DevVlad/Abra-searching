@@ -1,8 +1,6 @@
 import { createSelector } from 'reselect';
 import Immutable from 'immutable';
 
-export const selectorAll = (state) => state.toJS();
-
 const getAliasF = (state, alias) => state.getIn(['filter', alias]);
 
 // HINTS & FILTER & LOADING
@@ -13,7 +11,8 @@ export const stateSelectorListAlias = (state, alias) => {
 		hint: getHintAlias(state, alias),
 		loading: getLoadingAlias(state, alias),
 		nextRequestPossible: getNextRequestInfo(state, alias)[0],
-		lastPaging: getNextRequestInfo(state, alias)[1]
+		lastPaging: getNextRequestInfo(state, alias)[1],
+		initValueOfInput: getInitValueOfInput(state, alias)
 	};
 	return obj;
 };
@@ -47,6 +46,14 @@ export const getLoadingAlias = createSelector(getAliasF, x => {
 		return false;
 	} else {
 		return x.get('loading');
+	}
+});
+
+export const getInitValueOfInput = createSelector(getAliasF, x => {
+	if (x === undefined) {
+		return '';
+	} else {
+		return x.get('valueOfInput');
 	}
 });
 
