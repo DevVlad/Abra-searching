@@ -7,6 +7,7 @@ import * as actionsP from '../redux/ducks/progress/progress.jsx';
 
 export function setFilter(filter, alias, paging, resultsToDisplay) {
 	return dispatch => {
+		dispatch(actionsDDC.setEntityToText(filter, alias));
 		if (paging === 0) {
 			dispatch(actionsDDC.setHint([], alias, paging, false));
 			dispatch(actionsDDC.init(filter, alias));
@@ -87,15 +88,18 @@ function setLimit(list, alias, boolLast, toDisplayLimit, paging, nextLoading) {
 	}
 };
 
-export function setInitValue(id, alias) {
+export function setDropdownInputValue(id, alias) {
 	return dispatch => {
-		actionsDDC.serviceRequest('', 0, id).then(data => dispatch(entityToText(data.winstrom.kontakt, alias)));
+		if (typeof id === 'number') actionsDDC.serviceRequest('', 0, id).then(data => dispatch(entityToText(data.winstrom.kontakt, alias)));
+		if (typeof id === 'string') dispatch(actionsDDC.setEntityToText(id, alias));
 	};
 };
 
 function entityToText(object, alias) {
 	return dispatch => {
 		const textToDisplay = [object[0].prijmeni, object[0].jmeno].join(' ');
-		dispatch(actionsDDC.setValueOfInit(textToDisplay, alias));
+		console.log('blabla ', textToDisplay, alias)
+		dispatch(actionsDDC.setEntityToText(textToDisplay, alias));
+
 	};
 };

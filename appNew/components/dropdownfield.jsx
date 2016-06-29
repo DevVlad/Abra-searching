@@ -5,8 +5,7 @@ import AutoComplete from 'material-ui/AutoComplete';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-import { setFilter, setDropdownInputValue } from '../logic/logic.jsx';
-import { stateSelectorListAlias } from '../redux/ducks/dropDownContact/selectors.jsx';
+import * as DropdownField from '../redux/ducks/dropdownfield.jsx';
 
 import './App.css';
 
@@ -17,28 +16,32 @@ class ContactDropdown extends React.Component{
 	};
 
 	handleInput(e) {
-		this.props.dispatch(setFilter(e, this.props.alias, 0, 10));
+		this.props.dispatch(DropdownField.setList(e, this.props.alias, 0, 10));
 	};
 
 	handleOnSelect(e) {
 		console.log('onSelect',e)
+		this.props.dispatch(DropdownField.setValueOfEntityToText(e.text, this.props.alias));
+		this.props.dispatch(DropdownField.setIdOfSelectedItem(e.id, this.props.alias));
 	};
 
 	render() {
-		if (this.props.entityId !== undefined && this.props.filter !== undefined) {
-			this.props.dispatch(setDropdownInputValue(this.props.entityId, this.props.alias));
-		};
-    this.list = [];
+		this.list = [{}];
 		if (this.props.hint !== undefined) {
 			this.list = this.props.hint.toJS().map(item => {
 	      return {
 	        'text': [item.prijmeni, item.jmeno].join(' '),
-	        'value': item.id,
+	        'id': item.id,
 	        'body': {...item}
 	      };
 	    });
 		};
-
+		if (this.props.entityId !== undefined && this.props.entityToText === '') this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
+		if (typeof this.props.entityToText === 'object') {
+			this.toDisplay = [this.props.entityToText.jmeno, this.props.entityToText.prijmeni].join(' ');
+		} else {
+			this.toDisplay = this.props.entityToText
+		};
 
 		return (
       <div id="ContactDropdown">
@@ -49,7 +52,7 @@ class ContactDropdown extends React.Component{
 						filter={ item => item }
 	          placeholder='Search...'
 						openOnFocus={ true }
-						searchText={ this.props.entityToText !== undefined ? this.props.entityToText : '' }
+						searchText={this.toDisplay}
 						menuStyle = { { maxHeight: '300px' } }
 						dataSource={ this.list }
 						dataSourceConfig={ {  text: 'text', value: 'text'  } }
@@ -64,8 +67,7 @@ class ContactDropdown extends React.Component{
 };
 
 function mapStateToProps(state, props) {
-	console.log(stateSelectorListAlias(state, props.alias),'difjsdfjsdjspo',props.alias)
-	return stateSelectorListAlias(state, props.alias);
+	return DropdownField.getOwnState(state, props.alias);
 };
 
 const appConnect = connect(mapStateToProps)(ContactDropdown);

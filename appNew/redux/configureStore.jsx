@@ -2,15 +2,13 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import Immutable from 'immutable';
 
-import * as dropDownContact from './ducks/dropDownContact/dropDownContact.jsx';
-import * as progress from './ducks/progress/progress.jsx';
+import * as DropdownField from './ducks/dropdownfield.jsx';
 import combineImmutableReducers from './combineImmutableReducers.jsx';
 
 
 const reducer = combineImmutableReducers(
   {
-    filter: dropDownContact.reducer,
-    progress: progress.reducer
+    filter: DropdownField.reducer
   }
 );
 

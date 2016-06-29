@@ -9,7 +9,7 @@ export const INIT = 'INIT';
 export const SET_LOADING = 'SET_LOADING';
 export const ADD_HINT = 'ADD_HINT';
 export const SET_HINT = 'SET_HINT';
-export const SET_VALUE_OF_INIT = 'SET_VALUE_OF_INIT';
+export const SET_ENTITY_TO_TEXT = 'SET_ENTITY_TO_TEXT';
 
 export function init(filter, alias) {
 	return {
@@ -47,9 +47,9 @@ export function setHint(list, alias, paging, bool) {
 	};
 };
 
-export function setValueOfInit(text, alias) {
+export function setEntityToText(text, alias) {
 	return {
-		type: 'SET_VALUE_OF_INIT',
+		type: 'SET_ENTITY_TO_TEXT',
 		text,
 		alias
 	};
@@ -80,8 +80,8 @@ export function reducer (state = initialStateFilter, action) {
     case SET_LOADING:
       return state.setIn([action.alias, 'loading'], action.loading);
 
-		case SET_VALUE_OF_INIT:
-			return state.setIn([action.alias, 'valueOfInput'], action.text);
+		case SET_ENTITY_TO_TEXT:
+			return state.setIn([action.alias, 'entityToText'], action.text);
 
     default:
       return state;

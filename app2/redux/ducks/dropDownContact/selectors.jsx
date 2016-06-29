@@ -11,7 +11,7 @@ export const stateSelectorListAlias = (state, alias) => {
 		loading: getLoadingAlias(state, alias),
 		nextRequestPossible: getNextRequestInfo(state, alias)[0],
 		lastPaging: getNextRequestInfo(state, alias)[1],
-		initValueOfInput: getInitValueOfInput(state, alias)
+		entityToText: getEntityToText(state, alias)
 	};
 	return obj;
 };
@@ -48,11 +48,11 @@ export const getLoadingAlias = createSelector(getAliasF, x => {
 	}
 });
 
-export const getInitValueOfInput = createSelector(getAliasF, x => {
+export const getEntityToText = createSelector(getAliasF, x => {
 	if (x === undefined) {
 		return '';
 	} else {
-		return x.get('valueOfInput');
+		return x.get('entityToText');
 	}
 });
 
