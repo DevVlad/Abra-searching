@@ -25,10 +25,11 @@ class ContactDropdown extends React.Component{
 	};
 
 	render() {
-		if (this.props.entityId !== undefined && this.props[this.props.alias].filter !== undefined) this.props.dispatch(setInitValue(this.props.entityId, this.props.alias))
+		console.log('sdofsdpjfspf', this.props)
+		if (this.props.entityId !== undefined && this.props.filter !== undefined) this.props.dispatch(setInitValue(this.props.entityId, this.props.alias))
     this.list = [];
-		if (this.props[this.props.alias].hint !== undefined) {
-			this.list = this.props[this.props.alias].hint.toJS().map(item => {
+		if (this.props.hint !== undefined) {
+			this.list = this.props.hint.toJS().map(item => {
 	      return {
 	        'text': [item.prijmeni, item.jmeno].join(' '),
 	        'value': item.id,
@@ -48,7 +49,7 @@ class ContactDropdown extends React.Component{
 	          placeholder='Search...'
 						openOnFocus={true}
 						searchText={
-							this.props[this.props.alias].initValueOfInput !== undefined ? this.props[this.props.alias].initValueOfInput : ''
+							this.props.initValueOfInput !== undefined ? this.props.initValueOfInput : ''
 						}
 						menuStyle = {{maxHeight: '300px'}}
 						dataSource={this.list}

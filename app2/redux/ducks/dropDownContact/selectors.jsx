@@ -5,8 +5,7 @@ const getAliasF = (state, alias) => state.getIn(['filter', alias]);
 
 // HINTS & FILTER & LOADING
 export const stateSelectorListAlias = (state, alias) => {
-	let obj = {};
-	obj[alias] = {
+	let obj = {
 		filter: getFilterAlias(state, alias),
 		hint: getHintAlias(state, alias),
 		loading: getLoadingAlias(state, alias),

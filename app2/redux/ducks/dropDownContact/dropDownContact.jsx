@@ -9,7 +9,6 @@ export const INIT = 'INIT';
 export const SET_LOADING = 'SET_LOADING';
 export const ADD_HINT = 'ADD_HINT';
 export const SET_HINT = 'SET_HINT';
-export const SET_INIT_VALUE = 'SET_INIT_VALUE';
 export const SET_VALUE_OF_INIT = 'SET_VALUE_OF_INIT';
 
 export function init(filter, alias) {
