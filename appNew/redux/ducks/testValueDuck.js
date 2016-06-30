@@ -3,7 +3,7 @@
  */
 import Immutable from 'immutable';
 
-const SET_TEST_VALUE = 'SET_TEST_VALUE';
+const SET_TEST_ID = 'SET_TEST_ID';
 
 const initialState = Immutable.fromJS({});
 
@@ -11,22 +11,22 @@ const testValueDuck = {
 
 	reducer(state = initialState, action) {
 		switch (action.type) {
-			case SET_TEST_VALUE:
+			case SET_TEST_ID:
 				return state.set(action.name, action.value);
 			default:
 				return state;
 		}
 	},
 
-	setTestValue(name, value) {
+	setTestId(name, value) {
 		return {
-			type: SET_TEST_VALUE,
+			type: SET_TEST_ID,
 			name,
 			value
 		};
 	},
 
-	getTestValue(state, name) {
+	getTestState(state, name) {
 		return state.get(name);
 	}
 

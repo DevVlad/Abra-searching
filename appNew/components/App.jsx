@@ -6,7 +6,7 @@ import testValueDuck from '../redux/ducks/testValueDuck.js';
 
 @connect(state => (
 	{
-	testId: testValueDuck.getTestValue(state, 'testId')
+	testId: testValueDuck.getTestState(state, 'testId')
 	}
 ))
 class App extends React.Component{
@@ -15,7 +15,7 @@ class App extends React.Component{
 	};
 
 	changeTestValue(id) {
-		this.props.dispatch(testValueDuck.setTestValue('testId', id));
+		this.props.dispatch(testValueDuck.setTestId('testId', id));
 	};
 
 	render(){

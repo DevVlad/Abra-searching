@@ -5,7 +5,6 @@ import AutoComplete from 'material-ui/AutoComplete';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-// import * as DropdownField from '../redux/ducks/dropdownfield.jsx';
 import DropdownField from '../redux/ducks/DropdownField.jsx';
 
 import './App.css';
@@ -27,6 +26,10 @@ class ContactDropdown extends React.Component{
 		if (this.props.onChange) {
 			this.props.onChange(e.id);
 		}
+	};
+
+	handleOnBlur() {
+		if(this.props.hint !== undefined) this.props.dispatch(DropdownField.setHint(undefined, this.props.alias, undefined, undefined));
 	};
 
 	render() {
@@ -65,6 +68,7 @@ class ContactDropdown extends React.Component{
 						dataSourceConfig={ {  text: 'text', value: 'text'  } }
 						onUpdateInput={ this.handleInput.bind(this) }
 						onNewRequest={ this.handleOnSelect.bind(this) }
+						onBlur={ this.handleOnBlur.bind(this) }
 	        />
 				</MuiThemeProvider>
       </div>
