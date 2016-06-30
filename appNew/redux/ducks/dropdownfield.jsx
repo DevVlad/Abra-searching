@@ -3,106 +3,202 @@ import superagent from 'superagent';
 import _ from 'lodash';
 import { createSelector } from 'reselect';
 
-/*
-* ACTIONS
-*/
-
 const SET_LOADING = 'SET_LOADING';
 const ADD_HINT = 'ADD_HINT';
 const SET_HINT = 'SET_HINT';
 const SET_ENTITY_TO_TEXT = 'SET_ENTITY_TO_TEXT';
 const SET_CONDITION = 'SET_CONDITION';
+const SET_FILTER = 'SET_FILTER';
 
-export function setLoading(loading, alias) {
-	return {
-		type: SET_LOADING,
-		loading,
-		alias
-	};
+const getAliasState = (state, alias) => state.getIn(['filter', alias]);
+
+const DropdownField = {
+  /*
+   ACTIONS
+  */
+  	setLoading(loading, alias) {
+  		return {
+  			type: SET_LOADING,
+  			loading,
+  			alias
+  		};
+  	},
+
+  	addHint(list, alias, paging, bool) {
+  		return {
+  			type: ADD_HINT,
+  			hint: list,
+  			alias,
+  			paging,
+  			bool
+  		};
+  	},
+
+  	setHint(list, alias, paging, bool) {
+  		return {
+  			type: SET_HINT,
+  			list,
+  			alias,
+  			paging,
+  			bool
+  		};
+  	},
+
+  	setValueOfEntityToText(id, alias) {
+  		return dispatch => {
+  				serviceRequestOnInsertedId(id).then(data => dispatch(DropdownField.setEntityToText(data.winstrom.kontakt[0], alias)));
+  			};
+  	},
+
+  	setEntityToText(object, alias) {
+  		return {
+  			type: SET_ENTITY_TO_TEXT,
+  			alias,
+  			object
+  		};
+  	},
+
+  	setCondition(text, alias) {
+  		let condition = {
+  			type: 'comp',
+  			operator: 'like similar',
+  			left: 'jmeno',
+  			right: text
+  		};
+  		return {
+  			type: SET_CONDITION,
+  			alias,
+  			condition
+  		};
+  	},
+
+    setFilter(filter, alias) {
+      return {
+        type: SET_FILTER,
+        alias,
+        filter
+      };
+    },
+
+    setList(filter, alias, paging, resultsToDisplay) {
+  		return dispatch => {
+        dispatch(DropdownField.setFilter(filter, alias));
+  			if (paging === 0) {
+  				dispatch(DropdownField.setHint([], alias, 0, false));
+  				dispatch(DropdownField.setLoading(false, alias));
+  			};
+  			if (filter !== '') {
+  				// dispatch(actionsP.setProgress(true));
+  				dispatch(DropdownField.setLoading(true, alias));
+  				serviceRequestOnChangeInput(filter, paging).then(data => dispatch(processRequest(data.winstrom, filter, paging, alias, resultsToDisplay)));
+  			};
+  			if (filter === '') {
+  				dispatch(DropdownField.setHint([], alias, paging, true));
+  				// dispatch(actionsP.setProgress(false));
+  			};
+  		};
+  	},
+
+    /*
+    * REDUCER
+    */
+
+    reducer(state = Immutable.fromJS({}), action) {
+      switch (action.type) {
+
+        case SET_HINT:
+          return state.setIn([action.alias, 'hint'], Immutable.fromJS(action.list))
+                      .setIn([action.alias, 'lastPaging'], action.paging)
+                      .setIn([action.alias, 'nextRequestPossible'], action.bool);
+
+        case ADD_HINT:
+          return state.updateIn([action.alias, 'hint'], list => list.concat(Immutable.fromJS(action.hint)))
+                      .setIn([action.alias, 'lastPaging'], action.paging)
+                      .setIn([action.alias, 'nextRequestPossible'], action.bool);
+
+        case SET_LOADING:
+          return state.setIn([action.alias, 'loading'], action.loading);
+
+        case SET_ENTITY_TO_TEXT:
+          return state.setIn([action.alias, 'entityToText'], action.object)
+                      .setIn([action.alias, 'nextRequestPossible'], false);
+
+        case SET_CONDITION:
+          return state.setIn([action.alias, 'filterToCondition'], Immutable.fromJS(action.condition));
+
+        case SET_FILTER:
+          return state.setIn([action.alias, 'filter'], action.filter);
+
+        default:
+          return state;
+      }
+    },
+
+    /*
+  	*	SELECTORS
+  	*/
+
+  	getOwnState(state, alias) {
+  		let obj = {
+  			entityToText: getEntityToText(state, alias),
+  			hint: getHint(state, alias)
+  		};
+  		return obj;
+  	}
 };
 
-export function addHint(list, alias, paging, bool) {
-	return {
-		type: 'ADD_HINT',
-		hint: list,
-		alias,
-		paging,
-		bool
+const getEntityToText = createSelector(getAliasState, x => {
+	if (x === undefined) {
+		return undefined;
+	} else {
+		return x.get('entityToText');
 	};
-};
+});
 
-export function setHint(list, alias, paging, bool) {
-	console.log('sethint', list)
-	return {
-		type: 'SET_HINT',
-		list,
-		alias,
-		paging,
-		bool
+const getHint = createSelector(getAliasState, x => {
+	if (x === undefined) {
+		return undefined;
+	} else {
+		return x.get('hint');
 	};
-};
+});
 
-export function setValueOfEntityToText(obj, alias) {
-	return dispatch => {
-		let result = '';
-		if (typeof obj === 'number') {
-			serviceRequestOnInsertedId(obj).then(data => dispatch(setEntityToText(data.winstrom.kontakt[0], alias)));
-		};
-		if (typeof obj === 'string') {
-			dispatch(setEntityToText(obj, alias));
-		};
+const getLoading = createSelector(getAliasState, x => {
+	if (x === undefined) {
+		return false;
+	} else {
+		return x.get('loading');
 	};
-};
+});
 
-export function setEntityToText(object, alias) {
-	return {
-		type: 'SET_ENTITY_TO_TEXT',
-		alias,
-		object
+const getEntityId = createSelector(getAliasState, x => {
+	if (x === undefined) {
+		return undefined;
+	} else {
+		return x.get('entityId');
 	};
-};
+});
 
-export function setCondition(text, alias) {
-	let condition = {
-		type: 'comp',
-		operator: 'like similar',
-		left: 'jmeno',
-		right: text
+const getFilter = createSelector(getAliasState, x => {
+	if (x === undefined) {
+		return undefined;
+	} else {
+		return x.get('filter');
 	};
-	return {
-		type: 'SET_CONDITION',
-		alias,
-		condition
-	};
-};
+});
 
-export function setList(filter, alias, paging, resultsToDisplay) {
-	return dispatch => {
-		dispatch(setEntityToText(filter, alias));
-		if (paging === 0) {
-			dispatch(setHint([], alias, 0, false));
-			dispatch(setLoading(false, alias));
-		};
-		if (filter !== '') {
-			// dispatch(actionsP.setProgress(true));
-			dispatch(setLoading(true, alias));
-			serviceRequestOnChangeInput(filter, paging).then(data => dispatch(processRequest(data.winstrom, filter, paging, alias, resultsToDisplay)));
-		};
-		if (filter === '') {
-			dispatch(setHint([], alias, paging, true));
-			// dispatch(actionsP.setProgress(false));
-		};
-	};
-};
+/*
+logic
+*/
 
 function processRequest(data, filter, paging, alias, resultsToDisplay) {
 	return (dispatch, getState) => {
-		if (getEntityToText(getState(), alias) === filter) {
+		if (getFilter(getState(), alias) === filter) {
 			const totalCount = parseInt(data['@rowCount']);
 			if (totalCount === 0) {
 				console.log('No data found!');
-				dispatch(setLoading(false, alias));
-				dispatch(setHint([], alias, paging, totalCount > paging+ data.kontakt.length));
+				dispatch(DropdownField.setHint([], alias, paging, totalCount > paging+ data.kontakt.length));
+        dispatch(DropdownField.setLoading(false, alias));
 				// dispatch(actionsP.setProgress(false));
 			} else {
 					if (paging + 20 > totalCount)  {
@@ -138,54 +234,20 @@ function setLimit(list, alias, boolLast, toDisplayLimit, paging, nextLoading) {
 			pom = list;
 		}
 		if (loading) {
-			dispatch(setLoading(false, alias));
-			if (paging === 0) dispatch(setHint(pom, alias, paging, nextLoading));
+			dispatch(DropdownField.setLoading(false, alias));
+			if (paging === 0) dispatch(DropdownField.setHint(pom, alias, paging, nextLoading));
 		} else if(pom.length > 0) {
-			dispatch(addHint(pom, alias, paging, nextLoading));
+			dispatch(DropdownField.addHint(pom, alias, paging, nextLoading));
 		}
 		// if (getHint(getState(),alias).size === toDisplayLimit || boolLast) dispatch(setProgress(false));
 	}
 };
 
 /*
-* REDUCER
-*/
-
-const initialStateFilter = Immutable.fromJS({});
-
-export function reducer (state = initialStateFilter, action) {
-  switch (action.type) {
-
-    case SET_HINT:
-      return state.setIn([action.alias, 'hint'], Immutable.fromJS(action.list))
-									.setIn([action.alias, 'lastPaging'], action.paging)
-									.setIn([action.alias, 'nextRequestPossible'], action.bool);
-
-    case ADD_HINT:
-      return state.updateIn([action.alias, 'hint'], list => list.concat(Immutable.fromJS(action.hint)))
-									.setIn([action.alias, 'lastPaging'], action.paging)
-									.setIn([action.alias, 'nextRequestPossible'], action.bool);
-
-    case SET_LOADING:
-      return state.setIn([action.alias, 'loading'], action.loading);
-
-		case SET_ENTITY_TO_TEXT:
-			return state.setIn([action.alias, 'entityToText'], action.object)
-									.setIn([action.alias, 'nextRequestPossible'], false);
-
-		case SET_CONDITION:
-			return state.setIn([action.alias, 'filterToCondition'], Immutable.fromJS(action.condition))
-
-    default:
-      return state;
-  }
-};
-
-/*
 *	SERVICE
 */
 
-export function serviceRequestOnChangeInput(filter, paging) {
+function serviceRequestOnChangeInput(filter, paging) {
 	let query = {
 		'add-row-count': true,
 		'start': paging,
@@ -208,7 +270,7 @@ export function serviceRequestOnChangeInput(filter, paging) {
 	});
 };
 
-export function serviceRequestOnInsertedId(initId) {
+function serviceRequestOnInsertedId(initId) {
 	const query = {
 		'add-row-count': true,
 		'start': 0,
@@ -229,46 +291,4 @@ export function serviceRequestOnInsertedId(initId) {
 	});
 };
 
-/*
-*	SELECTORS
-*/
-const getAliasState = (state, alias) => state.getIn(['filter', alias]);
-export const getOwnState = (state, alias) => {
-	let obj = {
-		entityToText: getEntityToText(state, alias),
-		hint: getHint(state, alias)
-	};
-	return obj;
-};
-
-export const getEntityToText = createSelector(getAliasState, x => {
-	if (x === undefined) {
-		return '';
-	} else {
-		return x.get('entityToText');
-	};
-});
-
-export const getHint = createSelector(getAliasState, x => {
-	if (x === undefined) {
-		return Immutable.fromJS([]);
-	} else {
-		return x.get('hint');
-	};
-});
-
-export const getLoading = createSelector(getAliasState, x => {
-	if (x === undefined) {
-		return false;
-	} else {
-		return x.get('loading');
-	};
-});
-
-export const getEntityId = createSelector(getAliasState, x => {
-	if (x === undefined) {
-		return false;
-	} else {
-		return x.get('entityId');
-	};
-});
+export default DropdownField;
