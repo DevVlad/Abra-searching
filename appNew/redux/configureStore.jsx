@@ -11,7 +11,7 @@ import combineImmutableReducers from './combineImmutableReducers.jsx';
 const reducer = combineImmutableReducers(
   {
     filter: DropdownField.reducer,
-	testValue: testValue.reducer
+	test: testValue.reducer
   }
 );
 
@@ -20,9 +20,9 @@ const store = createStore(reducer, compose(
   window.devToolsExtension ? window.devToolsExtension() : f => f
 ));
 
-store.subscribe(() => {
-	console.log('--------------------------------------------------------------');
-	console.log(store.getState().toJS());
-});
+// store.subscribe(() => {
+// 	console.log('--------------------------------------------------------------');
+// 	console.log(store.getState().toJS());
+// });
 
 export default store;

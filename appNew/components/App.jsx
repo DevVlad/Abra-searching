@@ -6,7 +6,7 @@ import testValueDuck from '../redux/ducks/testValueDuck.js';
 
 @connect(state => (
 	{
-	testId: testValueDuck.getTestState(state, 'testId')
+	testId: testValueDuck.getTestState(state)
 	}
 ))
 class App extends React.Component{
@@ -19,6 +19,7 @@ class App extends React.Component{
 	};
 
 	render(){
+		console.log('app component', this.props)
 		return (
 			<div className="mainDiv">
 				<DropdownField
@@ -26,6 +27,13 @@ class App extends React.Component{
 					entityName="kontakt"
 					onChange={this.changeTestValue.bind(this)}
     			entityId={this.props.testId}
+					entityToText={object => [object.jmeno, object.prijmeni].join(' ')}
+				/>
+				<DropdownField
+					alias='b'
+					entityName="kontakt"
+					onChange={this.changeTestValue.bind(this)}
+					entityId={this.props.testId}
 					entityToText={object => [object.jmeno, object.prijmeni].join(' ')}
 				/>
 			</div>

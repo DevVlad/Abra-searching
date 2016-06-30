@@ -21,7 +21,7 @@ class ContactDropdown extends React.Component{
 	};
 
 	handleOnSelect(e) {
-		this.props.dispatch(DropdownField.setValueOfEntityToText(e.id, this.props.alias));
+		if(this.props.hint !== undefined) this.props.dispatch(DropdownField.setHint(undefined, this.props.alias, undefined, undefined));
 		// this.props.dispatch(DropdownField.setCondition(e.text, this.props.alias))
 		if (this.props.onChange) {
 			this.props.onChange(e.id);
@@ -48,7 +48,11 @@ class ContactDropdown extends React.Component{
 			let pom = this.props.entityToText;
 			if (pom !== undefined) {
 				text = [pom.prijmeni, pom.jmeno].join(' ');
+				if ((this.props.hint === undefined && this.props.entityId !== undefined && this.props.entityId !== pom.id) ) {
+					this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
+				}
 			} else {
+				console.log(this.props.alias,'kokooooot')
 				this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
 			}
 		}
