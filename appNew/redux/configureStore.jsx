@@ -1,19 +1,23 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import Immutable from 'immutable';
+import invariant from 'redux-immutable-state-invariant';
 
-import * as DropdownField from './ducks/dropdownfield.jsx';
+// import * as DropdownField from './ducks/dropdownfield.jsx';
+import DropdownField from './ducks/DropdownField.jsx';
+import testValue from './ducks/testValueDuck.js';
 import combineImmutableReducers from './combineImmutableReducers.jsx';
 
 
 const reducer = combineImmutableReducers(
   {
-    filter: DropdownField.reducer
+    filter: DropdownField.reducer,
+	testValue: testValue.reducer
   }
 );
 
 const store = createStore(reducer, compose(
-	applyMiddleware(thunk),
+	applyMiddleware(invariant(), thunk),
   window.devToolsExtension ? window.devToolsExtension() : f => f
 ));
 
