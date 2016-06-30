@@ -48,7 +48,7 @@ class ContactDropdown extends React.Component{
 			let pom = this.props.entityToText;
 			if (pom !== undefined) {
 				text = [pom.prijmeni, pom.jmeno].join(' ');
-				if ((this.props.hint === undefined && this.props.entityId !== undefined && this.props.entityId !== pom.id) ) {
+				if (this.props.entityId !== pom.id) {
 					this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
 				}
 			} else {
