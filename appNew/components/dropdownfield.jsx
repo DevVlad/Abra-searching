@@ -17,6 +17,7 @@ class ContactDropdown extends React.Component{
 
 	handleInput(e) {
 		this.props.dispatch(DropdownField.setList(e, this.props.alias, 0, 10));
+		this.props.filterToCondition(e);
 		// this.props.dispatch(DropdownField.setCondition(e, this.props.alias))
 	};
 
@@ -32,8 +33,12 @@ class ContactDropdown extends React.Component{
 		if(this.props.hint !== undefined) this.props.dispatch(DropdownField.setHint(undefined, this.props.alias, undefined, undefined));
 	};
 
+	//handle press ESC
+	handleOnKeyDown(e) {
+		if (e.keyCode === 27) this.props.dispatch(DropdownField.setHint(undefined, this.props.alias, undefined, undefined));
+	};
+
 	render() {
-		console.log('props of dropdownfield', this.props);
 		let list = [];
 		if (this.props.hint !== undefined) {
 			list = this.props.hint.toJS().map(item => {
@@ -52,7 +57,6 @@ class ContactDropdown extends React.Component{
 					this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
 				}
 			} else {
-				console.log(this.props.alias,'kokooooot')
 				this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
 			}
 		}
@@ -73,6 +77,7 @@ class ContactDropdown extends React.Component{
 						onUpdateInput={ this.handleInput.bind(this) }
 						onNewRequest={ this.handleOnSelect.bind(this) }
 						onBlur={ this.handleOnBlur.bind(this) }
+						onKeyDown={ this.handleOnKeyDown.bind(this) }
 	        />
 				</MuiThemeProvider>
       </div>

@@ -7,7 +7,7 @@ const SET_LOADING = 'SET_LOADING';
 const ADD_HINT = 'ADD_HINT';
 const SET_HINT = 'SET_HINT';
 const SET_ENTITY_TO_TEXT = 'SET_ENTITY_TO_TEXT';
-const SET_CONDITION = 'SET_CONDITION';
+// const SET_CONDITION = 'SET_CONDITION';
 const SET_FILTER = 'SET_FILTER';
 
 const getAliasState = (state, alias) => state.getIn(['filter', alias]);
@@ -58,19 +58,19 @@ const DropdownField = {
   		};
   	},
 
-  	setCondition(text, alias) {
-  		let condition = {
-  			type: 'comp',
-  			operator: 'like similar',
-  			left: 'jmeno',
-  			right: text
-  		};
-  		return {
-  			type: SET_CONDITION,
-  			alias,
-  			condition
-  		};
-  	},
+  	// setCondition(text, alias) {
+  	// 	let condition = {
+  	// 		type: 'comp',
+  	// 		operator: 'like similar',
+  	// 		left: 'jmeno',
+  	// 		right: text
+  	// 	};
+  	// 	return {
+  	// 		type: SET_CONDITION,
+  	// 		alias,
+  	// 		condition
+  	// 	};
+  	// },
 
     setFilter(filter, alias) {
       return {
@@ -123,8 +123,8 @@ const DropdownField = {
           return state.setIn([action.alias, 'entityToText'], action.object)
                       .setIn([action.alias, 'nextRequestPossible'], false);
 
-        case SET_CONDITION:
-          return state.setIn([action.alias, 'filterToCondition'], Immutable.fromJS(action.condition));
+        // case SET_CONDITION:
+        //   return state.setIn([action.alias, 'filterToCondition'], Immutable.fromJS(action.condition));
 
         case SET_FILTER:
           return state.setIn([action.alias, 'filter'], action.filter);

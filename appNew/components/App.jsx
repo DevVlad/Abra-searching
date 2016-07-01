@@ -19,22 +19,23 @@ class App extends React.Component{
 	};
 
 	render(){
-		console.log('app component', this.props)
 		return (
 			<div className="mainDiv">
 				<DropdownField
 					alias='a'
 					entityName="kontakt"
-					onChange={this.changeTestValue.bind(this)}
-    			entityId={this.props.testId}
-					entityToText={object => [object.jmeno, object.prijmeni].join(' ')}
+					onChange={ this.changeTestValue.bind(this) }
+    			entityId={ this.props.testId}
+					entityToText={ object => [object.jmeno, object.prijmeni].join(' ') }
+					filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 				/>
 				<DropdownField
 					alias='b'
 					entityName="kontakt"
-					onChange={this.changeTestValue.bind(this)}
-					entityId={this.props.testId}
-					entityToText={object => [object.jmeno, object.prijmeni].join(' ')}
+					onChange={ this.changeTestValue.bind(this) }
+					entityId={ this.props.testId }
+					entityToText={ object => [object.jmeno, object.prijmeni].join(' ') }
+					filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 				/>
 			</div>
 		)
