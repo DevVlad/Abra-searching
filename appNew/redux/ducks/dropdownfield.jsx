@@ -33,7 +33,7 @@ const DropdownField = {
   			bool
   		};
   	},
-	
+
   	setHint(list, alias, paging, bool) {
   		return {
   			type: SET_HINT,
@@ -121,7 +121,7 @@ const DropdownField = {
 
         case SET_ENTITY_TO_TEXT:
           return state.setIn([action.alias, 'entityToText'], action.object)
-                      .setIn([action.alias, 'nextRequestPossible'], false);
+                      .setIn([action.alias, 'nextRequestPossible'], undefined);
 
         // case SET_CONDITION:
         //   return state.setIn([action.alias, 'filterToCondition'], Immutable.fromJS(action.condition));
