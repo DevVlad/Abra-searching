@@ -33,7 +33,7 @@ const DropdownField = {
   			bool
   		};
   	},
-
+	
   	setHint(list, alias, paging, bool) {
   		return {
   			type: SET_HINT,
@@ -140,6 +140,7 @@ const DropdownField = {
 
   	getOwnState(state, alias) {
   		let obj = {
+		    filter: getFilter(state, alias),
   			entityToText: getEntityToText(state, alias),
   			hint: getHint(state, alias)
   		};

@@ -3,7 +3,7 @@ import thunk from 'redux-thunk';
 import Immutable from 'immutable';
 import invariant from 'redux-immutable-state-invariant';
 
-import DropdownField from './ducks/DropdownField.jsx';
+import DropdownField from './ducks/dropdownfield.jsx';
 import testValue from './ducks/testValueDuck.js';
 import combineImmutableReducers from './combineImmutableReducers.jsx';
 
