@@ -7,9 +7,9 @@ const SET_LOADING = 'SET_LOADING';
 const ADD_HINT = 'ADD_HINT';
 const SET_HINT = 'SET_HINT';
 const SET_ENTITY_TO_TEXT = 'SET_ENTITY_TO_TEXT';
-// const SET_CONDITION = 'SET_CONDITION';
+const SET_FILTER_MODE = 'SET_FILTER_MODE';
 const SET_FILTER = 'SET_FILTER';
-const DELETE_ALL = 'DELETE_ALL';
+const DELETE = 'DELETE';
 
 const getAliasState = (state, alias) => state.getIn(['filter', alias]);
 
@@ -59,20 +59,6 @@ const DropdownField = {
   		};
   	},
 
-  	// setCondition(text, alias) {
-  	// 	let condition = {
-  	// 		type: 'comp',
-  	// 		operator: 'like similar',
-  	// 		left: 'jmeno',
-  	// 		right: text
-  	// 	};
-  	// 	return {
-  	// 		type: SET_CONDITION,
-  	// 		alias,
-  	// 		condition
-  	// 	};
-  	// },
-
     setFilter(filter, alias) {
       return {
         type: SET_FILTER,
@@ -81,10 +67,19 @@ const DropdownField = {
       };
     },
 
-    setDeleteAll(alias) {
+    setDelete(alias, subjects) {
       return {
-        type: DELETE_ALL,
-        alias
+        type: DELETE,
+        alias,
+        subjects
+      };
+    },
+
+    setFilterMode(alias, bool) {
+      return {
+        type: SET_FILTER_MODE,
+        alias,
+        bool
       };
     },
 
@@ -131,16 +126,18 @@ const DropdownField = {
           return state.setIn([action.alias, 'entityToText'], action.object)
                       .setIn([action.alias, 'nextRequestPossible'], undefined);
 
-        // case SET_CONDITION:
-        //   return state.setIn([action.alias, 'filterToCondition'], Immutable.fromJS(action.condition));
-
         case SET_FILTER:
           return state.setIn([action.alias, 'filter'], action.filter);
 
-        case DELETE_ALL:
-          return state.setIn([action.alias, 'entityId'], undefined)
-                      .setIn([action.alias, 'entityToText'], undefined)
-                      .setIn([action.alias, 'filter'], undefined);
+        case DELETE:
+          let obj = state;
+          action.subjects.forEach(subject => {
+            obj = obj.setIn([action.alias, subject], undefined);
+          });
+          return obj;
+
+        case SET_FILTER_MODE:
+          return state.setIn([action.alias, 'filterMode'], action.bool);
 
         default:
           return state;
@@ -155,7 +152,9 @@ const DropdownField = {
   		let obj = {
 		    filter: getFilter(state, alias),
   			entityToText: getEntityToText(state, alias),
-  			hint: getHint(state, alias)
+  			hint: getHint(state, alias),
+        filterMode: getFilterMode(state, alias),
+        loading: getLoading(state, alias)
   		};
   		return obj;
   	}
@@ -194,11 +193,19 @@ const getEntityId = createSelector(getAliasState, x => {
 });
 
 const getFilter = createSelector(getAliasState, x => {
-	if (x === undefined) {
-		return undefined;
-	} else {
-		return x.get('filter');
-	};
+  if (x === undefined) {
+    return undefined;
+  } else {
+    return x.get('filter');
+  };
+});
+
+const getFilterMode = createSelector(getAliasState, x => {
+  if (x === undefined) {
+    return undefined;
+  } else {
+    return x.get('filterMode');
+  };
 });
 
 /*

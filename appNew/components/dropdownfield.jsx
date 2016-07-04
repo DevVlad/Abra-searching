@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-//import $ from 'jquery';
 import AutoComplete from 'material-ui/AutoComplete';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import SvgIcon from 'material-ui/SvgIcon';
 import { red500 } from 'material-ui/styles/colors';
 import DropdownField from '../redux/ducks/dropdownfield.jsx';
+import Loading from './loading.jsx';
 
 import './App.css';
 
@@ -20,6 +20,7 @@ const ClearIcon = (props) => (
 class ContactDropdown extends React.Component{
 	constructor(props){
 		super(props);
+		this.InMenu = [];
 	};
 
 	handleInput(e) {
@@ -27,49 +28,73 @@ class ContactDropdown extends React.Component{
 			this.inputDeleted = false;
 			this.props.dispatch(DropdownField.setList(e, this.props.alias, 0, 10));
 			this.props.filterToCondition(e);
+			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, true));
 		} else {
 			this.inputDeleted = true;
+			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
 		}
 	};
 
 	handleOnSelect(e) {
-		if(this.props.hint !== undefined) this.props.dispatch(DropdownField.setHint(undefined, this.props.alias, undefined, undefined));
+		if(this.props.hint !== undefined) this.props.dispatch(DropdownField.setDelete(this.props.alias,['hint']));
 		if (this.props.onChange) {
 			this.props.onChange(e.id);
 		}
-		this.props.dispatch(DropdownField.setFilter(undefined, this.props.alias));
+		this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter']));
+		this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
 		this.inputDeleted = false;
-		this.refs.textfield.focus();
 		setTimeout( () => { this.refs.textfield.focus() }, 0 );
 	};
 
 	handleOnBlur() {
-		console.log('ContactDropdown: onBlur');
 		if (this.props.entityToText && this.inputDeleted) {
-			this.props.dispatch(DropdownField.setFilter(undefined, this.props.alias));
-			if (this.inputDeleted) {
+			//previous selected and deleted input => nothing to display
+			this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter']));
+			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
+			if (this.inputDeleted && !this.props.filterMode) {
 				this.props.onChange(undefined);
 				this.inputDeleted = false;
 			}
 		}
+		if (this.props.filter && this.props.hint && this.props.entityToText && !this.props.filterMode) {
+			//delete input and leave
+			this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter', 'hint', 'loading']));
+			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
+		}
+		//handle if selected, start typing and leave
+		if (this.props.filterMode && this.props.entityId) this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter']));
+		//handle write, nothing selected a leave
+		if (!this.props.entityId && this.props.filter && this.InMenu.length === 0) this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'hint', 'loading']));
+
 	};
 
-	//handle press ESC
 	handleOnKeyDown(e) {
+		//handle press ESC
 		if (e.keyCode === 27) {
-			this.props.dispatch(DropdownField.setFilter(undefined, this.props.alias));
-			this.props.dispatch(DropdownField.setHint(undefined, this.props.alias, undefined, undefined));
-			if (this.props.hint.size > 0 && this.props.entityToText) this.props.dispatch(DropdownField.setFilter(undefined, this.props.alias));
+			this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter', 'hint', 'loading']));
+			if (this.props.hint && this.props.entityToText) this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter']));
+			setTimeout( () => { this.refs.textfield.focus() }, 0 );
 		}
+		if (e.keyCode === 40 || e.keyCode == 38) this.InMenu.push(true);
 	};
 
 	handleDeleteFromIcon() {
 		this.props.onChange(undefined);
-		this.props.dispatch(DropdownField.setDeleteAll(this.props.alias));
-		// this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
+	};
+
+	handleOnBlurMenu() {
+		this.InMenu.push(false);
+		// console.log(this.InMenu[this.InMenu.length],this.InMenu[this.InMenu.length-2],this.InMenu[this.InMenu.length-1], this.InMenu)
+		if (this.InMenu[this.InMenu.length-2] === false) {
+			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
+			this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'hint']));
+			this.InMenu = [];
+		}
 	};
 
 	render() {
+		if (!this.props.entityId && this.props.entityToText) setTimeout( () => { this.props.dispatch(DropdownField.setDelete(this.props.alias, ['entityId', 'entityToText', 'filter'])) }, 0 );
+
 		let list = [];
 		if (this.props.hint !== undefined) {
 			list = this.props.hint.toJS().map(item => {
@@ -80,7 +105,6 @@ class ContactDropdown extends React.Component{
 			});
 		}
 		let text = this.props.filter || '';
-
 		if (!this.props.filter && this.props.entityId !== undefined) {
 			let pom = this.props.entityToText;
 			if (pom !== undefined) {
@@ -98,9 +122,9 @@ class ContactDropdown extends React.Component{
   			<h1>ContactDropdown { this.props.alias }</h1>
 	        <AutoComplete
 		        floatingLabelText="Kontakt"
-		                ref="textfield"
+		        ref="textfield"
 						filter={ item => item }
-		        menuProps={ { onKeyDown: this.handleOnKeyDown.bind(this) } }
+		        menuProps={ { onKeyDown: this.handleOnKeyDown.bind(this), onBlur: this.handleOnBlurMenu.bind(this) } }
 						openOnFocus={ true }
 						searchText={ text }
 						menuStyle = { { maxHeight: '300px' } }
@@ -112,8 +136,9 @@ class ContactDropdown extends React.Component{
 						onBlur={ this.handleOnBlur.bind(this) }
 						onKeyDown={ this.handleOnKeyDown.bind(this) }
 						iconClassName="muidocs-icon-custom-github"
-	        /> <ClearIcon visibility={ this.props.entityId ? 'visible' : 'hidden' } hoverColor={red500} onClick={ this.handleDeleteFromIcon.bind(this) }/>
-
+	        />
+				<ClearIcon visibility={ this.props.entityId ? 'visible' : 'hidden' } hoverColor={red500} onClick={ this.handleDeleteFromIcon.bind(this) }/>
+				<Loading loading={this.props.loading} />
       </div>
 		);
 	};
