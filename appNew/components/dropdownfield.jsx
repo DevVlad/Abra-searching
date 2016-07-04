@@ -45,7 +45,6 @@ class ContactDropdown extends React.Component{
 	handleOnBlur() {
 		if (this.props.entityToText && this.inputDeleted) {
 			this.props.dispatch(DropdownField.setFilter(undefined, this.props.alias));
-			console.log('blur', this.props, this.inputDeleted)
 			if (this.inputDeleted) {
 				this.props.onChange(undefined);
 				this.inputDeleted = false;
@@ -69,7 +68,6 @@ class ContactDropdown extends React.Component{
 	};
 
 	render() {
-		console.log('render', this.props)
 		let list = [];
 		if (this.props.hint !== undefined) {
 			list = this.props.hint.toJS().map(item => {
