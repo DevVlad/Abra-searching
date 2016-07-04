@@ -1,0 +1,37 @@
+.anime-enter {
+  opacity: 0.01;
+  height: 0px;
+  transition: all 0.5s ease-in-out
+}
+
+
+.anime-enter.anime-enter-active {
+  opacity: 1;
+  height: inherit;
+}
+
+.anime-leave {
+  opacity: 0.1;
+  transition: opacity 0.01s ease-in-out;
+}
+
+.anime-leave.anime-leave-active {
+  opacity: 0;
+
+}
+
+/*ul {
+  list-style: none;
+  height: 57.27px;
+}*/
+
+/*div {
+  width: 650px;
+  overflow-x: hidden;
+}*/
+
+#loading {
+  position: absolute;
+  top: 40px;
+  left: 700px;
+}

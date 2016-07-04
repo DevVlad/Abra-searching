@@ -6,7 +6,7 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
   devtool: 'cheap-source-map',
   entry: [
-    path.resolve(__dirname, 'app/main.jsx'),
+    path.resolve(__dirname, 'appNew/main.jsx'),
   ],
   output: {
     path: __dirname + '/build',
@@ -15,8 +15,8 @@ module.exports = {
   },
   module: {
     loaders:[
-      { test: /\.css$/, include: path.resolve(__dirname, 'app'), loader: 'style-loader!css-loader' },
-      { test: /\.js[x]?$/, include: path.resolve(__dirname, 'app'), exclude: /node_modules/, loader: 'babel-loader' }
+      { test: /\.css$/, include: path.resolve(__dirname, 'appNew'), loader: 'style-loader!css-loader' },
+      { test: /\.js[x]?$/, include: path.resolve(__dirname, 'appNew'), exclude: /node_modules/, loader: 'babel-loader' }
     ]
   },
   resolve: {
@@ -30,8 +30,8 @@ module.exports = {
       }
     }),
     new CopyWebpackPlugin([
-      { from: './app/index.html', to: 'index.html' },
-      { from: './app/main.css', to: 'main.css' }
+      { from: './appNew/index.html', to: 'index.html' },
+      { from: './appNew/main.css', to: 'main.css' }
     ]),
   ]
 };
