@@ -24,7 +24,7 @@ class ContactDropdown extends React.Component{
 	};
 
 	handleInput(e) {
-		if (e) {
+		if(e) {
 			this.inputDeleted = false;
 			this.props.dispatch(DropdownField.setList(e, this.props.alias, 0, 10));
 			this.props.filterToCondition(e);
@@ -38,14 +38,13 @@ class ContactDropdown extends React.Component{
 	handleOnSelect(e) {
 		if(this.props.hint !== undefined) this.props.dispatch(DropdownField.setDelete(this.props.alias,['hint']));
 		if (this.props.onChange) this.props.onChange(e.id);
-		// this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter']));
 		this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
 		this.inputDeleted = false;
 		setTimeout( () => { this.refs.textfield.focus() }, 0 );
+		this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter', 'loading']));
 	};
 
 	handleOnBlur() {
-		// console.log(this.props, 'onblur', this.inputDeleted, this.InMenu[this.InMenu.length-1])
 		if (!this.props.entityToText && this.entityId && this.props.filter) this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter']));
  		if (this.props.entityToText && this.inputDeleted) {
 			//previous selected and deleted input => nothing to display
@@ -69,7 +68,6 @@ class ContactDropdown extends React.Component{
 		if (!this.props.entityId && this.props.filter && this.InMenu.length === 0) {
 			this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'hint', 'loading']));
 		}
-
 	};
 
 	handleOnKeyDown(e) {
@@ -90,7 +88,6 @@ class ContactDropdown extends React.Component{
 	handleOnBlurMenu() {
 		this.InMenu.push(false);
 		if (this.InMenu[this.InMenu.length-2] === false) {
-			console.log('menublur', this.props);
 			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
 			this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'hint']));
 			this.InMenu = [];
@@ -98,14 +95,13 @@ class ContactDropdown extends React.Component{
 	};
 
 	render() {
-		//  if (!this.props.entityId && this.props.entityToText) {debugger; setTimeout( () => { this.props.dispatch(DropdownField.setDelete(this.props.alias, ['entityId', 'entityToText', 'filter'])) }, 0 );}
-		// console.log('render', this.props)
+		 if (!this.props.entityId && this.props.entityToText) setTimeout( () => { this.props.dispatch(DropdownField.setDelete(this.props.alias, ['entityId', 'entityToText', 'filter'])) }, 0 );
 		let list = [];
 		if (this.props.hint !== undefined) {
 			list = this.props.hint.toJS().map(item => {
 				return {
 					'id': item.id,
-					'text': [item.prijmeni, item.jmeno].join(' ').trim()
+					'text': [item.prijmeni, item.jmeno].join(' ')
 				};
 			});
 		}
@@ -124,14 +120,14 @@ class ContactDropdown extends React.Component{
 
 		return (
       <div id="ContactDropdown">
-  			<h1>ContactDropdown { this.props.alias }</h1>
+  			<h1>ContactDropdown: { this.props.alias }</h1>
 	        <AutoComplete
 		        floatingLabelText="Kontakt"
 		        ref="textfield"
 						filter={ item => item }
-		        menuProps={ { onKeyDown: this.handleOnKeyDown.bind(this), onBlur: this.handleOnBlurMenu.bind(this) } }
 						openOnFocus={ true }
 						searchText={ text }
+						menuProps={ { onKeyDown: this.handleOnKeyDown.bind(this), onBlur: this.handleOnBlurMenu.bind(this) } }
 						menuStyle = { { maxHeight: '300px' } }
 		        animated = { false }
 						dataSource={ list }
@@ -140,7 +136,6 @@ class ContactDropdown extends React.Component{
 						onNewRequest={ this.handleOnSelect.bind(this) }
 						onBlur={ this.handleOnBlur.bind(this) }
 						onKeyDown={ this.handleOnKeyDown.bind(this) }
-						iconClassName="muidocs-icon-custom-github"
 	        />
 				<ClearIcon visibility={ this.props.entityId ? 'visible' : 'hidden' } hoverColor={red500} onClick={ this.handleDeleteFromIcon.bind(this) }/>
 				<Loading loading={this.props.loading} />
