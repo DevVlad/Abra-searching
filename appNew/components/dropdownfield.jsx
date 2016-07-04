@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import $ from 'jquery';
+//import $ from 'jquery';
 import AutoComplete from 'material-ui/AutoComplete';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import SvgIcon from 'material-ui/SvgIcon';
@@ -39,10 +39,12 @@ class ContactDropdown extends React.Component{
 		}
 		this.props.dispatch(DropdownField.setFilter(undefined, this.props.alias));
 		this.inputDeleted = false;
-		setTimeout( function() { $( '#dropdown_'+this.props.alias ).focus() }.bind(this), 500 );
+		this.refs.textfield.focus();
+		setTimeout( () => { this.refs.textfield.focus() }, 0 );
 	};
 
 	handleOnBlur() {
+		console.log('ContactDropdown: onBlur');
 		if (this.props.entityToText && this.inputDeleted) {
 			this.props.dispatch(DropdownField.setFilter(undefined, this.props.alias));
 			if (this.inputDeleted) {
@@ -96,7 +98,7 @@ class ContactDropdown extends React.Component{
   			<h1>ContactDropdown { this.props.alias }</h1>
 	        <AutoComplete
 		        floatingLabelText="Kontakt"
-						id={'dropdown_'+this.props.alias}
+		                ref="textfield"
 						filter={ item => item }
 		        menuProps={ { onKeyDown: this.handleOnKeyDown.bind(this) } }
 						openOnFocus={ true }
