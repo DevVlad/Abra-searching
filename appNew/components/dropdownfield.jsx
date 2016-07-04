@@ -37,17 +37,17 @@ class ContactDropdown extends React.Component{
 
 	handleOnSelect(e) {
 		if(this.props.hint !== undefined) this.props.dispatch(DropdownField.setDelete(this.props.alias,['hint']));
-		if (this.props.onChange) {
-			this.props.onChange(e.id);
-		}
-		this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter']));
+		if (this.props.onChange) this.props.onChange(e.id);
+		// this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter']));
 		this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
 		this.inputDeleted = false;
 		setTimeout( () => { this.refs.textfield.focus() }, 0 );
 	};
 
 	handleOnBlur() {
-		if (this.props.entityToText && this.inputDeleted) {
+		// console.log(this.props, 'onblur', this.inputDeleted, this.InMenu[this.InMenu.length-1])
+		if (!this.props.entityToText && this.entityId && this.props.filter) this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter']));
+ 		if (this.props.entityToText && this.inputDeleted) {
 			//previous selected and deleted input => nothing to display
 			this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter']));
 			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
@@ -62,9 +62,13 @@ class ContactDropdown extends React.Component{
 			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
 		}
 		//handle if selected, start typing and leave
-		if (this.props.filterMode && this.props.entityId) this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter']));
+		if (this.props.filterMode && this.props.entityId && this.InMenu[this.InMenu.length-1] === false) {
+			this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter']));
+		}
 		//handle write, nothing selected a leave
-		if (!this.props.entityId && this.props.filter && this.InMenu.length === 0) this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'hint', 'loading']));
+		if (!this.props.entityId && this.props.filter && this.InMenu.length === 0) {
+			this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'hint', 'loading']));
+		}
 
 	};
 
@@ -80,12 +84,13 @@ class ContactDropdown extends React.Component{
 
 	handleDeleteFromIcon() {
 		this.props.onChange(undefined);
+		this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter']));
 	};
 
 	handleOnBlurMenu() {
 		this.InMenu.push(false);
-		// console.log(this.InMenu[this.InMenu.length],this.InMenu[this.InMenu.length-2],this.InMenu[this.InMenu.length-1], this.InMenu)
 		if (this.InMenu[this.InMenu.length-2] === false) {
+			console.log('menublur', this.props);
 			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
 			this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'hint']));
 			this.InMenu = [];
@@ -93,14 +98,14 @@ class ContactDropdown extends React.Component{
 	};
 
 	render() {
-		if (!this.props.entityId && this.props.entityToText) setTimeout( () => { this.props.dispatch(DropdownField.setDelete(this.props.alias, ['entityId', 'entityToText', 'filter'])) }, 0 );
-
+		//  if (!this.props.entityId && this.props.entityToText) {debugger; setTimeout( () => { this.props.dispatch(DropdownField.setDelete(this.props.alias, ['entityId', 'entityToText', 'filter'])) }, 0 );}
+		// console.log('render', this.props)
 		let list = [];
 		if (this.props.hint !== undefined) {
 			list = this.props.hint.toJS().map(item => {
 				return {
 					'id': item.id,
-					'text': [item.prijmeni, item.jmeno].join(' ')
+					'text': [item.prijmeni, item.jmeno].join(' ').trim()
 				};
 			});
 		}
@@ -108,7 +113,7 @@ class ContactDropdown extends React.Component{
 		if (!this.props.filter && this.props.entityId !== undefined) {
 			let pom = this.props.entityToText;
 			if (pom !== undefined) {
-				text = [pom.prijmeni, pom.jmeno].join(' ');
+				text = [pom.prijmeni, pom.jmeno].join(' ').trim();
 				if (this.props.entityId !== pom.id) {
 					this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
 				}

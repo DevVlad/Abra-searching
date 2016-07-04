@@ -219,7 +219,7 @@ function processRequest(data, filter, paging, alias, resultsToDisplay) {
 			if (totalCount === 0) {
 				console.log('No data found!');
 				dispatch(DropdownField.setHint([], alias, paging, totalCount > paging+ data.kontakt.length));
-        dispatch(DropdownField.setLoading(false, alias));
+        // dispatch(DropdownField.setLoading(false, alias));
 				// dispatch(actionsP.setProgress(false));
 			} else {
 					if (paging + 20 > totalCount)  {
