@@ -4,16 +4,16 @@ import $ from 'jquery';
 import AutoComplete from 'material-ui/AutoComplete';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import SvgIcon from 'material-ui/SvgIcon';
-import {blue500, red500, greenA200} from 'material-ui/styles/colors';
+import { red500 } from 'material-ui/styles/colors';
 import DropdownField from '../redux/ducks/dropdownfield.jsx';
 
 import './App.css';
 
 injectTapEventPlugin();
 
-const HomeIcon = (props) => (
+const ClearIcon = (props) => (
   <SvgIcon {...props}>
-    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
   </SvgIcon>
 );
 
@@ -30,7 +30,6 @@ class ContactDropdown extends React.Component{
 		} else {
 			this.inputDeleted = true;
 		}
-		console.log('input', this.props, this.inputDeleted)
 	};
 
 	handleOnSelect(e) {
@@ -40,13 +39,13 @@ class ContactDropdown extends React.Component{
 		}
 		this.props.dispatch(DropdownField.setFilter(undefined, this.props.alias));
 		this.inputDeleted = false;
+		setTimeout( function() { $( '#dropdown_'+this.props.alias ).focus() }.bind(this), 500 );
 	};
 
 	handleOnBlur() {
-		if (this.props.entityToText) {
+		if (this.props.entityToText && this.inputDeleted) {
 			this.props.dispatch(DropdownField.setFilter(undefined, this.props.alias));
 			console.log('blur', this.props, this.inputDeleted)
-			// if (this.inputDeleted) this.setState({});
 			if (this.inputDeleted) {
 				this.props.onChange(undefined);
 				this.inputDeleted = false;
@@ -63,7 +62,14 @@ class ContactDropdown extends React.Component{
 		}
 	};
 
+	handleDeleteFromIcon() {
+		this.props.onChange(undefined);
+		this.props.dispatch(DropdownField.setDeleteAll(this.props.alias));
+		// this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
+	};
+
 	render() {
+		console.log('render', this.props)
 		let list = [];
 		if (this.props.hint !== undefined) {
 			list = this.props.hint.toJS().map(item => {
@@ -80,24 +86,21 @@ class ContactDropdown extends React.Component{
 			if (pom !== undefined) {
 				text = [pom.prijmeni, pom.jmeno].join(' ');
 				if (this.props.entityId !== pom.id) {
-					console.log('0')
 					this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
 				}
 			} else if (!this.props.filter) {
-				console.log('1')
 				this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
 			}
 		}
-		console.log('ContactDropdown: render', this.props, this.inputDeleted);
 
 		return (
       <div id="ContactDropdown">
   			<h1>ContactDropdown { this.props.alias }</h1>
 	        <AutoComplete
 		        floatingLabelText="Kontakt"
-						id='dropdown'
+						id={'dropdown_'+this.props.alias}
 						filter={ item => item }
-		        menuProps={ { onKeyDown: this.handleOnKeyDown.bind(this)}}
+		        menuProps={ { onKeyDown: this.handleOnKeyDown.bind(this) } }
 						openOnFocus={ true }
 						searchText={ text }
 						menuStyle = { { maxHeight: '300px' } }
@@ -109,7 +112,7 @@ class ContactDropdown extends React.Component{
 						onBlur={ this.handleOnBlur.bind(this) }
 						onKeyDown={ this.handleOnKeyDown.bind(this) }
 						iconClassName="muidocs-icon-custom-github"
-	        /> <HomeIcon color={red500} hoverColor={greenA200} />
+	        /> <ClearIcon visibility={ this.props.entityId ? 'visible' : 'hidden' } hoverColor={red500} onClick={ this.handleDeleteFromIcon.bind(this) }/>
 
       </div>
 		);

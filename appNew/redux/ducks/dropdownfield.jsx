@@ -9,6 +9,7 @@ const SET_HINT = 'SET_HINT';
 const SET_ENTITY_TO_TEXT = 'SET_ENTITY_TO_TEXT';
 // const SET_CONDITION = 'SET_CONDITION';
 const SET_FILTER = 'SET_FILTER';
+const DELETE_ALL = 'DELETE_ALL';
 
 const getAliasState = (state, alias) => state.getIn(['filter', alias]);
 
@@ -80,6 +81,13 @@ const DropdownField = {
       };
     },
 
+    setDeleteAll(alias) {
+      return {
+        type: DELETE_ALL,
+        alias
+      };
+    },
+
     setList(filter, alias, paging, resultsToDisplay) {
   		return dispatch => {
         dispatch(DropdownField.setFilter(filter, alias));
@@ -128,6 +136,11 @@ const DropdownField = {
 
         case SET_FILTER:
           return state.setIn([action.alias, 'filter'], action.filter);
+
+        case DELETE_ALL:
+          return state.setIn([action.alias, 'entityId'], undefined)
+                      .setIn([action.alias, 'entityToText'], undefined)
+                      .setIn([action.alias, 'filter'], undefined);
 
         default:
           return state;
