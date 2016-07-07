@@ -24,7 +24,7 @@ class Loading extends React.Component {
   };
 
   render(){
-    if (this.props.loading > 0) {
+    if (this.props.counter > 0) {
       return (
         <div id='loading' ref={(ref) => this.loadRef = ref}>
           <h2 >Loading...</h2>

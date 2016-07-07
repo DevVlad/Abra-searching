@@ -100,7 +100,7 @@ class ContactDropdown extends React.Component{
 	};
 
 	render() {
-		 if (!this.props.entityId && this.props.entityToText) setTimeout( () => { this.props.dispatch(DropdownField.setDelete(this.props.alias, ['entityId', 'entityToText', 'filter'])) }, 0 );
+		if (!this.props.entityId && this.props.entityToText) setTimeout( () => { this.props.dispatch(DropdownField.setDelete(this.props.alias, ['entityId', 'entityToText', 'filter'])) }, 0 );
 		let list = [];
 		if (this.props.hint !== undefined) {
 			list = this.props.hint.toJS().map(item => {
@@ -143,7 +143,7 @@ class ContactDropdown extends React.Component{
 						onKeyDown={ this.handleOnKeyDown.bind(this) }
 	        />
 				<ClearIcon visibility={ this.props.entityId ? 'visible' : 'hidden' } hoverColor={red500} onClick={ this.handleDeleteFromIcon.bind(this) }/>
-				<Loading loading={this.props.counter} />
+				<Loading counter={this.props.counter} />
       </div>
 		);
 	};
