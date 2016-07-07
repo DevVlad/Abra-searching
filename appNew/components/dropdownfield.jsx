@@ -118,7 +118,7 @@ class ContactDropdown extends React.Component{
 				this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
 			}
 		}
-    console.log('prdel', this.props)
+
 		return (
       <div id="ContactDropdown">
   			<h1>ContactDropdown: { this.props.alias }</h1>
@@ -147,8 +147,7 @@ class ContactDropdown extends React.Component{
 };
 
 function mapStateToProps(state, props) {
-  let obj = {...DropdownField.getOwnState(state, props.alias), ...Progress.getOwnState(state)};
-	return obj;//DropdownField.getOwnState(state, props.alias);
+	return {...DropdownField.getOwnState(state, props.alias), ...Progress.getOwnState(state)};
 };
 
 const appConnect = connect(mapStateToProps)(ContactDropdown);
