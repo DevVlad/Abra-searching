@@ -6,6 +6,7 @@ import SvgIcon from 'material-ui/SvgIcon';
 import { red500 } from 'material-ui/styles/colors';
 import DropdownField from '../redux/ducks/dropdownfield.jsx';
 import Loading from './loading.jsx';
+import Progress from '../redux/ducks/progress.jsx';
 
 import './App.css';
 
@@ -45,10 +46,10 @@ class ContactDropdown extends React.Component{
 	};
 
 	handleOnBlur() {
-		if (!this.props.entityToText && this.entityId && this.props.filter) this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter']));
+		if (!this.props.entityToText && this.entityId && this.props.filter) this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'loading']));
  		if (this.props.entityToText && this.inputDeleted) {
 			//previous selected and deleted input => nothing to display
-			this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter']));
+			this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter', 'loading']));
 			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
 			if (this.inputDeleted && !this.props.filterMode) {
 				this.props.onChange(undefined);
@@ -89,7 +90,7 @@ class ContactDropdown extends React.Component{
 		this.InMenu.push(false);
 		if (this.InMenu[this.InMenu.length-2] === false) {
 			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
-			this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'hint']));
+			this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'hint', 'loading']));
 			this.InMenu = [];
 		}
 	};
@@ -138,7 +139,7 @@ class ContactDropdown extends React.Component{
 						onKeyDown={ this.handleOnKeyDown.bind(this) }
 	        />
 				<ClearIcon visibility={ this.props.entityId ? 'visible' : 'hidden' } hoverColor={red500} onClick={ this.handleDeleteFromIcon.bind(this) }/>
-				<Loading loading={this.props.loading} />
+				<Loading loading={this.props.counter} />
       </div>
 		);
 	};
@@ -146,7 +147,7 @@ class ContactDropdown extends React.Component{
 };
 
 function mapStateToProps(state, props) {
-	return DropdownField.getOwnState(state, props.alias);
+	return {...DropdownField.getOwnState(state, props.alias), ...Progress.getOwnState(state)};
 };
 
 const appConnect = connect(mapStateToProps)(ContactDropdown);

@@ -6,12 +6,14 @@ import invariant from 'redux-immutable-state-invariant';
 import DropdownField from './ducks/dropdownfield.jsx';
 import testValue from './ducks/testValueDuck.js';
 import combineImmutableReducers from './combineImmutableReducers.jsx';
+import Progress from './ducks/progress.jsx';
 
 
 const reducer = combineImmutableReducers(
   {
     filter: DropdownField.reducer,
-	test: testValue.reducer
+	  test: testValue.reducer,
+    progress: Progress.reducer
   }
 );
 

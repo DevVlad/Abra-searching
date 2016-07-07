@@ -2,6 +2,7 @@ import Immutable from 'immutable';
 import superagent from 'superagent';
 import _ from 'lodash';
 import { createSelector } from 'reselect';
+import Progress from './progress.jsx';
 
 const SET_LOADING = 'SET_LOADING';
 const ADD_HINT = 'ADD_HINT';
@@ -91,13 +92,13 @@ const DropdownField = {
   				dispatch(DropdownField.setLoading(false, alias));
   			};
   			if (filter !== '') {
-  				// dispatch(actionsP.setProgress(true));
+  				dispatch(Progress.setProgress(true));
   				dispatch(DropdownField.setLoading(true, alias));
   				serviceRequestOnChangeInput(filter, paging).then(data => dispatch(processRequest(data.winstrom, filter, paging, alias, resultsToDisplay)));
   			};
   			if (filter === '') {
   				dispatch(DropdownField.setHint([], alias, paging, true));
-  				// dispatch(actionsP.setProgress(false));
+  				dispatch(Progress.setProgress(false));
   			};
   		};
   	},
@@ -219,8 +220,8 @@ function processRequest(data, filter, paging, alias, resultsToDisplay) {
 			if (totalCount === 0) {
 				console.log('No data found!');
 				dispatch(DropdownField.setHint([], alias, paging, totalCount > paging+ data.kontakt.length));
-        // dispatch(DropdownField.setLoading(false, alias));
-				// dispatch(actionsP.setProgress(false));
+        dispatch(DropdownField.setLoading(false, alias));
+				dispatch(Progress.setProgress(false));
 			} else {
 					if (paging + 20 > totalCount)  {
 						dispatch(setLimit(data.kontakt, alias, true, resultsToDisplay, paging, totalCount > paging+ data.kontakt.length));
@@ -234,7 +235,7 @@ function processRequest(data, filter, paging, alias, resultsToDisplay) {
 					}
 			}
 		} else {
-			// dispatch(actionsP.setProgress(false));
+			dispatch(Progress.setProgress(false));
 		}
 	}
 };
@@ -260,7 +261,7 @@ function setLimit(list, alias, boolLast, toDisplayLimit, paging, nextLoading) {
 		} else if(pom.length > 0) {
 			dispatch(DropdownField.addHint(pom, alias, paging, nextLoading));
 		}
-		// if (getHint(getState(),alias).size === toDisplayLimit || boolLast) dispatch(setProgress(false));
+		if (getHint(getState(),alias).size === toDisplayLimit || boolLast) dispatch(Progress.setProgress(false));
 	}
 };
 
