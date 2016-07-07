@@ -24,6 +24,10 @@ class ContactDropdown extends React.Component{
 		this.InMenu = [];
 	};
 
+  componentWillMount() {
+    this.props.dispatch(DropdownField.setHint([], this.props.alias, 0, false));
+  };
+
 	handleInput(e) {
 		if(e) {
 			this.inputDeleted = false;
@@ -37,7 +41,7 @@ class ContactDropdown extends React.Component{
 	};
 
 	handleOnSelect(e) {
-		if(this.props.hint !== undefined) this.props.dispatch(DropdownField.setDelete(this.props.alias,['hint']));
+		if(this.props.hint !== undefined) this.props.dispatch(DropdownField.setHint([], this.props.alias, 0, false));
 		if (this.props.onChange) this.props.onChange(e.id);
 		this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
 		this.inputDeleted = false;
@@ -102,7 +106,7 @@ class ContactDropdown extends React.Component{
 			list = this.props.hint.toJS().map(item => {
 				return {
 					'id': item.id,
-					'text': [item.prijmeni, item.jmeno].join(' ')
+					'text': [item.prijmeni, item.jmeno].join(' ').trim()
 				};
 			});
 		}

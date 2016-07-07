@@ -88,7 +88,6 @@ const DropdownField = {
   		return dispatch => {
         dispatch(DropdownField.setFilter(filter, alias));
   			if (paging === 0) {
-  				dispatch(DropdownField.setHint([], alias, 0, false));
   				dispatch(DropdownField.setLoading(false, alias));
   			};
   			if (filter !== '') {
