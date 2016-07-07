@@ -50,7 +50,20 @@ class ContactDropdown extends React.Component{
 	};
 
 	handleOnBlur() {
-		if (!this.props.entityToText && this.entityId && this.props.filter) this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'loading']));
+    let pom = '';
+    if (this.props.entityToText &&  this.props.entityToText.prijmeni === '') {
+      pom = entityToText.jmeno.trim();
+    } else if (this.props.entityToText && this.props.entityToText.jmeno === '') {
+      pom = this.props.entityToText.prijmeni.trim();
+    } else if (this.props.entityToText) {
+      pom = [this.props.entityToText.prijmeni, this.props.entityToText.jmeno].join(' ').trim();
+    }
+    if (this.text !== pom && this.props.filterMode && this.props.entityToText !== undefined && this.props.hint.size === 0) {
+      this.props.dispatch(DropdownField.setFilter(pom ,this.props.alias));
+    }
+		if (!this.props.entityToText && this.entityId && this.props.filter) {
+      this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'loading']));
+    }
  		if (this.props.entityToText && this.inputDeleted) {
 			//previous selected and deleted input => nothing to display
 			this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter', 'loading']));
@@ -110,11 +123,11 @@ class ContactDropdown extends React.Component{
 				};
 			});
 		}
-		let text = this.props.filter || '';
+		this.text = this.props.filter || '';
 		if (!this.props.filter && this.props.entityId !== undefined) {
 			let pom = this.props.entityToText;
 			if (pom !== undefined) {
-				text = [pom.prijmeni, pom.jmeno].join(' ').trim();
+				this.text = [pom.prijmeni, pom.jmeno].join(' ').trim();
 				if (this.props.entityId !== pom.id) {
 					this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
 				}
@@ -131,7 +144,7 @@ class ContactDropdown extends React.Component{
 		        ref="textfield"
 						filter={ item => item }
 						openOnFocus={ true }
-						searchText={ text }
+						searchText={ this.text }
 						menuProps={ { onKeyDown: this.handleOnKeyDown.bind(this), onBlur: this.handleOnBlurMenu.bind(this) } }
 						menuStyle = { { maxHeight: '300px' } }
 		        animated = { false }
