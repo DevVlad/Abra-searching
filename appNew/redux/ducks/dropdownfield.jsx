@@ -98,6 +98,8 @@ const DropdownField = {
   			};
         dispatch(Progress.setProgress(true));
         dispatch(Progress.setProgress(false));
+        dispatch(Progress.setProgress(false));
+        dispatch(Progress.setProgress(true));
         dispatch(Progress.setProgress(true));
         dispatch(Progress.setProgress(false));
         dispatch(Progress.setProgress(true));

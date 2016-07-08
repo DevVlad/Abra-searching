@@ -32,7 +32,10 @@ const Progress = {
 					} else if(counter === 0) dispatch(setCurrentState(false));
 				}, 100);
 				timeouts.push(timeID);
-				if (progressBin && bool === progressBin[progressBin.length-2]) clearTimeout(progressBin[progressBin.length-2]);
+				if (progressBin && bool === progressBin[progressBin.length-2]) {
+					console.log(progressBin[progressBin.length-2], progressBin)
+					clearTimeout(progressBin.length-2);
+				}
 
 			// let promise = new Promise((res) => {
 			// 	const timeID = setTimeout( () => {
