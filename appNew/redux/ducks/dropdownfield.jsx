@@ -88,7 +88,7 @@ const DropdownField = {
   		return dispatch => {
         dispatch(DropdownField.setFilter(filter, alias));
   			if (paging === 0) {
-  				dispatch(DropdownField.setLoading(false, alias));
+  				dispatch(DropdownField.setLoading(true, alias));
   			};
   			if (filter !== '') {
           dispatch(progressMedium(filter, paging, paging, alias, resultsToDisplay));
@@ -96,18 +96,6 @@ const DropdownField = {
   			if (filter === '') {
   				dispatch(DropdownField.setHint([], alias, paging, true));
   			};
-        dispatch(Progress.setProgress(true));
-        dispatch(Progress.setProgress(false));
-        dispatch(Progress.setProgress(false));
-        dispatch(Progress.setProgress(true));
-        dispatch(Progress.setProgress(true));
-        dispatch(Progress.setProgress(false));
-        dispatch(Progress.setProgress(true));
-        dispatch(Progress.setProgress(false));
-        dispatch(Progress.setProgress(true));
-        dispatch(Progress.setProgress(false));
-        dispatch(Progress.setProgress(true));
-        dispatch(Progress.setProgress(false));
   		};
   	},
 
@@ -235,7 +223,6 @@ function processRequest(data, filter, paging, alias, resultsToDisplay) {
 				// dispatch(DropdownField.setHint([], alias, paging, totalCount > paging+ data.kontakt.length));
         // dispatch(DropdownField.setLoading(false, alias));
         dispatch(DropdownField.setDelete(alias, ['hint', 'loading']));
-        // if (Progress.getOwnState) dispatch(Progress.setProgress(false));
 			} else {
 					if (paging + 20 > totalCount)  {
 						dispatch(setLimit(data.kontakt, alias, true, resultsToDisplay, paging, totalCount > paging+ data.kontakt.length));
@@ -274,6 +261,7 @@ function setLimit(list, alias, boolLast, toDisplayLimit, paging, nextLoading) {
 		} else if (list.length <= dif) {
 			pom = list;
 		}
+    console.log('sethint',loading, pom)
 		if (loading) {
 			dispatch(DropdownField.setLoading(false, alias));
 			if (paging === 0) dispatch(DropdownField.setHint(pom, alias, paging, nextLoading));

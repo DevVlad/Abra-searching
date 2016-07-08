@@ -19,35 +19,28 @@ const Progress = {
 	*/
 
 	setProgress(bool) {
+		progressBin.push(bool);
 		if (bool) {
 			counter = counter + 1;
 		} else {
 			counter = counter - 1;
 		}
-		progressBin.push(bool);
 		return (dispatch, getState) => {
 			const timeID = setTimeout( () => {
-					if (counter > 0 && !getProgress(getState()) || getProgress(getState()) === undefined) {
-						dispatch(setCurrentState(true));
-					} else if(counter === 0) dispatch(setCurrentState(false));
-				}, 100);
-				timeouts.push(timeID);
-				if (progressBin && bool === progressBin[progressBin.length-2]) {
-					console.log(progressBin[progressBin.length-2], progressBin)
-					clearTimeout(progressBin.length-2);
+				if(progressBin[progressBin.length-3] === bool) {
+					clearTimeout(timeouts.length-3);
+					clearTimeout(timeouts.length-2);
 				}
-
-			// let promise = new Promise((res) => {
-			// 	const timeID = setTimeout( () => {
-			// 		res(timeID,counter, progressBin, bool, timeouts, getProgress(getState()))
-			// 	}, 1500);
-			// 	timeouts.push(timeID);
-			// 	console.log('insideofpromise', timeouts)
-			// });
-			// promise.then((res) => {
-			// 	console.log('after timeout', res,counter, progressBin, bool, timeouts)
-			//
-			// });
+				if(progressBin[progressBin.length-2] === bool) {
+					bool ? clearTimeout(timeouts.length-2) : clearTimeout(timeouts.length-1);
+				}
+			}, 1000);
+			timeouts.push(timeID);
+			console.log(counter)
+			if (counter > 0 && !getProgress(getState()) || getProgress(getState()) === undefined) {
+				console.log(progressBin)
+					dispatch(setCurrentState(true));
+			} else if(counter === 0) dispatch(setCurrentState(false));
 		};
 	},
 

@@ -81,7 +81,6 @@ class ContactDropdown extends React.Component{
 		//handle if selected, start typing and leave
 
 		if (this.props.filterMode && this.props.entityId !== undefined && this.InMenu.length === 0) {//this.InMenu[this.InMenu.length-1] === false) {
-      console.log('prdel', this.props,this.InMenu)
 			this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter']));
 		}
 		//handle write, nothing selected a leave
