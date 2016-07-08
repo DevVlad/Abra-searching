@@ -1,6 +1,7 @@
 import React from 'react';
 import $ from 'jquery';
 import { connect } from 'react-redux';
+import Progress from '../redux/ducks/progress.jsx';
 
 import './App.css';
 
@@ -24,7 +25,7 @@ class Loading extends React.Component {
   };
 
   render(){
-    if (this.props.loading) {
+    if (this.props.progress) {
       return (
         <div id='loading' ref={(ref) => this.loadRef = ref}>
           <h2 >Loading...</h2>
@@ -35,4 +36,8 @@ class Loading extends React.Component {
 
 };
 
-export default Loading;
+function mapStateToProps(state) {
+	return Progress.getOwnState(state);
+}
+const appConnect = connect(mapStateToProps)(Loading);
+export default appConnect;

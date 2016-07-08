@@ -96,6 +96,16 @@ const DropdownField = {
   			if (filter === '') {
   				dispatch(DropdownField.setHint([], alias, paging, true));
   			};
+        dispatch(Progress.setProgress(true));
+        dispatch(Progress.setProgress(false));
+        dispatch(Progress.setProgress(true));
+        dispatch(Progress.setProgress(false));
+        dispatch(Progress.setProgress(true));
+        dispatch(Progress.setProgress(false));
+        dispatch(Progress.setProgress(true));
+        dispatch(Progress.setProgress(false));
+        dispatch(Progress.setProgress(true));
+        dispatch(Progress.setProgress(false));
   		};
   	},
 
@@ -223,7 +233,7 @@ function processRequest(data, filter, paging, alias, resultsToDisplay) {
 				// dispatch(DropdownField.setHint([], alias, paging, totalCount > paging+ data.kontakt.length));
         // dispatch(DropdownField.setLoading(false, alias));
         dispatch(DropdownField.setDelete(alias, ['hint', 'loading']));
-        // if (Progress.getOwnState) dispatch(Progress.setProgress(false));	
+        // if (Progress.getOwnState) dispatch(Progress.setProgress(false));
 			} else {
 					if (paging + 20 > totalCount)  {
 						dispatch(setLimit(data.kontakt, alias, true, resultsToDisplay, paging, totalCount > paging+ data.kontakt.length));

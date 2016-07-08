@@ -6,7 +6,6 @@ import SvgIcon from 'material-ui/SvgIcon';
 import { red500 } from 'material-ui/styles/colors';
 import DropdownField from '../redux/ducks/dropdownfield.jsx';
 import Loading from './loading.jsx';
-import Progress from '../redux/ducks/progress.jsx';
 
 import './App.css';
 
@@ -25,7 +24,8 @@ class ContactDropdown extends React.Component{
 	};
 
   componentWillMount() {
-    this.props.dispatch(DropdownField.setHint([], this.props.alias, 0, false));
+    this.props.dispatch(DropdownField.setDelete(this.props.alias,['hint']));
+    // this.props.dispatch(DropdownField.setHint([], this.props.alias, 0, false));
   };
 
 	handleInput(e) {
@@ -79,7 +79,9 @@ class ContactDropdown extends React.Component{
 			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
 		}
 		//handle if selected, start typing and leave
-		if (this.props.filterMode && this.props.entityId && this.InMenu[this.InMenu.length-1] === false) {
+
+		if (this.props.filterMode && this.props.entityId !== undefined && this.InMenu.length === 0) {//this.InMenu[this.InMenu.length-1] === false) {
+      console.log('prdel', this.props,this.InMenu)
 			this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter']));
 		}
 		//handle write, nothing selected a leave
@@ -156,7 +158,7 @@ class ContactDropdown extends React.Component{
 						onKeyDown={ this.handleOnKeyDown.bind(this) }
 	        />
 				<ClearIcon visibility={ this.props.entityId ? 'visible' : 'hidden' } hoverColor={red500} onClick={ this.handleDeleteFromIcon.bind(this) }/>
-				<Loading loading={this.props.progress} />
+				<Loading  />
       </div>
 		);
 	};
@@ -164,7 +166,7 @@ class ContactDropdown extends React.Component{
 };
 
 function mapStateToProps(state, props) {
-	return {...DropdownField.getOwnState(state, props.alias), ...Progress.getOwnState(state)};
+	return DropdownField.getOwnState(state, props.alias);
 };
 
 const appConnect = connect(mapStateToProps)(ContactDropdown);

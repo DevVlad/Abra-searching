@@ -19,27 +19,32 @@ const Progress = {
 	*/
 
 	setProgress(bool) {
-		console.log('prdel', timeouts, progressBin)
-
-
 		if (bool) {
 			counter = counter + 1;
 		} else {
 			counter = counter - 1;
 		}
 		progressBin.push(bool);
-		return dispatch => {
-			dispatch(setCurrentState(bool));
-			let promise = new Promise((res) => {
-				const timeID = setTimeout( () => {
-					res(timeID)
-				}, 1500);
+		return (dispatch, getState) => {
+			const timeID = setTimeout( () => {
+					if (counter > 0 && !getProgress(getState()) || getProgress(getState()) === undefined) {
+						dispatch(setCurrentState(true));
+					} else if(counter === 0) dispatch(setCurrentState(false));
+				}, 100);
 				timeouts.push(timeID);
-			});
-			promise.then((result) => {
-				console.log('after timeout', result, counter, progressBin, bool, timeouts)
+				if (progressBin && bool === progressBin[progressBin.length-2]) clearTimeout(progressBin[progressBin.length-2]);
 
-			});
+			// let promise = new Promise((res) => {
+			// 	const timeID = setTimeout( () => {
+			// 		res(timeID,counter, progressBin, bool, timeouts, getProgress(getState()))
+			// 	}, 1500);
+			// 	timeouts.push(timeID);
+			// 	console.log('insideofpromise', timeouts)
+			// });
+			// promise.then((res) => {
+			// 	console.log('after timeout', res,counter, progressBin, bool, timeouts)
+			//
+			// });
 		};
 	},
 
@@ -47,13 +52,11 @@ const Progress = {
 	* REDUCER
 	*/
 
-	reducer(state = Immutable.fromJS({}), action) {
+	reducer(state = Immutable.fromJS({loading: false}), action) {
 	  switch (action.type) {
 
 	    case SET_PROGRESS:
-			return state.setIn(['loading'], action.bool);
-
-
+				return state.setIn(['loading'], action.bool);
 
 	    default:
 	      return state;
