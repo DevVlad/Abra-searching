@@ -41,7 +41,7 @@ class ContactDropdown extends React.Component{
 	};
 
 	handleOnSelect(e) {
-		if(this.props.hint !== undefined) this.props.dispatch(DropdownField.setHint([], this.props.alias, 0, false));
+		if(this.props.hint) this.props.dispatch(DropdownField.setHint([], this.props.alias, 0, false));
 		if (this.props.onChange) this.props.onChange(e.id);
 		this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
 		this.inputDeleted = false;
@@ -52,8 +52,8 @@ class ContactDropdown extends React.Component{
 	handleOnBlur() {
     let pom = '';
     if (this.props.entityToText &&  this.props.entityToText.prijmeni === '') {
-      pom = entityToText.jmeno.trim();
-    } else if (this.props.entityToText && this.props.entityToText.jmeno === '') {
+      pom = this.props.entityToText.jmeno.trim();
+    } else if (this.props.entityToText !== undefined && this.props.entityToText.jmeno === '') {
       pom = this.props.entityToText.prijmeni.trim();
     } else if (this.props.entityToText) {
       pom = [this.props.entityToText.prijmeni, this.props.entityToText.jmeno].join(' ').trim();
@@ -156,7 +156,7 @@ class ContactDropdown extends React.Component{
 						onKeyDown={ this.handleOnKeyDown.bind(this) }
 	        />
 				<ClearIcon visibility={ this.props.entityId ? 'visible' : 'hidden' } hoverColor={red500} onClick={ this.handleDeleteFromIcon.bind(this) }/>
-				<Loading counter={this.props.counter} />
+				<Loading loading={this.props.progress} />
       </div>
 		);
 	};
