@@ -1,7 +1,7 @@
 import Immutable from 'immutable';
 import { createSelector } from 'reselect';
 
-
+const TEST = 'TEST';
 const SET_PROGRESS = 'SET_PROGRESS';
 function setCurrentState(bool) {
 	return {
@@ -26,7 +26,6 @@ const Progress = {
 				if (bool !== getProgress(getState())) {
 					dispatch(setCurrentState(bool));
 				};
-
 			}, 100);
 			timesBin.push(timeID);
 
