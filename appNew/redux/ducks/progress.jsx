@@ -20,27 +20,25 @@ const Progress = {
 
 	setProgress(bool) {
 		progressBin.push(bool);
-		if (bool) {
-			counter = counter + 1;
-		} else {
-			counter = counter - 1;
-		}
 		return (dispatch, getState) => {
+			let toNotice = [];
 			const timeID = setTimeout( () => {
-				if(progressBin[progressBin.length-3] === bool) {
-					clearTimeout(timeouts.length-3);
-					clearTimeout(timeouts.length-2);
-				}
-				if(progressBin[progressBin.length-2] === bool) {
-					bool ? clearTimeout(timeouts.length-2) : clearTimeout(timeouts.length-1);
-				}
+				if (bool !== getProgress(getState())) {
+					dispatch(setCurrentState(bool));
+					console.log(timeID,'inside ',timesBin, progressBin, bool,getProgress(getState()))
+				};
+
 			}, 1000);
-			timeouts.push(timeID);
-			console.log(counter)
-			if (counter > 0 && !getProgress(getState()) || getProgress(getState()) === undefined) {
-				console.log(progressBin)
-					dispatch(setCurrentState(true));
-			} else if(counter === 0) dispatch(setCurrentState(false));
+			timesBin.push(timeID);
+
+			if(progressBin[progressBin.length-2] === bool) {
+				clearTimeout(timesBin[progressBin.length-1]);
+				timesBin[progressBin.length-1] = 0;
+			} else if(progressBin[progressBin.length-3] === bool) {
+				clearTimeout(timesBin[progressBin.length-2]);
+				timesBin[progressBin.length-2] = 0;
+			}
+			console.log('outside ',timesBin, progressBin, bool)
 		};
 	},
 
@@ -67,8 +65,9 @@ const Progress = {
 
 };
 
-let timeouts = [];
+// let timeouts = [];
 let progressBin = [];
+let timesBin = [];
 let counter = 0;
 
 const getProgress = createSelector(getProgressState, x => x);

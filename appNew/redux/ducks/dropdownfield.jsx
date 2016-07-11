@@ -87,6 +87,18 @@ const DropdownField = {
     setList(filter, alias, paging, resultsToDisplay) {
   		return dispatch => {
         dispatch(DropdownField.setFilter(filter, alias));
+
+        dispatch(Progress.setProgress(true));
+        dispatch(Progress.setProgress(false));
+        dispatch(Progress.setProgress(true));
+        dispatch(Progress.setProgress(false));
+        dispatch(Progress.setProgress(true));
+        dispatch(Progress.setProgress(false));
+        dispatch(Progress.setProgress(true));
+        dispatch(Progress.setProgress(false));
+        dispatch(Progress.setProgress(true));
+        dispatch(Progress.setProgress(false));
+
   			if (paging === 0) {
   				dispatch(DropdownField.setLoading(true, alias));
   			};
@@ -261,7 +273,6 @@ function setLimit(list, alias, boolLast, toDisplayLimit, paging, nextLoading) {
 		} else if (list.length <= dif) {
 			pom = list;
 		}
-    console.log('sethint',loading, pom)
 		if (loading) {
 			dispatch(DropdownField.setLoading(false, alias));
 			if (paging === 0) dispatch(DropdownField.setHint(pom, alias, paging, nextLoading));
