@@ -25,10 +25,9 @@ const Progress = {
 			const timeID = setTimeout( () => {
 				if (bool !== getProgress(getState())) {
 					dispatch(setCurrentState(bool));
-					console.log(timeID,'inside ',timesBin, progressBin, bool,getProgress(getState()))
 				};
 
-			}, 1000);
+			}, 100);
 			timesBin.push(timeID);
 
 			if(progressBin[progressBin.length-2] === bool) {
@@ -38,7 +37,6 @@ const Progress = {
 				clearTimeout(timesBin[progressBin.length-2]);
 				timesBin[progressBin.length-2] = 0;
 			}
-			console.log('outside ',timesBin, progressBin, bool)
 		};
 	},
 
@@ -65,7 +63,6 @@ const Progress = {
 
 };
 
-// let timeouts = [];
 let progressBin = [];
 let timesBin = [];
 let counter = 0;
