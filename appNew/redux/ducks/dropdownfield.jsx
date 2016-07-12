@@ -87,18 +87,6 @@ const DropdownField = {
     setList(filter, alias, paging, resultsToDisplay) {
   		return dispatch => {
         dispatch(DropdownField.setFilter(filter, alias));
-
-        dispatch(Progress.setProgress(true));
-        dispatch(Progress.setProgress(false));
-        dispatch(Progress.setProgress(true));
-        dispatch(Progress.setProgress(false));
-        dispatch(Progress.setProgress(true));
-        dispatch(Progress.setProgress(false));
-        dispatch(Progress.setProgress(true));
-        dispatch(Progress.setProgress(false));
-        dispatch(Progress.setProgress(true));
-        dispatch(Progress.setProgress(false));
-
   			if (paging === 0) {
   				dispatch(DropdownField.setLoading(true, alias));
   			};
@@ -227,7 +215,8 @@ logic
 
 function processRequest(data, filter, paging, alias, resultsToDisplay) {
 	return (dispatch, getState) => {
-    dispatch(Progress.setProgress(false));
+    dispatch(Progress.stop());
+    // dispatch(Progress.setProgress(false));
 		if (getFilter(getState(), alias) === filter) {
 			const totalCount = parseInt(data['@rowCount']);
 			if (totalCount === 0) {
@@ -253,7 +242,8 @@ function processRequest(data, filter, paging, alias, resultsToDisplay) {
 
 function progressMedium(filter, count, paging, alias, resultsToDisplay) {
   return (dispatch) => {
-    dispatch(Progress.setProgress(true));
+    dispatch(Progress.start());
+    // dispatch(Progress.setProgress(true));
     serviceRequestOnChangeInput(filter, count).then(data => dispatch(processRequest(data.winstrom, filter, paging, alias, resultsToDisplay)));
   };
 };

@@ -37,7 +37,10 @@ class Loading extends React.Component {
 };
 
 function mapStateToProps(state) {
-	return Progress.getOwnState(state);
-}
+	return {
+		progress: Progress.isStarted(state)
+	};
+};
+
 const appConnect = connect(mapStateToProps)(Loading);
 export default appConnect;
