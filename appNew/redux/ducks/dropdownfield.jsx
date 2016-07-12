@@ -225,6 +225,8 @@ logic
 function processRequest(data, filter, paging, alias, resultsToDisplay) {
 	return (dispatch, getState) => {
     dispatch(Progress.stop());
+    // dispatch(Progress.step())
+    // dispatch(Progress.step(Progress.getProgressBar(getState())))
 		if (getFilter(getState(), alias) === filter) {
 			const totalCount = parseInt(data['@rowCount']);
 			if (totalCount === 0) {
