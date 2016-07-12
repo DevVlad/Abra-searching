@@ -11,16 +11,7 @@ const DEC_COUNTER = 'DEC_COUNTER';
 // const getProgressState = (state) => state.getIn(['progress', 'loading']);
 
 const getProgress = state => state.get('progress');
-const getCounter = createSelector(getProgress, x => {
-	if (x.size == 0) {
-		return 0;
-	} else {
-		return x.get('counter');
-	}
-});
-const getStarting = createSelector(getProgress, x => x.get('starting'));
-const getStopTimer = createSelector(getProgress, x => x.get('stopTimer'));
-const isStarted = createSelector(getProgress, x => x.get('started'));
+
 
 const Progress = {
 
@@ -28,32 +19,16 @@ const Progress = {
 	* SELECTORS
 	*/
 
-	getCounter(state) {
-		return getCounter(state);
-	},
-
-	isStarting(state) {
-		return getStarting(state);
-	},
-
-	getStopTimer(state) {
-		return getStopTimer(state);
-	},
-
-	isStarted(state) {
-		return isStarted(state);
-	},
-
-	// isStarting: createSelector(getProgress, progress => progress.get('starting')),
-	// getCounter: createSelector(getProgress, progress => {
-	// 	if (progress === undefined) {
-	// 		return 0;
-	// 	} else {
-	// 		progress.get('counter')
-	// 	}
-	// }),
-	// getStopTimer: createSelector(getProgress, progress => progress.get('stopTimer')),
-	// isStarted: createSelector(getProgress, progress => progress.get('started')),
+	isStarting: createSelector(getProgress, progress => progress.get('starting')),
+	getCounter: createSelector(getProgress, progress => {
+		if (progress.size == 0) {
+			return 0;
+		} else {
+			return progress.get('counter')
+		}
+	}),
+	getStopTimer: createSelector(getProgress, progress => progress.get('stopTimer')),
+	isStarted: createSelector(getProgress, progress => progress.get('started')),
 
 	/*
 	* ACTIONS
