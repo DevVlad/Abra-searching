@@ -17,13 +17,7 @@ const Progress = {
 	*/
 
 	isStarting: createSelector(getProgress, progress => progress.get('starting')),
-	getCounter: createSelector(getProgress, progress => {
-		if (progress.size == 0) {
-			return 0;
-		} else {
-			return progress.get('counter')
-		}
-	}),
+	getCounter: createSelector(getProgress, progress => progress.get('counter')),
 	getStopTimer: createSelector(getProgress, progress => progress.get('stopTimer')),
 	isStarted: createSelector(getProgress, progress => progress.get('started')),
 
@@ -103,7 +97,7 @@ const Progress = {
 * REDUCER
 */
 
-	reducer(state = Immutable.fromJS({}), action) {
+	reducer(state = Immutable.fromJS({counter: 0}), action) {
 	  switch (action.type) {
 
 		  case SET_STARTING:
@@ -122,12 +116,12 @@ const Progress = {
 			  return state.set('stopTimer', action.stopTimer);
 
 		  case INC_COUNTER:
-				return state.set('counter', action.counter + 1);
-			  // return state.updateIn(['counter'], counter => counter + 1);
+				// return state.set('counter', action.counter + 1);
+			  return state.updateIn(['counter'], counter => counter + 1);
 
 		  case DEC_COUNTER:
-				return state.set('counter', action.counter - 1);
-			  // return state.updateIn(['counter'], counter => counter - 1);
+				// return state.set('counter', action.counter - 1);
+			  return state.updateIn(['counter'], counter => counter - 1);
 
 		  default:
 	        return state;
