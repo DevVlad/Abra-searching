@@ -26,7 +26,7 @@ const testValueDuck = {
 				return state.set(action.name, action.value);
 			default:
 				return state;
-		}
+		};
 	},
 
 	setTestId(name, value) {

@@ -149,16 +149,25 @@ const DropdownField = {
   	*	SELECTORS
   	*/
 
-  	getOwnState(state, alias) {
-  		let obj = {
-		    filter: getFilter(state, alias),
-  			entityToText: getEntityToText(state, alias),
-  			hint: getHint(state, alias),
-        filterMode: getFilterMode(state, alias),
-        loading: getLoading(state, alias)
-  		};
-  		return obj;
-  	}
+    getFilter(state, alias) {
+      return getFilter(state, alias);
+    },
+
+    getEntityToText(state, alias) {
+      return getEntityToText(state, alias);
+    },
+
+    getHint(state, alias) {
+      return getHint(state, alias);
+    },
+
+    getFilterMode(state, alias) {
+      return getFilterMode(state, alias);
+    },
+
+    getLoading(state, alias) {
+      return getLoading(state, alias);
+    },
 };
 
 const getEntityToText = createSelector(getAliasState, x => {
@@ -216,7 +225,6 @@ logic
 function processRequest(data, filter, paging, alias, resultsToDisplay) {
 	return (dispatch, getState) => {
     dispatch(Progress.stop());
-    // dispatch(Progress.setProgress(false));
 		if (getFilter(getState(), alias) === filter) {
 			const totalCount = parseInt(data['@rowCount']);
 			if (totalCount === 0) {
@@ -243,7 +251,6 @@ function processRequest(data, filter, paging, alias, resultsToDisplay) {
 function progressMedium(filter, count, paging, alias, resultsToDisplay) {
   return (dispatch) => {
     dispatch(Progress.start());
-    // dispatch(Progress.setProgress(true));
     serviceRequestOnChangeInput(filter, count).then(data => dispatch(processRequest(data.winstrom, filter, paging, alias, resultsToDisplay)));
   };
 };

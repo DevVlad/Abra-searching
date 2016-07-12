@@ -9,7 +9,6 @@ const DEC_COUNTER = 'DEC_COUNTER';
 
 const getProgress = state => state.get('progress');
 
-
 const Progress = {
 
 	/*
@@ -125,7 +124,7 @@ const Progress = {
 
 		  default:
 	        return state;
-	  }
+	  };
 	}
 
 };

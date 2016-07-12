@@ -165,7 +165,13 @@ class ContactDropdown extends React.Component{
 };
 
 function mapStateToProps(state, props) {
-	return DropdownField.getOwnState(state, props.alias);
+  return {
+    filter: DropdownField.getFilter(state, props.alias),
+  			entityToText: DropdownField.getEntityToText(state, props.alias),
+  			hint: DropdownField.getHint(state, props.alias),
+        filterMode: DropdownField.getFilterMode(state, props.alias),
+        loading: DropdownField.getLoading(state, props.alias)
+  };
 };
 
 const appConnect = connect(mapStateToProps)(ContactDropdown);
