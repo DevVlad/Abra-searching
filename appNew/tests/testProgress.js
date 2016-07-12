@@ -9,7 +9,7 @@ const mockStore = configureMockStore(middlewares);
 
 describe('async Progress actions', () => {
   it('start, 30stop, 30start, 150 res => should be started', () => {
-    const store = mockStore(Immutable.fromJS({progress: {}}));
+    const store = mockStore(Immutable.fromJS({progress: {counter: 1}}));
 
     let pms = new Promise( res => {
       store.dispatch(Progress.start());
@@ -18,19 +18,18 @@ describe('async Progress actions', () => {
       }, 30);
       setTimeout( () => {
         store.dispatch(Progress.start());
-      }, 30);
+      }, 60);
       setTimeout( () => {
         res();
       }, 150);
     });
     return pms.then( () => {
-      console.log(store.getActions());
-      expect(store.getActions()).toExclude({ type: 'SET_STARTED' });
+      expect(store.getActions()).toInclude({ type: 'SET_STARTED', started: true });
     });
   });
 
-  it('start, 30res => should not be started', () => {
-    const store = mockStore(Immutable.fromJS({progress: {}}));
+  it('start, 30res => should not be started, just incCounter', () => {
+    const store = mockStore(Immutable.fromJS({progress: {counter: 1}}));
 
     let pms = new Promise( res => {
       store.dispatch(Progress.start());
@@ -39,23 +38,21 @@ describe('async Progress actions', () => {
       }, 30);
     });
     return pms.then( () => {
-      console.log(store.getActions());
-      expect(store.getActions()).toExclude({ type: 'INC_COUNTER' });
+      expect(store.getActions()).toExclude({ type: 'SET_STARTED', started: false });
     });
   });
 
   it('start, 150res => should be started', () => {
-    const store = mockStore(Immutable.fromJS({progress: {}}));
+    const store = mockStore(Immutable.fromJS({progress: {counter: 1}}));
 
     let pms = new Promise( res => {
       store.dispatch(Progress.start());
       setTimeout( () => {
         res();
-      }, 150);
+      }, 200);
     });
     return pms.then( () => {
-      console.log(store.getActions());
-      expect(store.getActions()).toExclude({ type: 'SET_STARTED' });
+      expect(store.getActions()).toInclude({ type: 'SET_STARTED', started: true });
     });
   });
 
