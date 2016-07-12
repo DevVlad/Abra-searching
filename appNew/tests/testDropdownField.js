@@ -104,7 +104,4 @@ describe('DropdownField Reducer', () => {
       )
   });
 
-
-
-
 });
