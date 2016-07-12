@@ -88,17 +88,13 @@ const DropdownField = {
   		return dispatch => {
         dispatch(DropdownField.setFilter(filter, alias));
   			if (paging === 0) {
-  				dispatch(DropdownField.setHint([], alias, 0, false));
-  				dispatch(DropdownField.setLoading(false, alias));
+  				dispatch(DropdownField.setLoading(true, alias));
   			};
   			if (filter !== '') {
-  				dispatch(Progress.setProgress(true));
-  				dispatch(DropdownField.setLoading(true, alias));
-  				serviceRequestOnChangeInput(filter, paging).then(data => dispatch(processRequest(data.winstrom, filter, paging, alias, resultsToDisplay)));
+          dispatch(progressMedium(filter, paging, paging, alias, resultsToDisplay));
   			};
   			if (filter === '') {
   				dispatch(DropdownField.setHint([], alias, paging, true));
-  				dispatch(Progress.setProgress(false));
   			};
   		};
   	},
@@ -133,7 +129,11 @@ const DropdownField = {
         case DELETE:
           let obj = state;
           action.subjects.forEach(subject => {
-            obj = obj.setIn([action.alias, subject], undefined);
+            if (subject === 'hint') {
+              obj = obj.setIn([action.alias, 'hint'], Immutable.fromJS([]));
+            } else {
+              obj = obj.setIn([action.alias, subject], undefined);
+            }
           });
           return obj;
 
@@ -215,13 +215,15 @@ logic
 
 function processRequest(data, filter, paging, alias, resultsToDisplay) {
 	return (dispatch, getState) => {
+    dispatch(Progress.stop());
+    // dispatch(Progress.setProgress(false));
 		if (getFilter(getState(), alias) === filter) {
 			const totalCount = parseInt(data['@rowCount']);
 			if (totalCount === 0) {
 				console.log('No data found!');
-				dispatch(DropdownField.setHint([], alias, paging, totalCount > paging+ data.kontakt.length));
-        dispatch(DropdownField.setLoading(false, alias));
-				dispatch(Progress.setProgress(false));
+				// dispatch(DropdownField.setHint([], alias, paging, totalCount > paging+ data.kontakt.length));
+        // dispatch(DropdownField.setLoading(false, alias));
+        dispatch(DropdownField.setDelete(alias, ['hint', 'loading']));
 			} else {
 					if (paging + 20 > totalCount)  {
 						dispatch(setLimit(data.kontakt, alias, true, resultsToDisplay, paging, totalCount > paging+ data.kontakt.length));
@@ -231,13 +233,19 @@ function processRequest(data, filter, paging, alias, resultsToDisplay) {
 					const count = paging + data.kontakt.length;
 					const hintCount = getHint(getState(), alias).size;
 					if (totalCount > count && hintCount < resultsToDisplay) {
-						serviceRequestOnChangeInput(filter, count).then(data => processRequest(data, filter, paging, alias, resultsToDisplay));
+            dispatch(progressMedium(filter, count, paging, alias, resultsToDisplay));
 					}
 			}
-		} else {
-			dispatch(Progress.setProgress(false));
 		}
 	}
+};
+
+function progressMedium(filter, count, paging, alias, resultsToDisplay) {
+  return (dispatch) => {
+    dispatch(Progress.start());
+    // dispatch(Progress.setProgress(true));
+    serviceRequestOnChangeInput(filter, count).then(data => dispatch(processRequest(data.winstrom, filter, paging, alias, resultsToDisplay)));
+  };
 };
 
 function setLimit(list, alias, boolLast, toDisplayLimit, paging, nextLoading) {
@@ -261,7 +269,6 @@ function setLimit(list, alias, boolLast, toDisplayLimit, paging, nextLoading) {
 		} else if(pom.length > 0) {
 			dispatch(DropdownField.addHint(pom, alias, paging, nextLoading));
 		}
-		if (getHint(getState(),alias).size === toDisplayLimit || boolLast) dispatch(Progress.setProgress(false));
 	}
 };
 
@@ -270,25 +277,25 @@ function setLimit(list, alias, boolLast, toDisplayLimit, paging, nextLoading) {
 */
 
 function serviceRequestOnChangeInput(filter, paging) {
-	let query = {
-		'add-row-count': true,
-		'start': paging,
-		'limit': 20
-	};
+  let query = {
+  	'add-row-count': true,
+  	'start': paging,
+  	'limit': 20
+  };
 	const fields = ['jmeno', 'prijmeni', 'email', 'mobil', 'tel'];
-	const inp = fields.map(f => `${f} like similar '${filter}'`).join(' or ');
+  const inp = fields.map(f => `${f} like similar '${filter}'`).join(' or ');
 	return new Promise((resolve, reject) => {
 		superagent.get(`https://nejlepsi.flexibee.eu/c/velka/kontakt/${`(${encodeURIComponent(inp)})`}`)
-		.set('Accept', 'application/json')
-		.auth('admin', 'adminadmin')
-		.query(query)
-		.end((err, res)=>{
-			if (!err) {
-				resolve(res.body);
-			} else {
-				console.log('Error ApiService - ContactDropdown: ', err);
-			}
-		})
+  	.set('Accept', 'application/json')
+  	.auth('admin', 'adminadmin')
+  	.query(query)
+  	.end((err, res)=>{
+  		if (!err) {
+  			resolve(res.body);
+  		} else {
+  			console.log('Error ApiService - ContactDropdown: ', err);
+  		}
+  	})
 	});
 };
 

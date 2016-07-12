@@ -6,7 +6,6 @@ import SvgIcon from 'material-ui/SvgIcon';
 import { red500 } from 'material-ui/styles/colors';
 import DropdownField from '../redux/ducks/dropdownfield.jsx';
 import Loading from './loading.jsx';
-import Progress from '../redux/ducks/progress.jsx';
 
 import './App.css';
 
@@ -24,6 +23,11 @@ class ContactDropdown extends React.Component{
 		this.InMenu = [];
 	};
 
+  componentWillMount() {
+    this.props.dispatch(DropdownField.setDelete(this.props.alias,['hint']));
+    // this.props.dispatch(DropdownField.setHint([], this.props.alias, 0, false));
+  };
+
 	handleInput(e) {
 		if(e) {
 			this.inputDeleted = false;
@@ -37,7 +41,7 @@ class ContactDropdown extends React.Component{
 	};
 
 	handleOnSelect(e) {
-		if(this.props.hint !== undefined) this.props.dispatch(DropdownField.setDelete(this.props.alias,['hint']));
+		if(this.props.hint) this.props.dispatch(DropdownField.setHint([], this.props.alias, 0, false));
 		if (this.props.onChange) this.props.onChange(e.id);
 		this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
 		this.inputDeleted = false;
@@ -46,7 +50,20 @@ class ContactDropdown extends React.Component{
 	};
 
 	handleOnBlur() {
-		if (!this.props.entityToText && this.entityId && this.props.filter) this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'loading']));
+    let pom = '';
+    if (this.props.entityToText &&  this.props.entityToText.prijmeni === '') {
+      pom = this.props.entityToText.jmeno.trim();
+    } else if (this.props.entityToText !== undefined && this.props.entityToText.jmeno === '') {
+      pom = this.props.entityToText.prijmeni.trim();
+    } else if (this.props.entityToText) {
+      pom = [this.props.entityToText.prijmeni, this.props.entityToText.jmeno].join(' ').trim();
+    }
+    if (this.text !== pom && this.props.filterMode && this.props.entityToText !== undefined && this.props.hint.size === 0) {
+      this.props.dispatch(DropdownField.setFilter(pom ,this.props.alias));
+    }
+		if (!this.props.entityToText && this.entityId && this.props.filter) {
+      this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'loading']));
+    }
  		if (this.props.entityToText && this.inputDeleted) {
 			//previous selected and deleted input => nothing to display
 			this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter', 'loading']));
@@ -62,7 +79,8 @@ class ContactDropdown extends React.Component{
 			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
 		}
 		//handle if selected, start typing and leave
-		if (this.props.filterMode && this.props.entityId && this.InMenu[this.InMenu.length-1] === false) {
+
+		if (this.props.filterMode && this.props.entityId !== undefined && this.InMenu.length === 0) {//this.InMenu[this.InMenu.length-1] === false) {
 			this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter']));
 		}
 		//handle write, nothing selected a leave
@@ -96,21 +114,21 @@ class ContactDropdown extends React.Component{
 	};
 
 	render() {
-		 if (!this.props.entityId && this.props.entityToText) setTimeout( () => { this.props.dispatch(DropdownField.setDelete(this.props.alias, ['entityId', 'entityToText', 'filter'])) }, 0 );
+		if (!this.props.entityId && this.props.entityToText) setTimeout( () => { this.props.dispatch(DropdownField.setDelete(this.props.alias, ['entityId', 'entityToText', 'filter'])) }, 0 );
 		let list = [];
 		if (this.props.hint !== undefined) {
 			list = this.props.hint.toJS().map(item => {
 				return {
 					'id': item.id,
-					'text': [item.prijmeni, item.jmeno].join(' ')
+					'text': [item.prijmeni, item.jmeno].join(' ').trim()
 				};
 			});
 		}
-		let text = this.props.filter || '';
+		this.text = this.props.filter || '';
 		if (!this.props.filter && this.props.entityId !== undefined) {
 			let pom = this.props.entityToText;
 			if (pom !== undefined) {
-				text = [pom.prijmeni, pom.jmeno].join(' ').trim();
+				this.text = [pom.prijmeni, pom.jmeno].join(' ').trim();
 				if (this.props.entityId !== pom.id) {
 					this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
 				}
@@ -127,7 +145,7 @@ class ContactDropdown extends React.Component{
 		        ref="textfield"
 						filter={ item => item }
 						openOnFocus={ true }
-						searchText={ text }
+						searchText={ this.text }
 						menuProps={ { onKeyDown: this.handleOnKeyDown.bind(this), onBlur: this.handleOnBlurMenu.bind(this) } }
 						menuStyle = { { maxHeight: '300px' } }
 		        animated = { false }
@@ -139,7 +157,7 @@ class ContactDropdown extends React.Component{
 						onKeyDown={ this.handleOnKeyDown.bind(this) }
 	        />
 				<ClearIcon visibility={ this.props.entityId ? 'visible' : 'hidden' } hoverColor={red500} onClick={ this.handleDeleteFromIcon.bind(this) }/>
-				<Loading loading={this.props.counter} />
+				<Loading  />
       </div>
 		);
 	};
@@ -147,7 +165,7 @@ class ContactDropdown extends React.Component{
 };
 
 function mapStateToProps(state, props) {
-	return {...DropdownField.getOwnState(state, props.alias), ...Progress.getOwnState(state)};
+	return DropdownField.getOwnState(state, props.alias);
 };
 
 const appConnect = connect(mapStateToProps)(ContactDropdown);
