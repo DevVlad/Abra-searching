@@ -1,8 +1,7 @@
 import Immutable from 'immutable';
 import { createSelector } from 'reselect';
 
-const TEST = 'TEST';
-const SET_PROGRESS = 'SET_PROGRESS';
+// const SET_PROGRESS = 'SET_PROGRESS';
 const SET_STARTING = 'SET_STARTING';
 const SET_STARTED = 'SET_STARTED';
 const SET_STOP_TIMER = 'SET_STOP_TIMER';
@@ -44,7 +43,7 @@ const Progress = {
 	isStarted(state) {
 		return isStarted(state);
 	},
-	
+
 	// isStarting: createSelector(getProgress, progress => progress.get('starting')),
 	// getCounter: createSelector(getProgress, progress => {
 	// 	if (progress === undefined) {
