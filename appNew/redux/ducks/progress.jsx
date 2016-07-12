@@ -1,14 +1,11 @@
 import Immutable from 'immutable';
 import { createSelector } from 'reselect';
 
-// const SET_PROGRESS = 'SET_PROGRESS';
 const SET_STARTING = 'SET_STARTING';
 const SET_STARTED = 'SET_STARTED';
 const SET_STOP_TIMER = 'SET_STOP_TIMER';
 const INC_COUNTER = 'INC_COUNTER';
 const DEC_COUNTER = 'DEC_COUNTER';
-
-// const getProgressState = (state) => state.getIn(['progress', 'loading']);
 
 const getProgress = state => state.get('progress');
 
@@ -102,46 +99,12 @@ const Progress = {
 		}
 	},
 
-	// setProgress(bool) {
-	// 	progressBin.push(bool);
-	// 	return (dispatch, getState) => {
-	// 		let toNotice = [];
-	// 		const timeID = setTimeout( () => {
-	// 			if (bool !== getProgress(getState())) {
-	// 				console.log('dispatch: setCurrentState', bool);
-	// 				dispatch(Progress.setCurrentState(bool));
-	// 			};
-	// 		}, 100);
-	// 		timesBin.push(timeID);
-	//
-	// 		if(progressBin[progressBin.length-2] === bool) {
-	// 			clearTimeout(timesBin[progressBin.length-1]);
-	// 			timesBin[progressBin.length-1] = 0;
-	// 		} else if(progressBin[progressBin.length-3] === bool) {
-	// 			clearTimeout(timesBin[progressBin.length-2]);
-	// 			timesBin[progressBin.length-2] = 0;
-	// 		}
-	// 	};
-	// },
-	//
-	// setCurrentState(bool)
-	// {
-	// 	return {
-	// 		type: SET_PROGRESS,
-	// 		bool
-	// 	};
-	// },
-
-
 /*
 * REDUCER
 */
 
 	reducer(state = Immutable.fromJS({}), action) {
 	  switch (action.type) {
-
-	    // case SET_PROGRESS:
-			// 	return state.setIn(['loading'], action.bool);
 
 		  case SET_STARTING:
 			  return state.set('starting', action.starting);
