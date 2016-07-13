@@ -253,6 +253,7 @@ function processRequest(data, filter, paging, alias, resultsToDisplay) {
 function progressMedium(filter, count, paging, alias, resultsToDisplay) {
   return (dispatch) => {
     dispatch(Progress.start());
+    dispatch(Progress.start());
     serviceRequestOnChangeInput(filter, count).then(data => dispatch(processRequest(data.winstrom, filter, paging, alias, resultsToDisplay)));
   };
 };
