@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import DropdownField from './dropdownfield.jsx';
+import Loading from './loading.jsx';
 import testValueDuck from '../redux/ducks/testValueDuck.js';
 
 @connect(state => (
@@ -37,6 +38,7 @@ class App extends React.Component{
 					entityToText={ object => [object.jmeno, object.prijmeni].join(' ') }
 					filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 				/>
+				<Loading />
 			</div>
 		)
 	};

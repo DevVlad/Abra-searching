@@ -7,8 +7,8 @@ const SET_STOP_TIMER = 'SET_STOP_TIMER';
 const INC_PROGRESS_BAR = 'INC_PROGRESS_BAR';
 const DEC_PROGRESS_BAR = 'DEC_PROGRESS_BAR';
 const STOP_PROGRESS_BAR = 'STOP_PROGRESS_BAR';
-const SET_SYPMPTON_KNOWN = 'SET_SYPMPTON_KNOWN';
-const SET_SYPMPTON_UNKNOWN = 'SET_SYPMPTON_UNKNOWN';
+const SET_SYMPTOM_KNOWN = 'SET_SYMPTOM_KNOWN';
+const SET_SYMPTOM_UNKNOWN = 'SET_SYMPTOM_UNKNOWN';
 const INC_XDRANT = 'INC_XDRANT';
 
 const getProgress = state => state.get('progress');
@@ -24,7 +24,7 @@ const Progress = {
 	getProgressBarValue: createSelector(getProgress, progress => progress.get('progressBar')),
 	getStopTimer: createSelector(getProgress, progress => progress.get('stopTimer')),
 	getStartTimer: createSelector(getProgress, progress => progress.get('startTimer')),
-	getSympton: createSelector(getProgress, progress => progress.get('sympton')),
+	getSymptom: createSelector(getProgress, progress => progress.get('sympton')),
 	getXdrant: createSelector(getProgress, progress => progress.get('xdrant')),
 
 	/*
@@ -33,10 +33,17 @@ const Progress = {
 
 	start(value) {
 		return (dispatch, getState) => {
-			const progressBarValue = Progress.getProgressBarValue(getState());
+			let progressBarValue = Progress.getProgressBarValue(getState());
 			if (!value) {
-				if (Progress.getSympton(getState()) !== 'unknown') dispatch(Progress.setSymptonUnknown('unknown'));
+				if (Progress.getSymptom(getState()) !== 'unknown') {
+					if (Progress.getSymptom(getState()) === 'known') {
+						dispatch(Progress.setSymptomUnknown('unknown', true));
+					} else {
+						dispatch(Progress.setSymptomUnknown('unknown'));
+					}
+				}
 				if (progressBarValue == 0) dispatch(Progress.incProgressBar(100));
+				progressBarValue = Progress.getProgressBarValue(getState());
 				if (progressBarValue > 0) {
 					if (!Progress.isStarting(getState())) {
 						const startTimer = setTimeout(() => {
@@ -48,7 +55,13 @@ const Progress = {
 				}
 
 			} else {
-				dispatch(Progress.setSymptonKnown('known'));
+				if (Progress.getSymptom(getState()) !== 'known') {
+					if (Progress.getSymptom(getState()) === 'unknown') {
+						dispatch(Progress.setSymptomKnown('known', true));
+					} else {
+						dispatch(Progress.setSymptomKnown('known'));
+					}
+				}
 				dispatch(Progress.incProgressBar(value));
 				const progressBarValue = Progress.getProgressBarValue(getState());
 				if (progressBarValue > 0) {
@@ -90,18 +103,20 @@ const Progress = {
 		};
 	},
 
-	setSymptonKnown(definition) {
+	setSymptomKnown(definition, changeOfSymptom = false) {
 		return {
-			type: SET_SYPMPTON_KNOWN,
-			definition
+			type: SET_SYMPTOM_KNOWN,
+			definition,
+			changeOfSymptom
 		};
 	},
 
-	setSymptonUnknown(definition) {
+	setSymptomUnknown(definition, changeOfSymptom = false) {
 		return {
-			type: SET_SYPMPTON_UNKNOWN,
+			type: SET_SYMPTOM_UNKNOWN,
 			definition,
-			xdrant: 1
+			xdrant: 1,
+			changeOfSymptom
 		};
 	},
 
@@ -109,7 +124,7 @@ const Progress = {
 		return (dispatch, getState) => {
 			if (Progress.isStarting(getState())) {
 				clearTimeout(Progress.getStartTimer(getState()));
-				if (Progress.getSympton(getState()) === 'known') {
+				if (Progress.getSymptom(getState()) === 'known') {
 					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['starting', 'sympton'] });
 				} else {
 					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['sympton', 'starting', 'xdrant'] });
@@ -117,7 +132,7 @@ const Progress = {
 
 			} else if (Progress.isStarted(getState())) {
 				dispatch(Progress.setStarted(false));
-				if (Progress.getSympton(getState()) === 'known') {
+				if (Progress.getSymptom(getState()) === 'known') {
 					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['sympton'] });
 				} else {
 					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['sympton', 'xdrant'] });
@@ -194,16 +209,19 @@ const Progress = {
 
 			case STOP_PROGRESS_BAR:
 				let pomState = state;
-				console.log(action.toShutDown)
 				action.toShutDown.forEach( x => {
 					pomState = pomState.set(x, undefined);
 				});
 				return pomState.set('progressBar', 0);
 
-			case SET_SYPMPTON_KNOWN:
+			case SET_SYMPTOM_KNOWN:
+				if (action.changeOfSymptom) {
+					return state.set('sympton', action.definition).set('xdrant', undefined);
+				}
 				return state.set('sympton', action.definition);
 
-			case SET_SYPMPTON_UNKNOWN:
+			case SET_SYMPTOM_UNKNOWN:
+
 				return state.set('sympton', action.definition).set('xdrant', action.xdrant);
 
 			case INC_XDRANT:

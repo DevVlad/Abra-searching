@@ -5,7 +5,6 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import SvgIcon from 'material-ui/SvgIcon';
 import { red500 } from 'material-ui/styles/colors';
 import DropdownField from '../redux/ducks/dropdownfield.jsx';
-import Loading from './loading.jsx';
 
 import './App.css';
 
@@ -157,7 +156,6 @@ class ContactDropdown extends React.Component{
 						onKeyDown={ this.handleOnKeyDown.bind(this) }
 	        />
 				<ClearIcon visibility={ this.props.entityId ? 'visible' : 'hidden' } hoverColor={red500} onClick={ this.handleDeleteFromIcon.bind(this) }/>
-				<Loading  />
       </div>
 		);
 	};

@@ -146,11 +146,12 @@ describe('async Progress actions - step(val) and start(val) tests', () => {
 });
 
 describe('async Progress actions - stop() and start(val) tests of "known ending"', () => {
+  
   it('start(val), 20stop => in 50 should not be started', () => {
-    const store = mockStore(Immutable.fromJS({ progress: {progressBar: 1} }));
+    const store = mockStore(Immutable.fromJS({ progress: {progressBar: 100} }));
 
     let pms = new Promise( res => {
-      store.dispatch(Progress.start(100));
+      store.dispatch(Progress.start(20));
       setTimeout( () => {
         store.dispatch(Progress.stop());
       }, 20);
@@ -161,7 +162,8 @@ describe('async Progress actions - stop() and start(val) tests of "known ending"
     return pms.then( () => {
       expect(store.getActions())
         .toExclude({ type: 'SET_STARTED', started: true })
-        .toInclude({ type: 'SET_SYPMPTON_KNOWN', definition: 'known' })
+        .toInclude({ type: 'INC_PROGRESS_BAR', value: 20 })
+        .toInclude({ type: 'SET_SYMPTOM_KNOWN', definition: 'known', changeOfSymptom: false })
     });
   });
 
@@ -182,13 +184,13 @@ describe('async Progress actions - stop() and start(val) tests of "known ending"
     });
     return pms.then( () => {
       expect(store.getActions())
-        .toInclude({ type: 'SET_SYPMPTON_KNOWN', definition: 'known' })
+        .toInclude({ type: 'SET_SYMPTOM_KNOWN', definition: 'known', changeOfSymptom: false })
         .toExclude({ type: 'SET_STARTED', started: true })
     });
   });
 
   it('undefined ending - testing of increment xdrants', () => {
-    const store = mockStore(Immutable.fromJS({ progress: {sympton: 'unknown', progressBar: 100} }));
+    const store = mockStore(Immutable.fromJS({ progress: {symptom: 'unknown', progressBar: 100} }));
 
     let pms = new Promise( res => {
       store.dispatch(Progress.start());
@@ -203,6 +205,24 @@ describe('async Progress actions - stop() and start(val) tests of "known ending"
       expect(store.getActions())
         .toInclude({ type: 'INC_XDRANT' })
         .toInclude({ type: 'SET_STARTED', started: true })
+    });
+  });
+
+  it('undefined ending - start(), start(val), 110res => should change symptom with recognize of change from Und -> Def', () => {
+    const store = mockStore(Immutable.fromJS({ progress: { progressBar: 0} }));
+
+    let pms = new Promise( res => {
+      store.dispatch(Progress.start());
+      store.dispatch(Progress.start(20));
+
+      setTimeout( () => {
+        res();
+      }, 150);
+    });
+    return pms.then( () => {
+      expect(store.getActions())
+        .toInclude({ type: 'SET_SYMPTOM_UNKNOWN', definition: 'unknown', xdrant: 1, changeOfSymptom: false })
+        .toInclude({ type: 'SET_SYMPTOM_KNOWN', definition: 'known', changeOfSymptom: false })
     });
   });
 

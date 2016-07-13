@@ -11,6 +11,12 @@ class Loading extends React.Component {
 		this.pulse = null;
 	};
 
+	componentWillUpdate() {
+		if (this.props.progress && this.props.xdrant && this.props.progressBarValue) {
+			console.log(this.props.progress, this.props.xdrant, this.props.progressBarValue)
+		}
+	};
+
   componentDidUpdate() {
 		if (this.pulse == null && this.loadRef != undefined) {
 			this.pulse = () => {
@@ -38,7 +44,9 @@ class Loading extends React.Component {
 
 function mapStateToProps(state) {
 	return {
-		progress: Progress.isStarted(state)
+		progress: Progress.isStarted(state),
+		xdrant: Progress.getXdrant(state),
+		progressBarValue: Progress.getProgressBarValue(state)
 	};
 };
 

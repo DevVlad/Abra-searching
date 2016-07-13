@@ -225,7 +225,7 @@ logic
 function processRequest(data, filter, paging, alias, resultsToDisplay) {
 	return (dispatch, getState) => {
     dispatch(Progress.stop());
-    // dispatch(Progress.step())
+    // dispatch(Progress.step(10))
     // dispatch(Progress.step(Progress.getProgressBar(getState())))
 		if (getFilter(getState(), alias) === filter) {
 			const totalCount = parseInt(data['@rowCount']);
@@ -252,7 +252,6 @@ function processRequest(data, filter, paging, alias, resultsToDisplay) {
 
 function progressMedium(filter, count, paging, alias, resultsToDisplay) {
   return (dispatch) => {
-    dispatch(Progress.start());
     dispatch(Progress.start());
     serviceRequestOnChangeInput(filter, count).then(data => dispatch(processRequest(data.winstrom, filter, paging, alias, resultsToDisplay)));
   };
