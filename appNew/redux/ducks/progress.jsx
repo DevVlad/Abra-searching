@@ -63,7 +63,7 @@ const Progress = {
 					}
 				}
 				dispatch(Progress.incProgressBar(value));
-				const progressBarValue = Progress.getProgressBarValue(getState());
+				progressBarValue = Progress.getProgressBarValue(getState());
 				if (progressBarValue > 0) {
 					if (!Progress.isStarting(getState())) {
 						const startTimer = setTimeout(() => {
