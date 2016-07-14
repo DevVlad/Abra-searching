@@ -95,9 +95,8 @@ function mapStateToProps(state) {
 	if (Progress.isStarted(state) !== undefined) {
 		return {
 			progress: Progress.isStarted(state),
-			xdrant: Progress.getXdrant(state),
-			progressBarValue: Progress.getProgressBarValue(state),
-			symptom: Progress.getSymptom(state),
+			xdrant: 0,
+			progressBarValue: Progress.getCounterValue(state),
 			barEndPoint: Progress.getBarEndPoint(state)
 		};
 	} else {

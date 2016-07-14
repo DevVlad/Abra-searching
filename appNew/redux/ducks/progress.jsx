@@ -4,12 +4,9 @@ import { createSelector } from 'reselect';
 const SET_STARTING = 'SET_STARTING';
 const SET_STARTED = 'SET_STARTED';
 const SET_STOP_TIMER = 'SET_STOP_TIMER';
-const INC_PROGRESS_BAR = 'INC_PROGRESS_BAR';
-const DEC_PROGRESS_BAR = 'DEC_PROGRESS_BAR';
-const STOP_PROGRESS_BAR = 'STOP_PROGRESS_BAR';
-const SET_SYMPTOM_KNOWN = 'SET_SYMPTOM_KNOWN';
-const SET_SYMPTOM_UNKNOWN = 'SET_SYMPTOM_UNKNOWN';
-const INC_XDRANT = 'INC_XDRANT';
+const INC_COUNTER = 'INC_COUNTER';
+const DEC_COUNTER = 'DEC_COUNTER';
+const SET_PERCENT = 'SET_PERCENT';
 
 const getProgress = state => state.get('progress');
 
@@ -21,82 +18,42 @@ const Progress = {
 
 	isStarting: createSelector(getProgress, progress => progress.get('starting')),
 	isStarted: createSelector(getProgress, progress => progress.get('started')),
-	getProgressBarValue: createSelector(getProgress, progress => progress.get('progressBar')),
+	getCounterValue: createSelector(getProgress, progress => progress.get('counter')),
 	getStopTimer: createSelector(getProgress, progress => progress.get('stopTimer')),
 	getStartTimer: createSelector(getProgress, progress => progress.get('startTimer')),
-	getSymptom: createSelector(getProgress, progress => progress.get('sympton')),
-	getXdrant: createSelector(getProgress, progress => progress.get('xdrant')),
 	getBarEndPoint: createSelector(getProgress, progress => progress.get('barEndPoint')),
+	getProgressBarPercent : createSelector(getProgress, progress => progress.get('progressBarPercent')),
 
 	/*
 	* ACTIONS
 	*/
 
-	start(value) {
+	start(value = 1) {
 		return (dispatch, getState) => {
-			let progressBarValue = Progress.getProgressBarValue(getState());
-			if (!value) {
-				//UNKNOWN
-				if (Progress.getSymptom(getState()) !== 'unknown') {
-					if (Progress.getSymptom(getState()) === 'known') {
-						dispatch(Progress.setSymptomUnknown('unknown', true));
-					} else {
-						dispatch(Progress.setSymptomUnknown('unknown'));
-					}
-				}
-				if (progressBarValue == 0) dispatch(Progress.incProgressBar(100));
-				progressBarValue = Progress.getProgressBarValue(getState());
-				if (progressBarValue > 0) {
-					if (!Progress.isStarting(getState())) {
-						const startTimer = setTimeout(() => {
-							dispatch(Progress.setStarted(progressBarValue > 0));
-							if (Progress.isStarted(getState())) dispatch(Progress.incXdrant());
-						}, 100);
-						if (!Progress.isStarting(getState()) && !Progress.isStarted(getState())) dispatch(Progress.setStarting(startTimer));
-					}
-				}
-
-			} else {
-				//KNOWN
-				if (Progress.getSymptom(getState()) !== 'known') {
-					if (Progress.getSymptom(getState()) === 'unknown') {
-						dispatch(Progress.setSymptomKnown('known', true));
-					} else {
-						dispatch(Progress.setSymptomKnown('known'));
-					}
-				}
-				dispatch(Progress.incProgressBar(value));
-				progressBarValue = Progress.getProgressBarValue(getState());
-				if (progressBarValue > 0) {
-					if (!Progress.isStarting(getState())) {
-						const startTimer = setTimeout(() => {
-							dispatch(Progress.setStarted(progressBarValue > 0));
-						}, 100);
-						if (!Progress.isStarting(getState()) && !Progress.isStarted(getState())) dispatch(Progress.setStarting(startTimer));
-					}
+			dispatch(Progress.incCounter(value));
+			const counterValue = Progress.getCounterValue(getState());
+			if (counterValue > 0) {
+				if (!Progress.isStarting(getState())) {
+					const startTimer = setTimeout(() => {
+						dispatch(Progress.setStarted(counterValue > 0, value));
+					}, 100);
+					if (!Progress.isStarting(getState()) && !Progress.isStarted(getState())) dispatch(Progress.setStarting(startTimer));
 				}
 			}
-
 		};
 	},
 
-	incXdrant() {
-		return {
-			type: INC_XDRANT
-		};
-	},
-
-	step(value) {
+	stop(value = 1) {
 		return (dispatch, getState) => {
-			if (!value) value = 0.01 * Progress.getProgressBarValue(getState());
-			dispatch(Progress.decProgressBar(value));
-			const progressBarValue = Progress.getProgressBarValue(getState());
-			if (progressBarValue == 0) {
+			dispatch(Progress.decCounter(value));
+			dispatch(Progress.incProgressBarPercent(value));
+			const counterValue = Progress.getCounterValue(getState());
+			if (counterValue == 0) {
 				const stopTimer = setTimeout(() => {
-					dispatch(Progress.setStarted(false));
+					dispatch(Progress.setStarted(false, value));
 				}, 100);
 				dispatch(Progress.setStopTimer(stopTimer));
-			} else if (progressBarValue >= 1) {
+			} else if (counterValue === 1) {
 				const stopTimer = Progress.getStopTimer(getState());
 				if (stopTimer) {
 					clearTimeout(stopTimer);
@@ -104,46 +61,6 @@ const Progress = {
 				}
 			}
 		};
-	},
-
-	setSymptomKnown(definition, changeOfSymptom = false) {
-		return {
-			type: SET_SYMPTOM_KNOWN,
-			definition,
-			changeOfSymptom
-		};
-	},
-
-	setSymptomUnknown(definition, changeOfSymptom = false) {
-		return {
-			type: SET_SYMPTOM_UNKNOWN,
-			definition,
-			xdrant: 0,
-			changeOfSymptom
-		};
-	},
-
-	stop() {
-		return (dispatch, getState) => {
-			if (Progress.isStarting(getState())) {
-				clearTimeout(Progress.getStartTimer(getState()));
-				if (Progress.getSymptom(getState()) === 'known') {
-					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['starting', 'sympton'], progressBarStatus: Progress.getProgressBarValue(getState()) });
-				} else {
-					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['sympton', 'starting', 'xdrant'], progressBarStatus: Progress.getProgressBarValue(getState()) });
-				}
-
-			} else if (Progress.isStarted(getState())) {
-				dispatch(Progress.setStarted(false));
-				if (Progress.getSymptom(getState()) === 'known') {
-					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['sympton'], progressBarStatus: Progress.getProgressBarValue(getState()) });
-				} else {
-					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['sympton', 'xdrant'], progressBarStatus: Progress.getProgressBarValue(getState()) });
-				}
-
-			}
-		};
-
 	},
 
 	setStarting(timer) {
@@ -154,10 +71,11 @@ const Progress = {
 		}
 	},
 
-	setStarted(started) {
+	setStarted(started, value) {
 		return {
 			type: SET_STARTED,
-			started
+			started,
+			value
 		};
 	},
 
@@ -168,25 +86,35 @@ const Progress = {
 		};
 	},
 
-	incProgressBar(value) {
+	incCounter(value) {
 		return {
-			type: INC_PROGRESS_BAR,
+			type: INC_COUNTER,
 			value
 		}
 	},
 
-	decProgressBar(value) {
+	decCounter(value) {
 		return {
-			type: DEC_PROGRESS_BAR,
+			type: DEC_COUNTER,
 			value
 		}
+	},
+
+	incProgressBarPercent(value) {
+		return (dispatch, getState) => {
+			let percentDone = Progress.getProgressBarPercent(getState());
+			let endPoint = Progress.getBarEndPoint(getState());
+			console.log('prdel',value, percentDone, endPoint);
+
+			dispatch({ type: SET_PERCENT, value: (percentDone + value/endPoint*100) });
+		};
 	},
 
 /*
 * REDUCER
 */
 
-	reducer(state = Immutable.fromJS({progressBar: 0, barEndPoint: 0}), action) {
+	reducer(state = Immutable.fromJS({counter: 0, barEndPoint: 0, progressBarPercent: 0}), action) {
 	  switch (action.type) {
 
 		  case SET_STARTING:
@@ -195,7 +123,7 @@ const Progress = {
 		  case SET_STARTED:
 			  let newState = state;
 			  if (action.started) {
-				  newState = newState.set('starting', false);
+				  newState = newState.set('starting', false).updateIn(['barEndPoint'], x => x + action.value);;
 			  } else {
 				  newState = newState.set('stopTimer', 0);
 			  }
@@ -204,30 +132,14 @@ const Progress = {
 		  case SET_STOP_TIMER:
 			  return state.set('stopTimer', action.stopTimer);
 
-		  case INC_PROGRESS_BAR:
-			  return state.updateIn(['progressBar'], x => x + action.value).updateIn(['barEndPoint'], x => x + action.value);
+		  case INC_COUNTER:
+			  return state.updateIn(['counter'], x => x + action.value);
 
-		  case DEC_PROGRESS_BAR:
-			  return state.updateIn(['progressBar'], x => x - action.value);
+		  case DEC_COUNTER:
+			  return state.updateIn(['counter'], x => x - action.value);
 
-			case STOP_PROGRESS_BAR:
-				let pomState = state;
-				action.toShutDown.forEach( x => {
-					pomState = pomState.set(x, undefined);
-				});
-				return pomState.set('progressBar', 0).set('barEndPoint', action.progressBarStatus).set('barEndPoint', 0);
-
-			case SET_SYMPTOM_KNOWN:
-				if (action.changeOfSymptom) {
-					return state.set('sympton', action.definition).set('xdrant', undefined);
-				}
-				return state.set('sympton', action.definition);
-
-			case SET_SYMPTOM_UNKNOWN:
-				return state.set('sympton', action.definition).set('xdrant', action.xdrant);
-
-			case INC_XDRANT:
-				return state.updateIn(['xdrant'], xdrantCount => xdrantCount + 1);
+			case SET_PERCENT:
+				return state.set('progressBarPercent', action.value);
 
 		  default:
 	        return state;

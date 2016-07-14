@@ -21,29 +21,28 @@ class App extends React.Component{
 	}
 
 	handleStart() {
-		this.props.dispatch(Progress.start(20));
-		setTimeout( () => {
-			this.props.dispatch(Progress.start());
-		}, 900);
+		this.props.dispatch(Progress.start());
 	}
 
 	handleStop() {
 		this.props.dispatch(Progress.stop());
 	}
 
-	handleStep() {
-		this.props.dispatch(Progress.step(10));
-		// setTimeout( () => {
-		// 	this.props.dispatch(Progress.step(5));
-		// }, 900);
+	handleStart10() {
+		this.props.dispatch(Progress.start(10));
+	}
+
+	handleStop10() {
+		this.props.dispatch(Progress.stop(10));
 	}
 
 	render(){
 		return (
 			<div className="mainDiv">
-				<button onClick={ this.handleStart.bind(this) }>Start</button>
-				<button onClick={ this.handleStep.bind(this) }>Step</button>
+				<button onClick={ this.handleStart.bind(this) }>Start()</button>
+				<button onClick={ this.handleStart10.bind(this) }>Start 10</button>
 				<button onClick={ this.handleStop.bind(this) }>Stop</button>
+				<button onClick={ this.handleStop10.bind(this) }>Stop 10</button>
 				<DropdownField
 					alias='a'
 					entityName="kontakt"
