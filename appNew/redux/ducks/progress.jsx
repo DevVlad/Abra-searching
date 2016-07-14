@@ -215,7 +215,7 @@ const Progress = {
 				action.toShutDown.forEach( x => {
 					pomState = pomState.set(x, undefined);
 				});
-				return pomState.set('progressBar', 0).set('barEndPoint', action.progressBarStatus);
+				return pomState.set('progressBar', 0).set('barEndPoint', action.progressBarStatus).set('barEndPoint', 0);
 
 			case SET_SYMPTOM_KNOWN:
 				if (action.changeOfSymptom) {
