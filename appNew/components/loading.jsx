@@ -11,22 +11,46 @@ class Loading extends React.Component {
 		this.pulse = null;
 		this.startPoint = 0;
 		this.currentVisual = 1;
-		this.endPoint = 0;
 		this.toDisplay = 0;
+		this.speed = 750;
 	};
 
 	componentWillUpdate() {
-		// console.log(this.props)
 		const props = this.props;
 		if (props.progress && props.symptom === 'known') {
-			if (this.endPoint < props.progressBarValue) {
-				this.endPoint = props.progressBarValue;
+			if (props.progressBarValue === props.barEndPoint) {
+				this.currentVisual = 0.1 * props.progressBarValue;
 			} else {
 				this.currentVisual = props.progressBarValue;
 			}
-			this.currentVisual/this.endPoint*100 == 0 ? this.toDisplay = 100 : this.toDisplay = this.currentVisual/this.endPoint*100;
-		}
+			if (props.progressBarValue === props.barEndPoint) {
+				this.toDisplay = this.toDisplay + 0.1 * props.barEndPoint
+			} else {
+				let pom = props.progressBarValue / props.barEndPoint * 100;
+				if (pom > this.toDisplay) {
+					this.toDisplay = pom;
+				} else {
+					this.toDisplay = this.toDisplay + (100 - this.toDisplay) * 0.1
+				}
 
+			}
+			// props.progressBarValue == 0 ? this.toDisplay = 100 : this.toDisplay = this.currentVisual/props.barEndPoint*100;
+		}
+		if (props.progress && props.symptom === 'unknown') {
+
+			if (props.xdrant === 0) {
+				this.toDisplay = props.progressBarValue / 2;;
+			} else {
+				this.speed = this.speed * (this.toDisplay/100);
+				let restOfBar = (props.progressBarValue - this.toDisplay) / 2;
+				this.toDisplay = this.toDisplay + restOfBar;
+			}
+		}
+		if ((props.progressBarValue === 0 || props.progress === false) && this.toDisplay > 0 && props.symptom) {
+		// if (props.progress === false && this.toDisplay > 0 && props.symptom) {
+			this.toDisplay = 100;
+		}
+		// console.log('componentWillUpdate',props, props.progress,this.toDisplay, this.speed)
 	};
 
   componentDidUpdate() {
@@ -43,6 +67,7 @@ class Loading extends React.Component {
   };
 
   render() {
+
 		const style = {
       height: '3px',
       width: `${this.toDisplay}%`,
@@ -53,9 +78,11 @@ class Loading extends React.Component {
 
 		if (this.toDisplay === 100) {
 			setTimeout( () => {
-				this.toDisplay = 0;
-				this.setState({});
-			}, 700)
+				if (this.toDisplay === 100) {
+					this.toDisplay = 0;
+					this.setState({});
+				}
+			}, 700);
 		}
 
     if (this.toDisplay > 0 ) {
@@ -74,15 +101,16 @@ class Loading extends React.Component {
 };
 
 function mapStateToProps(state) {
-	if (Progress.isStarted(state) && Progress.getSymptom(state)) {
+	if (Progress.isStarted(state) !== undefined) {
 		return {
 			progress: Progress.isStarted(state),
 			xdrant: Progress.getXdrant(state),
 			progressBarValue: Progress.getProgressBarValue(state),
-			symptom: Progress.getSymptom(state)
+			symptom: Progress.getSymptom(state),
+			barEndPoint: Progress.getBarEndPoint(state)
 		};
 	} else {
-		return {}
+		return {};
 	}
 
 };

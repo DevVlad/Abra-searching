@@ -26,6 +26,7 @@ const Progress = {
 	getStartTimer: createSelector(getProgress, progress => progress.get('startTimer')),
 	getSymptom: createSelector(getProgress, progress => progress.get('sympton')),
 	getXdrant: createSelector(getProgress, progress => progress.get('xdrant')),
+	getBarEndPoint: createSelector(getProgress, progress => progress.get('barEndPoint')),
 
 	/*
 	* ACTIONS
@@ -35,6 +36,7 @@ const Progress = {
 		return (dispatch, getState) => {
 			let progressBarValue = Progress.getProgressBarValue(getState());
 			if (!value) {
+				//UNKNOWN
 				if (Progress.getSymptom(getState()) !== 'unknown') {
 					if (Progress.getSymptom(getState()) === 'known') {
 						dispatch(Progress.setSymptomUnknown('unknown', true));
@@ -48,13 +50,14 @@ const Progress = {
 					if (!Progress.isStarting(getState())) {
 						const startTimer = setTimeout(() => {
 							dispatch(Progress.setStarted(progressBarValue > 0));
-							dispatch(Progress.incXdrant());
+							if (Progress.isStarted(getState())) dispatch(Progress.incXdrant());
 						}, 100);
 						if (!Progress.isStarting(getState()) && !Progress.isStarted(getState())) dispatch(Progress.setStarting(startTimer));
 					}
 				}
 
 			} else {
+				//KNOWN
 				if (Progress.getSymptom(getState()) !== 'known') {
 					if (Progress.getSymptom(getState()) === 'unknown') {
 						dispatch(Progress.setSymptomKnown('known', true));
@@ -115,7 +118,7 @@ const Progress = {
 		return {
 			type: SET_SYMPTOM_UNKNOWN,
 			definition,
-			xdrant: 1,
+			xdrant: 0,
 			changeOfSymptom
 		};
 	},
@@ -125,17 +128,17 @@ const Progress = {
 			if (Progress.isStarting(getState())) {
 				clearTimeout(Progress.getStartTimer(getState()));
 				if (Progress.getSymptom(getState()) === 'known') {
-					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['starting', 'sympton'] });
+					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['starting', 'sympton'], progressBarStatus: Progress.getProgressBarValue(getState()) });
 				} else {
-					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['sympton', 'starting', 'xdrant'] });
+					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['sympton', 'starting', 'xdrant'], progressBarStatus: Progress.getProgressBarValue(getState()) });
 				}
 
 			} else if (Progress.isStarted(getState())) {
 				dispatch(Progress.setStarted(false));
 				if (Progress.getSymptom(getState()) === 'known') {
-					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['sympton'] });
+					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['sympton'], progressBarStatus: Progress.getProgressBarValue(getState()) });
 				} else {
-					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['sympton', 'xdrant'] });
+					dispatch({ type: STOP_PROGRESS_BAR, toShutDown: ['sympton', 'xdrant'], progressBarStatus: Progress.getProgressBarValue(getState()) });
 				}
 
 			}
@@ -183,7 +186,7 @@ const Progress = {
 * REDUCER
 */
 
-	reducer(state = Immutable.fromJS({progressBar: 0}), action) {
+	reducer(state = Immutable.fromJS({progressBar: 0, barEndPoint: 0}), action) {
 	  switch (action.type) {
 
 		  case SET_STARTING:
@@ -202,7 +205,7 @@ const Progress = {
 			  return state.set('stopTimer', action.stopTimer);
 
 		  case INC_PROGRESS_BAR:
-			  return state.updateIn(['progressBar'], x => x + action.value);
+			  return state.updateIn(['progressBar'], x => x + action.value).updateIn(['barEndPoint'], x => x + action.value);
 
 		  case DEC_PROGRESS_BAR:
 			  return state.updateIn(['progressBar'], x => x - action.value);
@@ -212,7 +215,7 @@ const Progress = {
 				action.toShutDown.forEach( x => {
 					pomState = pomState.set(x, undefined);
 				});
-				return pomState.set('progressBar', 0);
+				return pomState.set('progressBar', 0).set('barEndPoint', action.progressBarStatus);
 
 			case SET_SYMPTOM_KNOWN:
 				if (action.changeOfSymptom) {
@@ -221,7 +224,6 @@ const Progress = {
 				return state.set('sympton', action.definition);
 
 			case SET_SYMPTOM_UNKNOWN:
-
 				return state.set('sympton', action.definition).set('xdrant', action.xdrant);
 
 			case INC_XDRANT:
