@@ -14,7 +14,7 @@ class Loading extends React.Component {
 	};
 
 	componentWillUpdate(newProps) {
-		console.log('LOADING: componentWillUpdate', newProps)
+		// console.log('LOADING: componentWillUpdate', newProps)
 		if (newProps.symptom === 'unknown' && newProps.progressBarValue < newProps.barEndPoint) {
 
 		}

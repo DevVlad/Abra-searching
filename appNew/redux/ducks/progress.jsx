@@ -46,7 +46,7 @@ const Progress = {
 	stop(value = 1) {
 		return (dispatch, getState) => {
 			dispatch(Progress.decCounter(value));
-			dispatch(Progress.incProgressBarPercent(value));
+			dispatch(Progress.incProgressBarPercent());
 			const counterValue = Progress.getCounterValue(getState());
 			if (counterValue == 0) {
 				const stopTimer = setTimeout(() => {
@@ -100,13 +100,14 @@ const Progress = {
 		}
 	},
 
-	incProgressBarPercent(value) {
+	incProgressBarPercent() {
 		return (dispatch, getState) => {
-			let percentDone = Progress.getProgressBarPercent(getState());
 			let endPoint = Progress.getBarEndPoint(getState());
-			console.log('prdel',value, percentDone, endPoint);
-
-			dispatch({ type: SET_PERCENT, value: (percentDone + value/endPoint*100) });
+			let value = 100;
+			if (Progress.getCounterValue(getState()) > 0) {
+				value = 100 - Progress.getCounterValue(getState()) / endPoint * 100
+			}
+			dispatch({ type: SET_PERCENT, value: value });
 		};
 	},
 
@@ -136,7 +137,11 @@ const Progress = {
 			  return state.updateIn(['counter'], x => x + action.value);
 
 		  case DEC_COUNTER:
-			  return state.updateIn(['counter'], x => x - action.value);
+			  return state.updateIn(['counter'], x => {
+					let val = 0;
+					x > 0 ? val = x - action.value : val;
+					return val;
+				});
 
 			case SET_PERCENT:
 				return state.set('progressBarPercent', action.value);
