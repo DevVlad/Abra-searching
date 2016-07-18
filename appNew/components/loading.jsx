@@ -9,7 +9,6 @@ class Loading extends React.Component {
 	constructor() {
 		super();
 		this.pulse = null;
-		this.currentVisual = 1;
 		this.toDisplay = 0;
 	};
 
@@ -17,25 +16,12 @@ class Loading extends React.Component {
     if (newProps.progress) this.toDisplay = newProps.progressBar;
   }
 
-  componentDidUpdate() {
-		// if (this.pulse == null && this.loadRef != undefined) {
-		// 	this.pulse = () => {
-		// 		if (this.loadRef == undefined) {
-		// 			this.pulse = null;
-		// 		} else {
-		// 			$(this.loadRef).delay(200).fadeOut('slow').delay(50).fadeIn('slow', this.pulse);
-		// 		}
-		// 	};
-		// 	this.pulse();
-		// }
-  };
-
   render() {
 		const style = {
       height: '3px',
       width: `${this.toDisplay}%`,
       background: '-webkit-linear-gradient(-45deg, rgba(197,222,234,1) 0%,rgba(138,187,215,1) 41%,rgba(138,187,215,1) 41%,rgba(6,109,171,1) 83%)',
-      transition: 'width 400ms ease-out, height 400ms linear',
+      transition: 'width 400ms ease-in, height 400ms linear',
       position: 'absolute',
     };
 
