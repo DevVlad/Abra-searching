@@ -145,43 +145,82 @@ describe('Progress actions - stop(val) and start(val) tests', () => {
   });
 });
 
-describe('Progress actions - stop() and start() tests', () => {
-  it('start, 20stop => in 100 should not be started', () => {
-    const store = mockStore(Immutable.fromJS({ progress: {counter: 0} }));
+describe('Progress progressBar in percent tests', () => {
+  it('start(10), 120stop(5) => in 200 should be started with 50% in progress bar', () => {
+    const store = mockStore(Immutable.fromJS({ progress: {counter: 5, barEndPoint: 10} }));
 
     let pms = new Promise( res => {
-      store.dispatch(Progress.start());
+      store.dispatch(Progress.start(10));
       setTimeout( () => {
-        store.dispatch(Progress.stop());
-      }, 20);
+        store.dispatch(Progress.stop(5));
+      }, 120);
       setTimeout( () => {
         res();
-      }, 100);
+      }, 200);
     });
     return pms.then( () => {
-      expect(store.getActions()).toExclude({ type: 'SET_STARTED', started: true });
+      expect(store.getActions()).toInclude({ type: 'SET_STARTED', started: true, value: 10 })
+                                .toInclude({ type: 'SET_PERCENT', value: 50 });
     });
   });
 
-  it('start, 20stop, 20start => in 100 should be started', () => {
-    const store = mockStore(Immutable.fromJS({ progress: {counter: 1} }));
+  it('start(10), 120stop(5), 20stop(5) => in 200 should have 0% again in progress bar', () => {
+    const store = mockStore(Immutable.fromJS({ progress: {counter: 5, barEndPoint: 5} }));
 
     let pms = new Promise( res => {
-      store.dispatch(Progress.start());
+      store.dispatch(Progress.start(10));
       setTimeout( () => {
-        store.dispatch(Progress.stop());
+        store.dispatch(Progress.stop(5));
         setTimeout( () => {
-          store.dispatch(Progress.start());
+          store.dispatch(Progress.stop(5));
         }, 20);
+      }, 120);
+      setTimeout( () => {
+        res();
+      }, 200);
+    });
+    return pms.then( () => {
+      expect(store.getActions()).toInclude({ type: 'SET_STARTED', started: true, value: 10 })
+                                .toInclude({ type: 'SET_PERCENT', value: 0 });
+    });
+  });
+
+  it('start(10), 20stop(5) => in 120 should have 50% in progress bar and be started', () => {
+    const store = mockStore(Immutable.fromJS({ progress: {counter: 5, barEndPoint: 10} }));
+
+    let pms = new Promise( res => {
+      store.dispatch(Progress.start(10));
+      setTimeout( () => {
+        store.dispatch(Progress.stop(5));
       }, 20);
       setTimeout( () => {
         res();
-      }, 100);
+      }, 120);
     });
     return pms.then( () => {
-      expect(store.getActions()).toInclude({ type: 'SET_STARTED', started: true, value: 1 });
+      expect(store.getActions()).toInclude({ type: 'SET_STARTED', started: true, value: 10 })
+                                .toInclude({ type: 'SET_PERCENT', value: 50 });
     });
-
   });
+
+  it('start(10), 20stop(5) => in 50 should have 50% in progress bar and not be started', () => {
+    const store = mockStore(Immutable.fromJS({ progress: {counter: 5, barEndPoint: 10} }));
+
+    let pms = new Promise( res => {
+      store.dispatch(Progress.start(10));
+      setTimeout( () => {
+        store.dispatch(Progress.stop(5));
+      }, 20);
+      setTimeout( () => {
+        res();
+      }, 50);
+    });
+    return pms.then( () => {
+      expect(store.getActions()).toExclude({ type: 'SET_STARTED', started: true, value: 10 })
+                                .toInclude({ type: 'SET_PERCENT', value: 50 });
+    });
+  });
+
+
 
 });

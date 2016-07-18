@@ -14,44 +14,8 @@ class Loading extends React.Component {
 	};
 
 	componentWillUpdate(newProps) {
-		// console.log('LOADING: componentWillUpdate', newProps)
-		if (newProps.symptom === 'unknown' && newProps.progressBarValue < newProps.barEndPoint) {
-
-		}
-		if (newProps.symptom === 'unknown' && newProps.progress && newProps.xdrant > 0) {
-
-				if (newProps.progressBarValue === newProps.barEndPoint) {
-					this.toDisplay = this.toDisplay + (newProps.progressBarValue - this.toDisplay) / 2;
-				} else {
-					if (this.toDisplay > 0) {
-						if (newProps.progressBarValue < newProps.barEndPoint) {
-							let remains = (newProps.barEndPoint - this.toDisplay);
-							let ratio = 1 - (newProps.progressBarValue / newProps.barEndPoint);
-							this.toDisplay = this.toDisplay + ratio * remains;
-						} else {
-							this.toDisplay = this.toDisplay + (newProps.progressBarValue - this.toDisplay) / 2;
-						}
-					}
-				}
-		}
-		if (newProps.symptom === 'known' && newProps.progress) {
-			if (newProps.progressBarValue === newProps.barEndPoint) {
-				if (this.toDisplay > 0) {
-					this.toDisplay = this.toDisplay + 0.1 * (newProps.barEndPoint - this.toDisplay);
-				} else {
-						this.toDisplay = 0.1 * (newProps.barEndPoint - this.toDisplay);
-				}
-
-			}
-			if (newProps.progressBarValue < newProps.barEndPoint) {
-				let remains = (newProps.barEndPoint - this.toDisplay);
-				let ratio = 1 - (newProps.progressBarValue / newProps.barEndPoint);
-				this.toDisplay = this.toDisplay + ratio * remains;
-			}
-		}
-		if (!newProps.progress && newProps.progressBarValue === 0 && this.toDisplay > 0) this.toDisplay = 100;
-
-	}
+    if (newProps.progress) this.toDisplay = newProps.progressBar;
+  }
 
   componentDidUpdate() {
 		// if (this.pulse == null && this.loadRef != undefined) {
@@ -70,14 +34,14 @@ class Loading extends React.Component {
 		const style = {
       height: '3px',
       width: `${this.toDisplay}%`,
-      backgroundColor: 'blue',
+      background: '-webkit-linear-gradient(-45deg, rgba(197,222,234,1) 0%,rgba(138,187,215,1) 41%,rgba(138,187,215,1) 41%,rgba(6,109,171,1) 83%)',
       transition: 'width 400ms ease-out, height 400ms linear',
       position: 'absolute',
     };
 
 		if (this.toDisplay === 100) {
 			setTimeout( () => {
-					this.toDisplay = 0;
+        this.toDisplay = 0;
 					this.setState({});
 			}, 700);
 		}
@@ -95,8 +59,7 @@ function mapStateToProps(state) {
 	if (Progress.isStarted(state) !== undefined) {
 		return {
 			progress: Progress.isStarted(state),
-			xdrant: 0,
-			progressBarValue: Progress.getCounterValue(state),
+			progressBar: Progress.getProgressBarPercent(state),
 			barEndPoint: Progress.getBarEndPoint(state)
 		};
 	} else {

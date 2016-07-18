@@ -105,7 +105,7 @@ const Progress = {
 			let endPoint = Progress.getBarEndPoint(getState());
 			let value = 100;
 			if (Progress.getCounterValue(getState()) > 0) {
-				value = 100 - Progress.getCounterValue(getState()) / endPoint * 100
+				value = 100 - Progress.getCounterValue(getState()) / endPoint * 100;
 			}
 			dispatch({ type: SET_PERCENT, value: value });
 		};
@@ -126,7 +126,7 @@ const Progress = {
 			  if (action.started) {
 				  newState = newState.set('starting', false).updateIn(['barEndPoint'], x => x + action.value);;
 			  } else {
-				  newState = newState.set('stopTimer', 0);
+				  newState = newState.set('stopTimer', 0).set('barEndPoint', 0).set('progressBarPercent', 0);
 			  }
 			  return newState.set('started', action.started).set('startTimer', undefined);
 
