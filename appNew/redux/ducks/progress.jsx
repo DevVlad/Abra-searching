@@ -7,6 +7,7 @@ const SET_STOP_TIMER = 'SET_STOP_TIMER';
 const INC_COUNTER = 'INC_COUNTER';
 const DEC_COUNTER = 'DEC_COUNTER';
 const SET_PERCENT = 'SET_PERCENT';
+const SET_BAR_END = 'SET_BAR_END';
 
 const getProgress = state => state.get('progress');
 
@@ -22,7 +23,8 @@ const Progress = {
 	getStopTimer: createSelector(getProgress, progress => progress.get('stopTimer')),
 	getStartTimer: createSelector(getProgress, progress => progress.get('startTimer')),
 	getBarEndPoint: createSelector(getProgress, progress => progress.get('barEndPoint')),
-	getProgressBarPercent : createSelector(getProgress, progress => progress.get('progressBarPercent')),
+	getProgressBarPercent: createSelector(getProgress, progress => progress.get('progressBarPercent')),
+	getCountOfStarts: createSelector(getProgress, progress => progress.get('countOfStarts')),
 
 	/*
 	* ACTIONS
@@ -35,7 +37,8 @@ const Progress = {
 			if (counterValue > 0) {
 				if (!Progress.isStarting(getState())) {
 					const startTimer = setTimeout(() => {
-						dispatch(Progress.setStarted(counterValue > 0, value));
+						dispatch(Progress.setBarEnd());
+						dispatch(Progress.setStarted(counterValue > 0));
 					}, 100);
 					if (!Progress.isStarting(getState()) && !Progress.isStarted(getState())) dispatch(Progress.setStarting(startTimer));
 				}
@@ -45,8 +48,8 @@ const Progress = {
 
 	stop(value = 1) {
 		return (dispatch, getState) => {
-			dispatch(Progress.decCounter(value));
-			dispatch(Progress.incProgressBarPercent());
+			if (Progress.getCounterValue(getState()) >= value) dispatch(Progress.decCounter(value));
+			if (Progress.isStarted(getState())) dispatch(Progress.incProgressBarPercent());
 			const counterValue = Progress.getCounterValue(getState());
 			if (counterValue == 0) {
 				const stopTimer = setTimeout(() => {
@@ -63,6 +66,16 @@ const Progress = {
 		};
 	},
 
+	setBarEnd() {
+		return (dispatch, getState) => {
+			dispatch ({
+				type: SET_BAR_END,
+				barEnd: Progress.getCounterValue(getState()),
+				valueOfProgress: 100 - (Progress.getCounterValue(getState()) / Progress.getCountOfStarts(getState())) * 100
+			});
+		};
+	},
+
 	setStarting(timer) {
 		return {
 			type: SET_STARTING,
@@ -71,11 +84,10 @@ const Progress = {
 		}
 	},
 
-	setStarted(started, value) {
+	setStarted(started) {
 		return {
 			type: SET_STARTED,
-			started,
-			value
+			started
 		};
 	},
 
@@ -103,10 +115,7 @@ const Progress = {
 	incProgressBarPercent() {
 		return (dispatch, getState) => {
 			let endPoint = Progress.getBarEndPoint(getState());
-			let value = 100;
-			if (Progress.getCounterValue(getState()) > 0) {
-				value = 100 - Progress.getCounterValue(getState()) / endPoint * 100;
-			}
+			let value = 100 - Progress.getCounterValue(getState()) / endPoint * (100 - Progress.getProgressBarPercent(getState()));
 			dispatch({ type: SET_PERCENT, value: value });
 		};
 	},
@@ -115,7 +124,7 @@ const Progress = {
 * REDUCER
 */
 
-	reducer(state = Immutable.fromJS({counter: 0, barEndPoint: 0, progressBarPercent: 0}), action) {
+	reducer(state = Immutable.fromJS({counter: 0, barEndPoint: 0, progressBarPercent: 0, countOfStarts: 0}), action) {
 	  switch (action.type) {
 
 		  case SET_STARTING:
@@ -124,9 +133,9 @@ const Progress = {
 		  case SET_STARTED:
 			  let newState = state;
 			  if (action.started) {
-				  newState = newState.set('starting', false).updateIn(['barEndPoint'], x => x + action.value);;
+				  newState = newState.set('starting', false);
 			  } else {
-				  newState = newState.set('stopTimer', 0).set('barEndPoint', 0).set('progressBarPercent', 0);
+				  newState = newState.set('stopTimer', 0).set('barEndPoint', 0).set('progressBarPercent', 0).set('countOfStarts', 0);
 			  }
 			  return newState.set('started', action.started).set('startTimer', undefined);
 
@@ -134,7 +143,7 @@ const Progress = {
 			  return state.set('stopTimer', action.stopTimer);
 
 		  case INC_COUNTER:
-			  return state.updateIn(['counter'], x => x + action.value);
+			  return state.updateIn(['counter'], x => x + action.value).updateIn(['countOfStarts'], x => x + action.value);
 
 		  case DEC_COUNTER:
 			  return state.updateIn(['counter'], x => {
@@ -145,6 +154,9 @@ const Progress = {
 
 			case SET_PERCENT:
 				return state.set('progressBarPercent', action.value);
+
+			case SET_BAR_END:
+				return state.set('barEndPoint', action.barEnd).set('progressBarPercent', action.valueOfProgress);
 
 		  default:
 	        return state;

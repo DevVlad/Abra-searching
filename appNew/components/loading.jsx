@@ -13,11 +13,13 @@ class Loading extends React.Component {
 	};
 
 	componentWillUpdate(newProps) {
-    if (newProps.progress) this.toDisplay = newProps.progressBar;
+    console.log('willupdate', newProps,this.toDisplay);
+    if (newProps.progress && this.toDisplay < newProps.progressBar) this.toDisplay = newProps.progressBar;
+    if (newProps.starting) this.toDisplay = 10;
   }
 
   render() {
-		const style = {
+		let style = {
       height: '3px',
       width: `${this.toDisplay}%`,
       background: '-webkit-linear-gradient(-45deg, rgba(197,222,234,1) 0%,rgba(138,187,215,1) 41%,rgba(138,187,215,1) 41%,rgba(6,109,171,1) 83%)',
@@ -28,8 +30,7 @@ class Loading extends React.Component {
 		if (this.toDisplay === 100) {
 			setTimeout( () => {
         this.toDisplay = 0;
-					this.setState({});
-			}, 700);
+			}, 300);
 		}
 
     if (this.toDisplay > 0) {
@@ -46,10 +47,11 @@ function mapStateToProps(state) {
 		return {
 			progress: Progress.isStarted(state),
 			progressBar: Progress.getProgressBarPercent(state),
-			barEndPoint: Progress.getBarEndPoint(state)
+			barEndPoint: Progress.getBarEndPoint(state),
+
 		};
 	} else {
-		return {};
+		return { starting: Progress.isStarting(state) };
 	}
 
 };
