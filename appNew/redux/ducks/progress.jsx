@@ -81,7 +81,7 @@ const Progress = {
 			type: SET_STARTING,
 			starting: true,
 			timer
-		}
+		};
 	},
 
 	setStarted(started) {
@@ -102,20 +102,20 @@ const Progress = {
 		return {
 			type: INC_COUNTER,
 			value
-		}
+		};
 	},
 
 	decCounter(value) {
 		return {
 			type: DEC_COUNTER,
 			value
-		}
+		};
 	},
 
 	incProgressBarPercent() {
 		return (dispatch, getState) => {
 			let endPoint = Progress.getBarEndPoint(getState());
-			let value = 100 - Progress.getCounterValue(getState()) / endPoint * (100 - Progress.getProgressBarPercent(getState()));
+			let value = 100 - Progress.getCounterValue(getState()) / endPoint * 90;
 			dispatch({ type: SET_PERCENT, value: value });
 		};
 	},

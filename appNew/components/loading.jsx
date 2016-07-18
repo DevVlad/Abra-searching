@@ -13,9 +13,10 @@ class Loading extends React.Component {
 	};
 
 	componentWillUpdate(newProps) {
-    console.log('willupdate', newProps,this.toDisplay);
-    if (newProps.progress && this.toDisplay < newProps.progressBar) this.toDisplay = newProps.progressBar;
-    if (newProps.starting) this.toDisplay = 10;
+    if (newProps.isStarting) this.toDisplay = 10;
+    if (newProps.progress && this.toDisplay < newProps.progressBar && !newProps.isStarting) {
+      this.toDisplay = newProps.progressBar;
+    }
   }
 
   render() {
@@ -30,7 +31,8 @@ class Loading extends React.Component {
 		if (this.toDisplay === 100) {
 			setTimeout( () => {
         this.toDisplay = 0;
-			}, 300);
+        this.setState({});
+			}, 600);
 		}
 
     if (this.toDisplay > 0) {
@@ -48,10 +50,10 @@ function mapStateToProps(state) {
 			progress: Progress.isStarted(state),
 			progressBar: Progress.getProgressBarPercent(state),
 			barEndPoint: Progress.getBarEndPoint(state),
-
+      isStarting: Progress.isStarting(state)
 		};
 	} else {
-		return { starting: Progress.isStarting(state) };
+		return {isStarting: Progress.isStarting(state)};
 	}
 
 };
