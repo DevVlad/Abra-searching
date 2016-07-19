@@ -164,7 +164,7 @@ describe('Progress progressBar in percent tests', () => {
     });
   });
 
-  it('start(10), 120stop(5), 20stop(5) => in 200 should have 60% in progress bar', () => {
+  it('start(10), 120stop(5), 20stop() => in 200 should have 60% in progress bar', () => {
     const store = mockStore(Immutable.fromJS({ progress: {counter: 4, countOfStarts: 10 } }));
 
     let pms = new Promise( res => {

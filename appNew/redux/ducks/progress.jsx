@@ -115,7 +115,7 @@ const Progress = {
 	incProgressBarPercent() {
 		return (dispatch, getState) => {
 			let endPoint = Progress.getBarEndPoint(getState());
-			let value = 100 - Progress.getCounterValue(getState()) / endPoint * 90;
+			let value = 100 - Progress.getCounterValue(getState()) / endPoint * 100;
 			dispatch({ type: SET_PERCENT, value: value });
 		};
 	},
