@@ -68,6 +68,22 @@ const testValueDuck = {
 		};
 	}),
 
+	getValueOfSelectField: createSelector(getOwnState, x => {
+		if (x === undefined) {
+			return undefined;
+		} else {
+			return x.get('textfield');
+		};
+	}),
+
+	getValueOfTimeField: createSelector(getOwnState, x => {
+		if (x === undefined) {
+			return undefined;
+		} else {
+			return x.get('timefield');
+		};
+	}),
+
 };
 
 export default testValueDuck;

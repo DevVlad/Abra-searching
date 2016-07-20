@@ -5,11 +5,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import './App.css';
 
-const style = {
-
-};
-
-class Checkbox extends React.Component{
+class CheckboxNew extends React.Component{
   constructor(props) {
     super(props);
   }
@@ -24,17 +20,20 @@ class Checkbox extends React.Component{
 
   handleOnBlur(e) {
     if (!this.props.value) {
-      this.props.onBlur(false);
+      this.props.onBlur({checkboxValue: false, alias: this.props.alias});
     } else {
-      this.props.onBlur(this.props.value);
+      this.props.onBlur({checkboxValue: this.props.value, alias: this.props.alias});
     }
   }
 
 	render() {
 		return (
-      <div id="checkbox" style={ style }>
-  			<h1>Checkbox: { this.props.alias }</h1>
+      <div id="radiobutton">
+  			<h1>CheckboxNew: { this.props.alias }</h1>
           <RadioButton
+            checkedIcon={ this.props.checkedIcon }
+            uncheckedIcon={this.props.uncheckedIcon }
+            disabled={ this.props.disabled }
             onClick={ this.handleOnClick.bind(this) }
             onBlur={ this.handleOnBlur.bind(this) }
             label={ this.props.label }
@@ -46,4 +45,4 @@ class Checkbox extends React.Component{
 
 };
 
-export default Checkbox;
+export default CheckboxNew;
