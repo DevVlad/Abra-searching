@@ -19,51 +19,94 @@ class TimeField extends React.Component{
     super(props);
     this.state = {value: ''};
     this.typing = false;
-    this.format = '24hr';
-  }
-
-  componentWillUpdate(newProps) {
-    if (!this.typing && newProps.value && this.state.value !== newProps.value) this.setState({value: newProps.value});
     if (this.props.timeFormat === 24) {
       this.format = '24hr';
     } else {
       this.format = 'ampm';
     }
-    console.log('willUpd', this.props.timeFormat,this.format);
+
+  }
+
+  componentWillUpdate(newProps) {
+    if (!this.typing && newProps.value && this.state.value !== newProps.value) this.setState({value: newProps.value});
   }
 
   handleOnBlur(e) {
-    console.log('blur',e.target.value, this.format);
-    if (e.target.value) {
+    const elem = e.target.value;
+    //inserting just numbers
+    if (elem) {
       this.typing = false;
       let pom = 0;
       let suffix = 0;
       let suffixAMPM = '';
-      if (this.props.timeFormat === 12) {
-        suffix = 12;
+      let firstPart = 0;
+      let secondPart = 0;
+
+      if (this.props.timeFormat === 24) {
+        if (elem.length === 1 || elem.length === 2) {
+          firstPart = elem;
+          secondPart = '00';
+        }
+
+        if (elem.length === 3) {
+          firstPart = '0' + elem.slice(0, 1);
+          secondPart = elem.slice(-2);
+        }
+
+        if (elem.length === 4) {
+          firstPart = elem.slice(0, 2);
+          secondPart = elem.slice(-2);
+        }
+
+        pom = firstPart + ':' + secondPart;
+        this.props.onBlur({timeFieldValue: pom, alias: this.props.alias});
       }
 
-      if (e.target.value === 0 && this.props.timeFormat === 12) pom = '00:00'
-      if (e.target.value.length === 2) pom = e.target.value-suffix + ":00";
-      if (e.target.value.length === 4) {
-        pom = e.target.value.slice(0, 2)-suffix + ':' + e.target.value.slice(-2);
-      }
-      if (e.target.value.length === 3) {
-        let firstPart = e.target.value.slice(0, 2);
-        if (firstPart < 10) {
-          pom = firstPart + ":" + e.target.value.slice(-1);
-        } else {
-          pom = e.target.value.slice(0, 1) + ":" + e.target.value.slice(-2);
+      if (this.props.timeFormat === 12) {
+        if (elem.length === 1) {
+          firstPart = elem;
+          secondPart = '00';
+          suffixAMPM = 'am';
         }
+
+        if (elem.length === 2) {
+          firstPart = elem.slice(0, 2);
+          if (firstPart < 12) {
+            suffixAMPM = 'am';
+          } else {
+            suffixAMPM = 'pm';
+            if (firstPart != 12) firstPart= firstPart - 12;
+          }
+          secondPart = '00';
+          // if (firstPart == '00') firstPart = 12;
+        }
+
+        if (elem.length === 3) {
+          firstPart = '0' + elem.slice(0, 1);
+          secondPart = elem.slice(-2);
+          if (firstPart < 12) {
+            suffixAMPM = 'am';
+          }
+        }
+
+        if (elem.length === 4) {
+          firstPart = elem.slice(0 , 2);
+          if (firstPart < 12 || firstPart == 24) {
+            suffixAMPM = 'am';
+            if (firstPart == 24) firstPart = '00';
+          } else {
+            suffixAMPM = 'pm';
+            if (firstPart != 12) {
+              firstPart = firstPart - 12;
+            }
+          }
+          secondPart = elem.slice(-2);
+        }
+
+        pom = firstPart + ':' + secondPart + ' ' + suffixAMPM;
+        this.props.onBlur({timeFieldValue: pom, alias: this.props.alias});
       }
-      console.log(pom);
-      if (this.props.timeFormat === 12 && pom.split(':')[0] < 12) {
-        suffixAMPM = ' am';
-      } else if(this.props.timeFormat === 12 && pom.split(':')[0] > 12) {
-        suffixAMPM = ' pm';
-      }
-      this.props.onBlur({timeFieldValue: pom + suffixAMPM, alias: this.props.alias});
-      if (this.props.value === this.state.value) this.setState({clicked: false});
+
     }
 
   }
@@ -79,7 +122,22 @@ class TimeField extends React.Component{
 
   handleOnChangeOfTimePicker(e) {
     let pom = '' + e + '';
-    pom = pom.split(' ')[4].split(':').slice(0, -1).join(':');
+    if (this.props.timeFormat === 24) {
+      pom = pom.split(' ')[4].split(':').slice(0, -1).join(':');
+    } else {
+      let firstPart = pom.split(' ')[4].split(':')[0];
+      let secondPart = pom.split(' ')[4].split(':')[1];
+      let suffixAMPM = '';
+      if (firstPart >= 12){
+        suffixAMPM = 'pm';
+        firstPart = firstPart - 12;
+      } else {
+        suffixAMPM = 'am';
+        if (firstPart == 12) firstPart = '00';
+      }
+      pom = firstPart + ':' + secondPart + ' ' + suffixAMPM;
+    }
+
     this.props.onBlur({timeFieldValue: pom, alias: this.props.alias});
   }
 
