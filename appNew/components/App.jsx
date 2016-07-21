@@ -6,9 +6,10 @@ import Loading from './loading.jsx';
 import testValueDuck from '../redux/ducks/testValueDuck.js';
 import Progress from '../redux/ducks/progress.jsx';
 import MenuList from './menulist.jsx';
-import Checkbox from './checkbox.jsx';
+import CheckboxField from './checkbox.jsx';
 import TextField from './textfield.jsx';
 import TimeField from './timefield.jsx';
+import DateField from './datefield.jsx';
 
 import ActionFavorite from 'material-ui/svg-icons/action/favorite';
 import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
@@ -19,7 +20,8 @@ import SvgIcon from 'material-ui/SvgIcon';
 		textForSelectField: testValueDuck.getValueFroSelectField(state),
 		valueOfCheckbox: testValueDuck.getValueOfCheckbox(state),
 		valueOfTextfield: testValueDuck.getValueOfSelectField(state),
-		valueOfTimefield: testValueDuck.getValueOfTimeField(state)
+		valueOfTimefield: testValueDuck.getValueOfTimeField(state),
+		valueOfDatefield: testValueDuck.getValueOfDateField(state)
 	};
 })
 class App extends React.Component{
@@ -98,7 +100,7 @@ class App extends React.Component{
           errorText='OMG what did u choose !?'
 					errorCondition={ this.props.textForSelectField === 'Bieber' }
 				/>
-				<Checkbox
+				<CheckboxField
 					alias='checkbox'
 					label='checkbox1'
 					checkedIcon={<SvgIcon>
@@ -126,9 +128,19 @@ class App extends React.Component{
 					label="TimeField"
 					onBlur={ (x) => { this.setValue('timefield', x.timeFieldValue)} }
 					disabled={false}
-					defaultTime={ {hours: 22, minutes: 34} }
 					value={ this.props.valueOfTimefield }
 					enableMousePicker={ true }
+				/>
+			<DateField
+					alias='datefield'
+					label="DateField"
+					onBlur={ (x) => { this.setValue('datefield', x.dateFieldValue)} }
+					disabled={false}
+					value={ this.props.valueOfDatefield }
+					enableMousePicker={ true }
+					submitLabel={ 'SELECT' }
+					cancelLabel={ 'CANCEL' }
+					locale='cs'
 				/>
 
 			</div>

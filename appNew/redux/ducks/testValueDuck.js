@@ -84,6 +84,14 @@ const testValueDuck = {
 		};
 	}),
 
+	getValueOfDateField: createSelector(getOwnState, x => {
+		if (x === undefined) {
+			return undefined;
+		} else {
+			return x.get('datefield');
+		};
+	}),
+
 };
 
 export default testValueDuck;
