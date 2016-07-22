@@ -5,6 +5,7 @@ import { orange500, blue500, grey500 } from 'material-ui/styles/colors';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import SvgIcon from 'material-ui/SvgIcon';
 import DatePickerDialog from 'material-ui/DatePicker/DatePickerDialog.js';
+import moment from 'moment';
 
 import './App.css';
 
@@ -14,50 +15,83 @@ const IconForDatePicker = (props) => {
   </SvgIcon>);
 };
 
-const makeMeDate = (object) => {
-  let myNewDate = {};
-  const parsedInput = parse(object.string);
-  if (Intl && object.locale && !object.format) {
-    let x = parsedInput.separatedString.map(toInt =>  parseInt(toInt));
-    let day = '';
-    let month = '';
-    let year = Math.max(...x);
-    day = x[0];
-    month=x[1];
-    let utcDate = new Date(Date.UTC(year, month-1, day, 0, 0, 0));
-    myNewDate = Intl.DateTimeFormat(object.locale).format(utcDate);
-  }
-  return myNewDate;
-  // if (typeof(format) !== 'string') alert('Format must be a string!');
-  // const parsedFormat = parse(format);
-  //
-  // let newDate = undefiend;
-  // if (parsedInput) {
-  //   if (parsedInput.separatedString[0] === parsedInput.separatedString[1]) newDate = new Date(Date.UTF(parsedInput.separatedString[2], parsedInput.separatedString[0], parsedInput.separatedString[1]));
-  //
-  // }
-  // console.log(parsedFormat, parsedInput);
+const DATE_PART = { DAY: 'D', MONTH: 'M', YEAR: 'Y' };
+
+const knownLocales = {};
+
+const getDateParts = (locale) => {
+	let result = knownLocales[locale] || [];
+	if (result.length == 0) {
+		const testDate = new Date(2000, 2 - 1, 3, 12);
+		const text = Intl.DateTimeFormat(locale, {
+			year: 'numeric', month: 'numeric', day: 'numeric'}).format(testDate);
+		const re = /.*?(\d+)(?:\D+(\d+)(?:\D+(\d+))?)?.*/;
+		const match = re.exec(text);
+		for (let i = 1; i < 4; i++) {
+			switch (parseInt(match[i])) {
+				case 2000:
+					result.push(DATE_PART.YEAR);
+					break;
+				case 2:
+					result.push(DATE_PART.MONTH);
+					break;
+				case 3:
+					result.push(DATE_PART.DAY);
+					break;
+			}
+		}
+		knownLocales[locale] = result;
+	}
+	return result;
 };
 
-const parse = (string) => {
-  const separators = [
-    '.',
-    '-',
-    '/',
-    ' ',
-    ',',
-    '. '
-  ];
-  let parsed = {};
-  separators.forEach( separator => {
-    let expr = new RegExp('\\b[0-9|D|M]{1,2}[\\' + separator + ']{'+ separator.length +'}[0-9|D|M]{1,2}[\\' + separator + ']{'+ separator.length +'}[0-9|Y]{1,4}', 'g');
-    if (expr.test(string)) {
-      parsed = ({separator: separator, pass: true, separatedString: string.split(separator), tested: string});
-    }
-  });
-  if (parsed) {
-    return parsed;
-  } else alert('Choose another parser, or change input!');
+const CENTURY_WINDOW = 20;
+
+const fixCentury = (year) => {
+	if (year > 100) {
+		return year;
+	}
+	const thisYear = new Date().getFullYear();
+	const edgeYear = thisYear + CENTURY_WINDOW;
+	let result = Math.floor(thisYear / 100) * 100 + year;
+	if (result > edgeYear) {
+		result = result - 100;
+	}
+	return result;
+};
+
+const parseDate = (parts, text) => {
+	const re = /.*?(\d+)(?:\D+(\d+)(?:\D+(\d+))?)?.*/;
+	const match = re.exec(text);
+	const now = new Date();
+	let day = now.getDate()
+	let month = now.getMonth() + 1
+	let year = now.getFullYear();
+	if (!match) {
+		throw new Error('unparsed date ' + text);
+	}
+	if (!match[2]) {
+		day = match[1];
+	} else {
+		parts.forEach((part, index) => {
+			if (match[index + 1]) {
+				switch (part) {
+					case DATE_PART.DAY:
+						day = match[index + 1];
+						break;
+					case DATE_PART.MONTH:
+						month = match[index + 1];
+						break;
+					case DATE_PART.YEAR:
+						year = fixCentury(parseInt(match[index + 1]));
+						break;
+					default:
+						throw new Error('unknown part ' + part);
+				}
+			}
+		});
+	}
+	return new Date(year, month - 1, day);
 };
 
 class DateField extends React.Component{
@@ -67,11 +101,19 @@ class DateField extends React.Component{
     this.state = {
       value: ''
     };
-    // this.patternDate = Intl.DateTimeFormat(this.props.locale).format(new Date(2012, 11, 25));
   }
 
   componentWillUpdate(newProps) {
-    if (newProps.value && !this.typing && this.state.value !== newProps.value) this.setState( {value: newProps.value} )
+    if (newProps.value && !this.typing && newProps.locale)  {
+      const newDate = Intl.DateTimeFormat(newProps.locale).format(newProps.value);
+
+      if (this.state.value !== newDate && !newProps.displayFormat) {
+        this.setState( {value: newDate} );
+      } else if (newProps.displayFormat) {
+        const formatedDate = moment.parseZone(newProps.value).format(this.props.displayFormat);
+        if (this.state.value !== formatedDate) this.setState( {value: formatedDate} );
+      }
+    }
   }
 
   handleOnClick() {
@@ -79,30 +121,25 @@ class DateField extends React.Component{
   }
 
   handleOnKeyDown(e) {
+    if (e.keyCode === 13) {
+      const elem = e.target.value;
+      const newDate = parseDate(getDateParts(this.props.locale), elem);
+      this.typing = false;
+      this.props.onChange(newDate);
+    }
 
   }
 
   handleOnBlur(e) {
     const elem = e.target.value;
-    if (elem) {
-      let obj = {
-        string: elem.toString(),
-        // format: 'DD. MM. YYYY',
-        locale: this.props.locale
-      };
-      let newDate = makeMeDate(obj);
-      this.typing = false;
-      this.props.onBlur({dateFieldValue: newDate, alias: this.props.alias});
-      // let parsedPatternDate = getFormat(this.patternDate.toString());
-      // console.log(parsedElem, parsedPatternDate);
-
-      // console.log('prdel', new Intl.DateTimeFormat([this.props.locale]).format(patternDate), parsedObject);
-    }
+    this.typing = false;
+    // const newDate = parseDate(['D', 'M', 'Y'], elem);
+    const newDate = parseDate(getDateParts(this.props.locale), elem);
+    this.props.onBlur(newDate);
   }
 
   handleOnChangeOfDatePicker(e) {
-    let newDate = new Intl.DateTimeFormat(this.props.locale).format(e);
-    this.props.onBlur({dateFieldValue: newDate, alias: this.props.alias});
+    this.props.onBlur(e);
   }
 
   handleOnChange(e) {
@@ -134,16 +171,16 @@ class DateField extends React.Component{
             color={ grey500 }
             onClick={ this.handleOnClick.bind(this) }
         />
-      <DatePickerDialog
-        ref='DatePickerDialog'
-        firstDayOfWeek={ 1 }
-        onAccept={ this.handleOnChangeOfDatePicker.bind(this) }
-        okLabel={ this.props.submitLabel }
-        cancelLabel={ this.props.cancelLabel }
-        DateTimeFormat={ global.Intl.DateTimeFormat }
-        value={ this.state.value }
-        locale={ this.props.locale }
-      />
+        <DatePickerDialog
+          ref='DatePickerDialog'
+          firstDayOfWeek={ 1 }
+          onAccept={ this.handleOnChangeOfDatePicker.bind(this) }
+          okLabel={ this.props.submitLabel }
+          cancelLabel={ this.props.cancelLabel }
+          DateTimeFormat={ global.Intl.DateTimeFormat }
+          value={ this.state.value }
+          locale={ this.props.locale }
+        />
       </div>
 		);
 	}

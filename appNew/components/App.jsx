@@ -124,23 +124,26 @@ class App extends React.Component{
 				/>
 				<TimeField
 					alias='timefield'
-					timeFormat={12}
+					timeFormat={24}
 					label="TimeField"
-					onBlur={ (x) => { this.setValue('timefield', x.timeFieldValue)} }
+					onBlur={ (x) => { this.setValue('timefield', x)} }
 					disabled={false}
+					locale='cs'
 					value={ this.props.valueOfTimefield }
 					enableMousePicker={ true }
 				/>
 			<DateField
 					alias='datefield'
 					label="DateField"
-					onBlur={ (x) => { this.setValue('datefield', x.dateFieldValue)} }
+					onChange={ (x) => this.setValue('datefield', x) }
+					onBlur={ (x) => this.setValue('datefield', x) }
 					disabled={false}
 					value={ this.props.valueOfDatefield }
 					enableMousePicker={ true }
 					submitLabel={ 'SELECT' }
 					cancelLabel={ 'CANCEL' }
 					locale='cs'
+					displayFormat="YYYY/MM/DD"
 				/>
 
 			</div>
