@@ -11,13 +11,18 @@ import CheckboxField from './CheckboxField.jsx';
 import TextField from './TextField.jsx';
 import TimeField from './TimeField.jsx';
 import DateField from './DateField.jsx';
+import ButtonField from './ButtonField.jsx';
+import FloatingButtonField from './FloatingButtonField.jsx';
+import ToggleField from './ToggleField.jsx';
 
 import ActionFavorite from 'material-ui/svg-icons/action/favorite';
 import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
 import SvgIcon from 'material-ui/SvgIcon';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 
 injectTapEventPlugin();
 
+import CONSTANTS from './CONSTANTS.jsx';
 
 @connect(state => {
 	return {
@@ -71,7 +76,6 @@ class App extends React.Component{
 	}
 
 	render(){
-		const items = [ {text: "Justin"}, {text: "Bieber"}, {text: "Is"}, {text: "The"}, {text: "WORST"}, {text: "Singer"}, {text: "Ever"} ];
 		// console.log('app',this.props);
 		return (
 			<div className="mainDiv">
@@ -83,11 +87,12 @@ class App extends React.Component{
 					alias='a'
 					entityName="kontakt"
 					onChange={ this.changeTestValue.bind(this) }
-    			entityId={ this.props.testId }
+					entityId={ this.props.testId }
 					entityToText={ object => [object.jmeno, object.prijmeni].join(' ') }
 					filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 					loadingNotify={ true }
 				/>
+				<br/>
 				<DropdownField
 					alias='b'
 					entityName="kontakt"
@@ -96,14 +101,16 @@ class App extends React.Component{
 					entityToText={ object => [object.jmeno, object.prijmeni].join(' ') }
 					filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 				/>
+				<br/>
 				<Loading />
 				<MenuList
 					alias='SelectField'
-					menuItems={ items }
+					menuItems={ CONSTANTS.ITEMS }
 					onChange={ this.setValueForSelectField.bind(this) }
 					value={ this.props.textForSelectField }
           errorText='OMG what did u choose !?'
 				/>
+				<br/>
 				<CheckboxField
 					alias='checkbox'
 					label='checkbox1'
@@ -115,20 +122,22 @@ class App extends React.Component{
 					onBlur={ (x) => console.log('Checkbox onBlur()', x) }
 					value={ this.props.valueOfCheckbox }
 				/>
+				<br/>
 				<TextField
 					alias='textfield'
 					label='TextField'
 					errorText=''
 					disabled={false}
 					onBlur={ (x) => {
-						if (this.props.valueOfTextfield !== x.textFieldValue) this.setValue('textfield', x.textFieldValue);
+						if (this.props.valueOfTextfield !== x.textFieldValue) this.setValue('textfield', x.target.value);
 						console.log('Textfield onBlur()', x);
 					 } }
 					value={ this.props.valueOfTextfield }
 				/>
+				<br/>
 				<TimeField
 					alias='timefield'
-					timeFormat={12}
+					timeFormat={24}
 					label="TimeField"
 					onBlur={ (x) => { this.setValue('timefield', x)} }
 					disabled={false}
@@ -136,7 +145,8 @@ class App extends React.Component{
 					value={ this.props.valueOfTimefield }
 					enableMousePicker={ true }
 				/>
-			<DateField
+				<br/>
+				<DateField
 					alias='datefield'
 					label="DateField"
 					onChange={ (x) => this.setValue('datefield', x) }
@@ -144,12 +154,48 @@ class App extends React.Component{
 					disabled={false}
 					value={ this.props.valueOfDatefield }
 					enableMousePicker={ true }
-					submitLabel={ 'SELECT' }
-					cancelLabel={ 'CANCEL' }
 					locale='cs'
 					// displayFormat="YYYY/MM/DD"
 				/>
-
+				<br/>
+				<ButtonField
+					alias='buttonfield'
+					onClick={ (x) => console.log('ButtonField clicked! ',x) }
+					disabled={ false }
+					label='button'
+					buttonValue=''
+					onBlur={ (x) => console.log('ButtonField onBlur! ', x) }
+					onMouseEnter={ (x) => console.log('ButtonField onMouseEnter! ', x) }
+					backgroundColor='info'
+					icon={
+						<SvgIcon><circle cx="12" cy="4" r="2"/>
+							<path d="M19 13v-2c-1.54.02-3.09-.75-4.07-1.83l-1.29-1.43c-.17-.19-.38-.34-.61-.45-.01 0-.01-.01-.02-.01H13c-.35-.2-.75-.3-1.19-.26C10.76 7.11 10 8.04 10 9.09V15c0 1.1.9 2 2 2h5v5h2v-5.5c0-1.1-.9-2-2-2h-3v-3.45c1.29 1.07 3.25 1.94 5 1.95zm-6.17 5c-.41 1.16-1.52 2-2.83 2-1.66 0-3-1.34-3-3 0-1.31.84-2.41 2-2.83V12.1c-2.28.46-4 2.48-4 4.9 0 2.76 2.24 5 5 5 2.42 0 4.44-1.72 4.9-4h-2.07z"/>
+						</SvgIcon>
+					}
+				/>
+				<br/>
+				<FloatingButtonField
+					alias='FloatingActionButton'
+					onClick={ (x) => console.log('FloatingActionButton clicked! ',x) }
+					onMouseEnter={ (x) => console.log("FloatingActionButton onMouseEnter! ", x) }
+					disabled={ false }
+					label='button'
+					buttonValue='' //primary or secondary
+					onBlur={ (x) => console.log('FloatingActionButton onBlur! ', x) }
+					backgroundColor='warning'
+					icon={ <ContentAdd /> }
+				/>
+				<br/>
+				<ToggleField
+					alias='togglefield'
+					label='toggle button'
+					labelPosition='right'
+					toggledDefault={ false }
+					disabled={ false }
+					onChange={ (x) => console.log('ToggleField onChange', x) }
+					onBlur={ (x) => console.log('ToggleField onBlur', x) }
+				/>
+				<br/>
 			</div>
 		)
 	}

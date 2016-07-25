@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import injectTapEventPlugin from 'react-tap-event-plugin';
+import CONSTANTS from './CONSTANTS.jsx';
 
 import './App.css';
 
@@ -34,12 +35,11 @@ class MenuList extends React.Component{
 
 		return (
       <div id="MenuList">
-  			<h1>MenuList: { this.props.alias }</h1>
         <SelectField
           value={ this.props.value }
           onChange={ this.handleOnChange.bind(this) }
           errorText={ ErrorCondition && this.props.errorText }
-          errorStyle={ {color: 'orange'} }
+          errorStyle={ {color: CONSTANTS.COLORS.error} }
         >{items}</SelectField>
       </div>
 		);

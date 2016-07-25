@@ -6,7 +6,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import './App.css';
 
 class CheckboxField extends React.Component{
-  PropTypes: {
+  static propTypes = {
     alias: PropTypes.string,
     label: PropTypes.string,
     checkedIcon: PropTypes.object,
@@ -39,7 +39,6 @@ class CheckboxField extends React.Component{
 	render() {
 		return (
       <div id="radiobutton">
-  			<h1>CheckboxField: { this.props.alias }</h1>
           <RadioButton
             checkedIcon={ this.props.checkedIcon }
             uncheckedIcon={this.props.uncheckedIcon }

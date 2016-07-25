@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
-import { orange500, blue500, grey500 } from 'material-ui/styles/colors';
+import CONSTANTS from './CONSTANTS.jsx';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import SvgIcon from 'material-ui/SvgIcon';
 import DatePickerDialog from 'material-ui/DatePicker/DatePickerDialog.js';
@@ -13,8 +13,8 @@ const IconForDatePicker = (props) => {
   return (<SvgIcon
     style={ { width: '20px', height: '20px' } }
     tooltip='select time'
-    hoverColor={ blue500 }
-    color={ grey500 } { ...props}>
+    hoverColor={ CONSTANTS.COLORS.info }
+    color={ CONSTANTS.COLORS.disabled } { ...props}>
     <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
   </SvgIcon>);
 };
@@ -99,7 +99,7 @@ const parseDate = (parts, text) => {
 };
 
 class DateField extends React.Component{
-  static PropTypes: {
+  static propTypes = {
     alias: PropTypes.string,
     label: PropTypes.string,
     onChange: PropTypes.func,
@@ -107,8 +107,6 @@ class DateField extends React.Component{
     disabled: PropTypes.bool,
     value: PropTypes.object,
     enableMousePicker: PropTypes.bool,
-    submitLabel: PropTypes.string,
-    cancelLabel: PropTypes.string,
     locale: PropTypes.string
   };
 
@@ -149,10 +147,13 @@ class DateField extends React.Component{
 
   handleOnBlur(e) {
     const elem = e.target.value;
-    this.typing = false;
-    // const newDate = parseDate(['D', 'M', 'Y'], elem);
-    const newDate = parseDate(getDateParts(this.props.locale), elem);
-    this.props.onBlur(newDate);
+    if (elem) {
+      this.typing = false;
+      // const newDate = parseDate(['D', 'M', 'Y'], elem);
+      const newDate = parseDate(getDateParts(this.props.locale), elem);
+      this.props.onBlur(newDate);
+    }
+
   }
 
   handleOnChangeOfDatePicker(e) {
@@ -168,13 +169,12 @@ class DateField extends React.Component{
 
 		return (
       <div id="datefield">
-  			<h1>DateField: { this.props.alias }</h1>
         <TextField
               floatingLabelText={ this.props.label }
               errorText={ this.props.errorText}
-              errorStyle={ {color: orange500} }
+              errorStyle={ {color: CONSTANTS.COLORS.warning} }
               disabled={ this.props.disabled }
-              underlineFocusStyle={ {color: blue500} }
+              underlineFocusStyle={ {color: CONSTANTS.COLORS.info} }
               onBlur={ this.handleOnBlur.bind(this) }
               value={ this.state.toDisplay }
               onKeyDown={ this.handleOnKeyDown.bind(this) }
@@ -188,8 +188,6 @@ class DateField extends React.Component{
           ref='DatePickerDialog'
           firstDayOfWeek={ 1 }
           onAccept={ this.handleOnChangeOfDatePicker.bind(this) }
-          okLabel={ this.props.submitLabel }
-          cancelLabel={ this.props.cancelLabel }
           DateTimeFormat={ global.Intl.DateTimeFormat }
           initialDate={ this.props.value }
           locale={ this.props.locale }

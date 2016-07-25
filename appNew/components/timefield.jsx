@@ -19,7 +19,7 @@ const IconForTimePicker = (props) => {
 };
 
 class TimeField extends React.Component{
-  static PropTypes: {
+  static propTypes = {
     alias: PropTypes.string,
     timeFormat: PropTypes.number,
     label: PropTypes.string,
@@ -40,7 +40,7 @@ class TimeField extends React.Component{
     if (!this.typing && newProps.value) {
       let formatForMoment;
       if (this.props.timeFormat === 24) {
-        formatForMoment = 'HH:MM';
+        formatForMoment = 'HH:mm';
       } else {
         formatForMoment = 'h:mm a';
       }
@@ -52,48 +52,49 @@ class TimeField extends React.Component{
   handleOnBlur(e) {
     const elem = e.target.value;
     this.typing = false;
-    let newDate = new Date();
-    const day = newDate.getDate();
-    const year = newDate.getFullYear();
-    const month = newDate.getMonth();
-    if (elem && this.props.timeFormat === 24) {
-        if (elem.length === 1 || elem.length === 2) {
-          let subDate = new Date(year, month, day, parseInt(elem));
-          newDate = subDate;
-        } else if (elem.length === 4) {
-          let subDate = new Date(year, month, day, parseInt(elem.slice(0, 2)), parseInt(elem.slice(-2)));
-          newDate = subDate;
-        }else if (elem.length === 3) {
-          let subDate = new Date(year, month, day, parseInt(elem.slice(0, 1)), parseInt(elem.slice(-2)));
-          newDate = subDate;
-        }
-    } else if (elem && this.props.timeFormat === 12) {
-      // const re = /.*?(?:(\d+)?)(?:\D(?:(\d+)?)\D((?:[a-z]+))?)/;
-      const re = /.*?(\d+)(?:\D(\d+)?(?:(\D+[a-z]+)?)).*/
-      const match = re.exec(elem);
-      let suffix = 0;
-      let hours = 0;
-      let minutes = 0;
-      if (match) {
-        if (match[3].split(' ').join('') !== 'am') suffix = 12;
-        for (let i = 1; i < 3; i++) {
-          if (match[i]) {
-            switch(i) {
-              case 1:
-                hours = parseInt(match[i]);
-                break;
-              case 2:
-                minutes = parseInt(match[i]);
-                break;
+    if (elem) {
+      let newDate = new Date();
+      const day = newDate.getDate();
+      const year = newDate.getFullYear();
+      const month = newDate.getMonth();
+      if (elem && this.props.timeFormat === 24) {
+          if (elem.length === 1 || elem.length === 2) {
+            let subDate = new Date(year, month, day, parseInt(elem), 0);
+            newDate = subDate;
+          } else if (elem.length === 4) {
+            let subDate = new Date(year, month, day, parseInt(elem.slice(0, 2)), parseInt(elem.slice(-2)));
+            newDate = subDate;
+          }else if (elem.length === 3) {
+            let subDate = new Date(year, month, day, parseInt(elem.slice(0, 1)), parseInt(elem.slice(-2)));
+            newDate = subDate;
+          }
+      } else if (elem && this.props.timeFormat === 12) {
+        //format of input d+\Dd+\D[a-z]+
+        const re = /.*?(\d+)(?:\D(\d+)?(?:(\D+[a-z]+)?)).*/;
+        const match = re.exec(elem);
+        let suffix = 0;
+        let hours = 0;
+        let minutes = 0;
+        if (match) {
+          if (match[3].split(' ').join('') !== 'am') suffix = 12;
+          for (let i = 1; i < 3; i++) {
+            if (match[i]) {
+              switch(i) {
+                case 1:
+                  hours = parseInt(match[i]);
+                  break;
+                case 2:
+                  minutes = parseInt(match[i]);
+                  break;
+              }
             }
           }
+          let subDate = new Date(year, month, day, hours + suffix, minutes);
+          newDate = subDate;
         }
-        let subDate = new Date(year, month, day, hours + suffix, minutes);
-        newDate = subDate;
       }
+      this.props.onBlur(newDate);
     }
-
-    this.props.onBlur(newDate);
 
   }
 
@@ -118,7 +119,6 @@ class TimeField extends React.Component{
 	render() {
 		return (
       <div id="timefield">
-  			<h1>TimeField: { this.props.alias }</h1>
         <TextField
             floatingLabelText={ this.props.label }
             errorText={ this.props.errorText}
@@ -130,14 +130,15 @@ class TimeField extends React.Component{
             value={ this.state.toDisplay }
             onKeyDown={this.handleOnKeyDown.bind(this)}
         />
-      <TimePickerDialog
-          ref="timePicker"
-          format={ this.props.timeFormat === 24 ? '24hr' : 'ampm' }
-          onAccept={ this.handleOnChangeOfTimePicker.bind(this) }
-      />
-      <IconForTimePicker
+        <IconForTimePicker
           visibility={ this.props.enableMousePicker ? 'visible' : 'hidden' }
           onClick={ this.handleOnClick.bind(this) }
+        />
+        <TimePickerDialog
+            ref="timePicker"
+            format={ this.props.timeFormat === 24 ? '24hr' : 'ampm' }
+            onAccept={ this.handleOnChangeOfTimePicker.bind(this) }
+            initialTime={ this.props.value }
         />
       </div>
 		);

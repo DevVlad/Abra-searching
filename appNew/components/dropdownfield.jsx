@@ -17,7 +17,7 @@ const ClearIcon = (props) => (
 );
 
 class ContactDropdown extends React.Component{
-  PropTypes: {
+  static propTypes = {
     alias: PropTypes.string,
     entityName: PropTypes.string,
     onChange: PropTypes.func,
@@ -165,7 +165,6 @@ class ContactDropdown extends React.Component{
 
 		return (
       <div id="ContactDropdown">
-  			<h1>ContactDropdown: { this.props.alias }</h1>
 	      <AutoComplete
 		        floatingLabelText={this.props.entityName}
 		        ref="textfield"
