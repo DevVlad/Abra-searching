@@ -1,15 +1,14 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import AutoComplete from 'material-ui/AutoComplete';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import SvgIcon from 'material-ui/SvgIcon';
 import { red500 } from 'material-ui/styles/colors';
+import RefreshIndicator from 'material-ui/RefreshIndicator';
+
 import DropdownField from '../redux/ducks/dropdownfield.jsx';
-import Loading from './loading.jsx';
 
 import './App.css';
-
-injectTapEventPlugin();
 
 const ClearIcon = (props) => (
   <SvgIcon {...props}>
@@ -18,6 +17,16 @@ const ClearIcon = (props) => (
 );
 
 class ContactDropdown extends React.Component{
+  PropTypes: {
+    alias: PropTypes.string,
+    entityName: PropTypes.string,
+    onChange: PropTypes.func,
+    entityId: PropTypes.number,
+    entityToText: PropTypes.func,
+    filterToCondition: PropTypes.func,
+    loadingNotify: PropTypes.bool
+  };
+
 	constructor(props){
 		super(props);
 		this.InMenu = [];
@@ -113,6 +122,23 @@ class ContactDropdown extends React.Component{
 		}
 	};
 
+  handleCurrentLoading(loading) {
+    if (loading && this.props.loadingNotify) {
+      return (
+        <RefreshIndicator
+          size={40}
+          left={10}
+          top={0}
+          status="loading"
+          style={ {
+              display: 'inline-block',
+              position: 'relative'
+          } }
+        />
+      );
+    }
+  }
+
 	render() {
 		if (!this.props.entityId && this.props.entityToText) setTimeout( () => { this.props.dispatch(DropdownField.setDelete(this.props.alias, ['entityId', 'entityToText', 'filter'])) }, 0 );
 		let list = [];
@@ -140,8 +166,8 @@ class ContactDropdown extends React.Component{
 		return (
       <div id="ContactDropdown">
   			<h1>ContactDropdown: { this.props.alias }</h1>
-	        <AutoComplete
-		        floatingLabelText="Kontakt"
+	      <AutoComplete
+		        floatingLabelText={this.props.entityName}
 		        ref="textfield"
 						filter={ item => item }
 						openOnFocus={ true }
@@ -155,9 +181,9 @@ class ContactDropdown extends React.Component{
 						onNewRequest={ this.handleOnSelect.bind(this) }
 						onBlur={ this.handleOnBlur.bind(this) }
 						onKeyDown={ this.handleOnKeyDown.bind(this) }
-	        />
+	      />
+        { this.handleCurrentLoading(this.props.loading) }
 				<ClearIcon visibility={ this.props.entityId ? 'visible' : 'hidden' } hoverColor={red500} onClick={ this.handleDeleteFromIcon.bind(this) }/>
-				<Loading  />
       </div>
 		);
 	};

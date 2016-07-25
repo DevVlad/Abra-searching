@@ -35,3 +35,9 @@
   top: 40px;
   left: 700px;
 }
+
+.progressBar {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
