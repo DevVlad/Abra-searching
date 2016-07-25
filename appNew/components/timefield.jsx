@@ -32,9 +32,9 @@ class TimeField extends React.Component{
 
   componentWillUpdate(newProps) {
     if (!this.typing && newProps.value) {
+      console.log(newProps.value);
       const momentTime = moment.parseZone(newProps.value).format(this.timeFormat);
       if (this.state.value !== momentTime) this.setState({value: momentTime});
-
     }
   }
 
@@ -42,104 +42,48 @@ class TimeField extends React.Component{
     const elem = e.target.value;
     this.typing = false;
     let newDate = new Date();
+    const day = newDate.getDate();
+    const year = newDate.getFullYear();
+    const month = newDate.getMonth();
     if (elem && this.props.timeFormat === 24) {
-        if (elem.length === 1) {
-          newDate.setHours(parseInt(elem));
-        }else if (elem.length === 2) {
-          newDate.setHours(parseInt(elem));
+        if (elem.length === 1 || elem.length === 2) {
+          let subDate = new Date(year, month, day, parseInt(elem));
+          newDate = subDate;
         } else if (elem.length === 4) {
-          newDate.setHours(parseInt(elem.slice(0, 2)));
-          newDate.setMinutes(parseInt(elem.slice(-2)));
+          let subDate = new Date(year, month, day, parseInt(elem.slice(0, 2)), parseInt(elem.slice(-2)));
+          newDate = subDate;
         }else if (elem.length === 3) {
-          newDate.setHours(parseInt(elem.slice(0, 1)));
-          newDate.setMinutes(parseInt(elem.slice(-2)));
+          let subDate = new Date(year, month, day, parseInt(elem.slice(0, 1)), parseInt(elem.slice(-2)));
+          newDate = subDate;
         }
+    } else if (elem && this.props.timeFormat === 12) {
+      // const re = /.*?(?:(\d+)?)(?:\D(?:(\d+)?)\D((?:[a-z]+))?)/;
+      const re = /.*?(\d+)(?:\D(\d+)?(?:(\D+[a-z]+)?)).*/
+      const match = re.exec(elem);
+      let suffix = 0;
+      let hours = 0;
+      let minutes = 0;
+      if (match) {
+        if (match[3].split(' ').join('') !== 'am') suffix = 12;
+        for (let i = 1; i < 3; i++) {
+          if (match[i]) {
+            switch(i) {
+              case 1:
+                hours = parseInt(match[i]);
+                break;
+              case 2:
+                minutes = parseInt(match[i]);
+                break;
+            }
+          }
+        }
+        let subDate = new Date(year, month, day, hours + suffix, minutes);
+        newDate = subDate;
+        console.log(match);
+      }
     }
-    console.log(newDate);
-    // this.props.onBlur(newDate);
 
-
-
-    // inserting just numbers
-    // if (elem) {
-    //   this.typing = false;
-    //
-    //   let pom = 0;
-    //   let suffix = 0;
-    //   let suffixAMPM = '';
-    //   let firstPart = 0;
-    //   let secondPart = 0;
-    //   let time = new Date();
-    //
-    //   if (this.props.timeFormat === 24) {
-    //     if (elem.length === 1 || elem.length === 2) {
-    //       firstPart = elem;
-    //       secondPart = '00';
-    //     }
-    //
-    //     if (elem.length === 3) {
-    //       firstPart = '0' + elem.slice(0, 1);
-    //       secondPart = elem.slice(-2);
-    //     }
-    //
-    //     if (elem.length === 4) {
-    //       firstPart = elem.slice(0, 2);
-    //       secondPart = elem.slice(-2);
-    //     }
-    //     time = time.setUTCHours(10)
-    //     // time = time.setMinutes(17);
-    //     // pom = firstPart + ':' + secondPart;
-    //     console.log(time);
-    //
-    //     // this.props.onBlur({timeFieldValue: pom, alias: this.props.alias});
-    //   }
-    //
-    //   if (this.props.timeFormat === 12) {
-    //     if (elem.length === 1) {
-    //       firstPart = elem;
-    //       secondPart = '00';
-    //       suffixAMPM = 'am';
-    //     }
-    //
-    //     if (elem.length === 2) {
-    //       firstPart = elem.slice(0, 2);
-    //       if (firstPart < 12) {
-    //         suffixAMPM = 'am';
-    //       } else {
-    //         suffixAMPM = 'pm';
-    //         if (firstPart != 12) firstPart= firstPart - 12;
-    //       }
-    //       secondPart = '00';
-    //     }
-    //
-    //     if (elem.length === 3) {
-    //       firstPart = '0' + elem.slice(0, 1);
-    //       secondPart = elem.slice(-2);
-    //       if (firstPart < 12) {
-    //         suffixAMPM = 'am';
-    //       }
-    //     }
-    //
-    //     if (elem.length === 4) {
-    //       firstPart = elem.slice(0 , 2);
-    //       if (firstPart < 12 || firstPart == 24) {
-    //         suffixAMPM = 'am';
-    //         if (firstPart == 24) firstPart = '00';
-    //       } else {
-    //         suffixAMPM = 'pm';
-    //         if (firstPart != 12) {
-    //           firstPart = firstPart - 12;
-    //         }
-    //       }
-    //       secondPart = elem.slice(-2);
-    //     }
-    //
-    //     pom = firstPart + ':' + secondPart + ' ' + suffixAMPM;
-    //     console.log(pom);
-    //     // this.props.onBlur({timeFieldValue: pom, alias: this.props.alias});
-    //   }
-    //
-    // }
+    this.props.onBlur(newDate);
 
   }
 

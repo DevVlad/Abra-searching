@@ -124,7 +124,7 @@ class App extends React.Component{
 				/>
 				<TimeField
 					alias='timefield'
-					timeFormat={24}
+					timeFormat={12}
 					label="TimeField"
 					onBlur={ (x) => { this.setValue('timefield', x)} }
 					disabled={false}
@@ -143,7 +143,7 @@ class App extends React.Component{
 					submitLabel={ 'SELECT' }
 					cancelLabel={ 'CANCEL' }
 					locale='cs'
-					displayFormat="YYYY/MM/DD"
+					// displayFormat="YYYY/MM/DD"
 				/>
 
 			</div>
