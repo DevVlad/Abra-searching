@@ -1,19 +1,24 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 
-import DropdownField from './dropdownfield.jsx';
-import Loading from './loading.jsx';
+import DropdownField from './DropdownField.jsx';
+import Loading from './Loading.jsx';
 import testValueDuck from '../redux/ducks/testValueDuck.js';
 import Progress from '../redux/ducks/progress.jsx';
-import MenuList from './menulist.jsx';
-import CheckboxField from './checkbox.jsx';
-import TextField from './textfield.jsx';
-import TimeField from './timefield.jsx';
-import DateField from './datefield.jsx';
+import MenuList from './MenuList.jsx';
+import CheckboxField from './CheckboxField.jsx';
+import TextField from './TextField.jsx';
+import TimeField from './TimeField.jsx';
+import DateField from './DateField.jsx';
 
 import ActionFavorite from 'material-ui/svg-icons/action/favorite';
 import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
 import SvgIcon from 'material-ui/SvgIcon';
+
+injectTapEventPlugin();
+
+
 @connect(state => {
 	return {
 		testId: testValueDuck.getTestState(state),
@@ -93,12 +98,11 @@ class App extends React.Component{
 				/>
 				<Loading />
 				<MenuList
-					alias={'SelectField'}
+					alias='SelectField'
 					menuItems={ items }
 					onChange={ this.setValueForSelectField.bind(this) }
 					value={ this.props.textForSelectField }
           errorText='OMG what did u choose !?'
-					errorCondition={ this.props.textForSelectField === 'Bieber' }
 				/>
 				<CheckboxField
 					alias='checkbox'

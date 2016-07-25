@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
 import { orange500, blue500, grey500 } from 'material-ui/styles/colors';
@@ -10,7 +10,11 @@ import moment from 'moment';
 import './App.css';
 
 const IconForDatePicker = (props) => {
-  return (<SvgIcon { ...props}>
+  return (<SvgIcon
+    style={ { width: '20px', height: '20px' } }
+    tooltip='select time'
+    hoverColor={ blue500 }
+    color={ grey500 } { ...props}>
     <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
   </SvgIcon>);
 };
@@ -95,11 +99,24 @@ const parseDate = (parts, text) => {
 };
 
 class DateField extends React.Component{
+  static PropTypes: {
+    alias: PropTypes.string,
+    label: PropTypes.string,
+    onChange: PropTypes.func,
+    onBlur: PropTypes.func,
+    disabled: PropTypes.bool,
+    value: PropTypes.object,
+    enableMousePicker: PropTypes.bool,
+    submitLabel: PropTypes.string,
+    cancelLabel: PropTypes.string,
+    locale: PropTypes.string
+  };
+
   constructor(props) {
     super(props);
     this.typing = false;
     this.state = {
-      value: ''
+      toDisplay: ''
     };
   }
 
@@ -107,11 +124,11 @@ class DateField extends React.Component{
     if (newProps.value && !this.typing && newProps.locale)  {
       const newDate = Intl.DateTimeFormat(newProps.locale).format(newProps.value);
 
-      if (this.state.value !== newDate && !newProps.displayFormat) {
-        this.setState( {value: newDate} );
+      if (this.state.toDisplay !== newDate && !newProps.displayFormat) {
+        this.setState( {toDisplay: newDate} );
       } else if (newProps.displayFormat) {
         const formatedDate = moment.parseZone(newProps.value).format(this.props.displayFormat);
-        if (this.state.value !== formatedDate) this.setState( {value: formatedDate} );
+        if (this.state.toDisplay !== formatedDate) this.setState( {toDisplay: formatedDate} );
       }
     }
   }
@@ -144,7 +161,7 @@ class DateField extends React.Component{
 
   handleOnChange(e) {
     this.typing = true;
-    this.setState({value: e.target.value});
+    this.setState({toDisplay: e.target.value});
   }
 
 	render() {
@@ -159,16 +176,12 @@ class DateField extends React.Component{
               disabled={ this.props.disabled }
               underlineFocusStyle={ {color: blue500} }
               onBlur={ this.handleOnBlur.bind(this) }
-              value={ this.state.value }
+              value={ this.state.toDisplay }
               onKeyDown={ this.handleOnKeyDown.bind(this) }
               onChange={ this.handleOnChange.bind(this) }
         />
         <IconForDatePicker
-            style={ { width: '20px', height: '20px' } }
-            tooltip='select time'
             visibility={ this.props.enableMousePicker ? 'visible' : 'hidden' }
-            hoverColor={ blue500 }
-            color={ grey500 }
             onClick={ this.handleOnClick.bind(this) }
         />
         <DatePickerDialog
@@ -178,7 +191,7 @@ class DateField extends React.Component{
           okLabel={ this.props.submitLabel }
           cancelLabel={ this.props.cancelLabel }
           DateTimeFormat={ global.Intl.DateTimeFormat }
-          value={ this.state.value }
+          initialDate={ this.props.value }
           locale={ this.props.locale }
         />
       </div>

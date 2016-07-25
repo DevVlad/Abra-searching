@@ -1,40 +1,51 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import TimePickerDialog from 'material-ui/TimePicker/TimePickerDialog.js';
 import TextField from 'material-ui/TextField';
-import {orange500, blue500, grey500 } from 'material-ui/styles/colors';
-import injectTapEventPlugin from 'react-tap-event-plugin';
+import { orange500, blue500, grey500 } from 'material-ui/styles/colors';
 import SvgIcon from 'material-ui/SvgIcon';
 import moment from 'moment';
 
 import './App.css';
 
 const IconForTimePicker = (props) => {
-  return (<SvgIcon { ...props}>
+  return (<SvgIcon
+    style={ { width: '20px', height: '20px' } }
+    tooltip='select time'
+    color={ grey500 }
+    hoverColor={ blue500 } { ...props}>
     <path d="M22 5.72l-4.6-3.86-1.29 1.53 4.6 3.86L22 5.72zM7.88 3.39L6.6 1.86 2 5.71l1.29 1.53 4.59-3.85zM12.5 8H11v6l4.75 2.85.75-1.23-4-2.37V8zM12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 16c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
   </SvgIcon>);
 };
 
 class TimeField extends React.Component{
+  static PropTypes: {
+    alias: PropTypes.string,
+    timeFormat: PropTypes.number,
+    label: PropTypes.string,
+    onBlur: PropTypes.func,
+    disabled: PropTypes.bool,
+    locale: PropTypes.string,
+    value: PropTypes.object,
+    enableMousePicker: PropTypes.bool
+  };
+
   constructor(props) {
     super(props);
-    this.state = {value: ''};
+    this.state = {toDisplay: ''};
     this.typing = false;
-    if (this.props.timeFormat === 24) {
-      this.formatForTimePicker = '24hr';
-      this.timeFormat = 'HH:MM';
-    } else {
-      this.formatForTimePicker = 'ampm';
-      this.timeFormat = 'h:mm a';
-    }
-
   }
 
   componentWillUpdate(newProps) {
     if (!this.typing && newProps.value) {
-      console.log(newProps.value);
-      const momentTime = moment.parseZone(newProps.value).format(this.timeFormat);
-      if (this.state.value !== momentTime) this.setState({value: momentTime});
+      let formatForMoment;
+      if (this.props.timeFormat === 24) {
+        formatForMoment = 'HH:MM';
+      } else {
+        formatForMoment = 'h:mm a';
+      }
+      const momentTime = moment.parseZone(newProps.value).format(formatForMoment);
+      if (this.state.toDisplay !== momentTime) this.setState({toDisplay: momentTime});
     }
   }
 
@@ -79,7 +90,6 @@ class TimeField extends React.Component{
         }
         let subDate = new Date(year, month, day, hours + suffix, minutes);
         newDate = subDate;
-        console.log(match);
       }
     }
 
@@ -93,7 +103,7 @@ class TimeField extends React.Component{
 
   handleOnChange(e) {
     this.typing = true;
-    this.setState({value: e.target.value});
+    this.setState({toDisplay: e.target.value});
   }
 
   handleOnChangeOfTimePicker(e) {
@@ -117,20 +127,16 @@ class TimeField extends React.Component{
             underlineFocusStyle={ {color: blue500} }
             onBlur={ this.handleOnBlur.bind(this) }
             onChange={ this.handleOnChange.bind(this) }
-            value={ this.state.value }
+            value={ this.state.toDisplay }
             onKeyDown={this.handleOnKeyDown.bind(this)}
         />
       <TimePickerDialog
           ref="timePicker"
-          format={ this.formatForTimePicker }
+          format={ this.props.timeFormat === 24 ? '24hr' : 'ampm' }
           onAccept={ this.handleOnChangeOfTimePicker.bind(this) }
       />
       <IconForTimePicker
-          style={ { width: '20px', height: '20px' } }
-          tooltip='select time'
           visibility={ this.props.enableMousePicker ? 'visible' : 'hidden' }
-          color={ grey500 }
-          hoverColor={ blue500 }
           onClick={ this.handleOnClick.bind(this) }
         />
       </div>

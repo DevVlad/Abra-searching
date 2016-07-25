@@ -1,11 +1,21 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import RadioButton from 'material-ui/RadioButton';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import './App.css';
 
-class CheckboxNew extends React.Component{
+class CheckboxField extends React.Component{
+  PropTypes: {
+    alias: PropTypes.string,
+    label: PropTypes.string,
+    checkedIcon: PropTypes.object,
+    uncheckedIcon: PropTypes.object,
+    onChange: PropTypes.func,
+    onBlur: PropTypes.func,
+    value: PropTypes.bool
+  };
+
   constructor(props) {
     super(props);
   }
@@ -29,7 +39,7 @@ class CheckboxNew extends React.Component{
 	render() {
 		return (
       <div id="radiobutton">
-  			<h1>CheckboxNew: { this.props.alias }</h1>
+  			<h1>CheckboxField: { this.props.alias }</h1>
           <RadioButton
             checkedIcon={ this.props.checkedIcon }
             uncheckedIcon={this.props.uncheckedIcon }
@@ -45,4 +55,4 @@ class CheckboxNew extends React.Component{
 
 };
 
-export default CheckboxNew;
+export default CheckboxField;
