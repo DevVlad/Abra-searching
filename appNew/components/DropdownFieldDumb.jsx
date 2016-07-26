@@ -54,9 +54,8 @@ class DropdownFieldDumb extends React.Component{
   handleOnSelect(e) {
     if (this.typing) this.typing = false;
     const output = this.props.entityToValue(e);
-    console.log('prdel', this.text, this.state.toDisplay, output);
     this.props.onChange(output);
-
+    // this.setState({toDisplay: this.props.entityToText(e)});
   }
 
   handleRenderWithInsertedValue(val) {
@@ -87,7 +86,7 @@ class DropdownFieldDumb extends React.Component{
 		}
     const reTYPE = new RegExp('\\b('+ this.props.value + ')');
     const resultTYPE = reTYPE.exec(typeOfValue);
-    console.log(resultTYPE, this.props.value, typeOfValue);
+    // console.log(resultTYPE, this.props.value, typeOfValue);
     if (this.props.value && !resultTYPE) {
       console.error('DropdownDumb, alias: ' + this.props.alias + ' -> Inserted type of value "' + typeof(this.props.value) + '" is not included as value on key: "' + resultVAL[1] + '" in props data! Check data on props or inserted value.');
     }
@@ -104,7 +103,6 @@ class DropdownFieldDumb extends React.Component{
       } else {
         this.notificationText = this.props.warnText;
       }
-
     }
 
 		return (
