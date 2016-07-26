@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-import DropdownField from './DropdownField.jsx';
+import DropdownFieldOld from './DropdownFieldOld.jsx';
 import Loading from './Loading.jsx';
 import testValueDuck from '../redux/ducks/testValueDuck.js';
 import Progress from '../redux/ducks/progress.jsx';
@@ -14,6 +14,8 @@ import DateField from './DateField.jsx';
 import ButtonField from './ButtonField.jsx';
 import FloatingButtonField from './FloatingButtonField.jsx';
 import ToggleField from './ToggleField.jsx';
+import DropdownFieldDumb from './DropdownFieldDumb.jsx';
+import DropdownField from './DropdownField.jsx';
 
 import ActionFavorite from 'material-ui/svg-icons/action/favorite';
 import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
@@ -83,8 +85,9 @@ class App extends React.Component{
 				<button onClick={ this.handleStart10.bind(this) }>Start 10</button>
 				<button onClick={ this.handleStop.bind(this) }>Stop()</button>
 				<button onClick={ this.handleStop10.bind(this) }>Stop 10</button>
-				<DropdownField
+				<DropdownFieldOld
 					alias='a'
+					label='clever dropdown old a'
 					entityName="kontakt"
 					onChange={ this.changeTestValue.bind(this) }
 					entityId={ this.props.testId }
@@ -93,8 +96,9 @@ class App extends React.Component{
 					loadingNotify={ true }
 				/>
 				<br/>
-				<DropdownField
+				<DropdownFieldOld
 					alias='b'
+					label='clever dropdown old b'
 					entityName="kontakt"
 					onChange={ this.changeTestValue.bind(this) }
 					entityId={ this.props.testId }
@@ -105,7 +109,7 @@ class App extends React.Component{
 				<Loading />
 				<MenuList
 					alias='SelectField'
-					menuItems={ CONSTANTS.ITEMS }
+					menuItems={ CONSTANTS.FAKEDATA }
 					onChange={ this.setValueForSelectField.bind(this) }
 					value={ this.props.textForSelectField }
           errorText='OMG what did u choose !?'
@@ -196,6 +200,32 @@ class App extends React.Component{
 					onBlur={ (x) => console.log('ToggleField onBlur', x) }
 				/>
 				<br/>
+				<DropdownFieldDumb
+					alias='DropdownDumb'
+					label='dumb dropdown'
+					data={ CONSTANTS.FAKEENTITY }
+					errorText={ '' }
+					warnText={ '' }
+					onChange={ (e) => console.log('DropdownDumb onChange', e) }
+					onBlur={ (e) => console.log('DropdownDumb on Blur', e) }
+					entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
+					entityToValue={ object => object.jmeno }
+					value={ 107 }
+				/>
+				<br/>
+				<DropdownField
+					alias='cleverDropdown'
+					label='clever dropdown new a'
+					entityName="kontakt"
+					errorText={ '' }
+					warnText={ '' }
+					onChange={ this.changeTestValue.bind(this) }
+					onBlur={ (e) => console.log('DropdownNewClever on Blur', e) }
+					entityId={ this.props.testId }
+					entityToText={ object => [object.jmeno, object.prijmeni].join(' ') }
+					filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
+					loadingNotify={ true }
+				/>
 			</div>
 		)
 	}

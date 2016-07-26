@@ -29,7 +29,7 @@ class MenuList extends React.Component{
 	render() {
     let items = this.props.menuItems.map( (x, k) => {
       return (
-        <MenuItem key={k} value={x.text} primaryText={x.text} />
+        <MenuItem key={k} value={x} primaryText={x} />
       );
     });
 

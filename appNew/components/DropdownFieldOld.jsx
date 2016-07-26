@@ -1,12 +1,12 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import AutoComplete from 'material-ui/AutoComplete';
-import injectTapEventPlugin from 'react-tap-event-plugin';
 import SvgIcon from 'material-ui/SvgIcon';
-import { red500 } from 'material-ui/styles/colors';
+// import { red500 } from 'material-ui/styles/colors';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 
 import DropdownField from '../redux/ducks/dropdownfield.jsx';
+import CONSTANTS from './CONSTANTS.jsx';
 
 import './App.css';
 
@@ -19,10 +19,11 @@ const ClearIcon = (props) => (
 class ContactDropdown extends React.Component{
   static propTypes = {
     alias: PropTypes.string,
+    label: PropTypes.string,
     entityName: PropTypes.string,
     onChange: PropTypes.func,
-    entityId: PropTypes.number,
-    entityToText: PropTypes.func,
+    entityId: PropTypes.string,
+    entityToText: PropTypes.object,
     filterToCondition: PropTypes.func,
     loadingNotify: PropTypes.bool
   };
@@ -166,7 +167,7 @@ class ContactDropdown extends React.Component{
 		return (
       <div id="ContactDropdown">
 	      <AutoComplete
-		        floatingLabelText={this.props.entityName}
+		        floatingLabelText={this.props.label}
 		        ref="textfield"
 						filter={ item => item }
 						openOnFocus={ true }
@@ -182,7 +183,7 @@ class ContactDropdown extends React.Component{
 						onKeyDown={ this.handleOnKeyDown.bind(this) }
 	      />
         { this.handleCurrentLoading(this.props.loading) }
-				<ClearIcon visibility={ this.props.entityId ? 'visible' : 'hidden' } hoverColor={red500} onClick={ this.handleDeleteFromIcon.bind(this) }/>
+				<ClearIcon visibility={ this.props.entityId ? 'visible' : 'hidden' } hoverColor={CONSTANTS.COLORS.error} onClick={ this.handleDeleteFromIcon.bind(this) }/>
       </div>
 		);
 	};
