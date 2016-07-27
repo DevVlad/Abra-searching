@@ -35,16 +35,43 @@ class TimeField extends React.Component{
     this.typing = false;
   }
 
+  giveMeTime(elem) {
+    let newDate = new Date();
+    const day = newDate.getDate();
+    const year = newDate.getFullYear();
+    const month = newDate.getMonth();
+    const re = /\b(\d{1,2})(?:\D{0,}?(\d{1,2}))?(?:\D{0,}?([a-z]+))?/i;
+    const result = re.exec(elem);
+    let hours = parseInt(result[1]);
+    let minutes = 0;
+    let suffix;
+    if (result[2]) minutes = parseInt(result[2]);
+    if (result[3]) suffix = result[3];
+    if (suffix) {
+      if (suffix === 'pm') hours = hours + 12;
+    }
+    let subDate = new Date(year, month, day, hours, minutes)
+    newDate = subDate;
+    return newDate;
+  }
+
+  getFormatedTime(date) {
+    let formatForMoment;
+    if (this.props.timeFormat === 12) {
+      formatForMoment = 'h:mm a';
+    } else {
+      formatForMoment = 'HH:mm';
+    }
+    return moment.parseZone(date).format(formatForMoment);
+  }
+
   componentWillUpdate(newProps) {
     if (!this.typing && newProps.value) {
-      let formatForMoment;
-      if (this.props.timeFormat === 24) {
-        formatForMoment = 'HH:mm';
-      } else {
-        formatForMoment = 'h:mm a';
+      const momentTime = this.getFormatedTime(e);
+      if (this.state.toDisplay !== momentTime) {
+        this.initTime = newProps.value;
+        this.setState({toDisplay: momentTime});
       }
-      const momentTime = moment.parseZone(newProps.value).format(formatForMoment);
-      if (this.state.toDisplay !== momentTime) this.setState({toDisplay: momentTime});
     }
   }
 
@@ -52,47 +79,11 @@ class TimeField extends React.Component{
     const elem = e.target.value;
     this.typing = false;
     if (elem) {
-      let newDate = new Date();
-      const day = newDate.getDate();
-      const year = newDate.getFullYear();
-      const month = newDate.getMonth();
-      if (elem && this.props.timeFormat === 24) {
-          if (elem.length === 1 || elem.length === 2) {
-            let subDate = new Date(year, month, day, parseInt(elem), 0);
-            newDate = subDate;
-          } else if (elem.length === 4) {
-            let subDate = new Date(year, month, day, parseInt(elem.slice(0, 2)), parseInt(elem.slice(-2)));
-            newDate = subDate;
-          }else if (elem.length === 3) {
-            let subDate = new Date(year, month, day, parseInt(elem.slice(0, 1)), parseInt(elem.slice(-2)));
-            newDate = subDate;
-          }
-      } else if (elem && this.props.timeFormat === 12) {
-        //format of input d+\Dd+\D[a-z]+
-        const re = /.*?(\d+)(?:\D(\d+)?(?:(\D+[a-z]+)?)).*/;
-        const match = re.exec(elem);
-        let suffix = 0;
-        let hours = 0;
-        let minutes = 0;
-        if (match) {
-          if (match[3].split(' ').join('') !== 'am') suffix = 12;
-          for (let i = 1; i < 3; i++) {
-            if (match[i]) {
-              switch(i) {
-                case 1:
-                  hours = parseInt(match[i]);
-                  break;
-                case 2:
-                  minutes = parseInt(match[i]);
-                  break;
-              }
-            }
-          }
-          let subDate = new Date(year, month, day, hours + suffix, minutes);
-          newDate = subDate;
-        }
-      }
-      this.props.onBlur(newDate);
+      const outputDate = this.giveMeTime(elem);
+      const momentTime = this.getFormatedTime(outputDate);
+      this.initTime = outputDate;
+      this.props.onBlur(outputDate);
+      if (this.state.toDisplay !== momentTime) this.setState({toDisplay: momentTime});
     }
 
   }
@@ -108,11 +99,20 @@ class TimeField extends React.Component{
 
   handleOnChangeOfTimePicker(e) {
     this.typing = false;
+    const momentTime = this.getFormatedTime(e);
+    if (this.state.toDisplay !== momentTime) this.setState({toDisplay: momentTime});
+    this.initTime = e;
     this.props.onBlur(e);
   }
 
   handleOnKeyDown(e) {
-    if (e.keyCode === 13) this.refs.timePicker.show();
+    if (e.keyCode === 13) {
+      const outputDate = this.giveMeTime(e.target.value);
+      this.initTime = outputDate;
+      const momentTime = this.getFormatedTime(outputDate);
+      if (this.state.toDisplay !== momentTime) this.setState({toDisplay: momentTime});
+      this.props.onChange(outputDate);
+    }
   }
 
 	render() {
@@ -138,7 +138,7 @@ class TimeField extends React.Component{
             ref="timePicker"
             format={ this.props.timeFormat === 24 ? '24hr' : 'ampm' }
             onAccept={ this.handleOnChangeOfTimePicker.bind(this) }
-            initialTime={ this.props.value }
+            initialTime={ this.initTime }
         />
       </div>
 		);

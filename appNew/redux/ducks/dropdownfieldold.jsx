@@ -5,8 +5,8 @@ import { createSelector } from 'reselect';
 import Progress from './progress.jsx';
 
 const SET_LOADING = 'SET_LOADING';
-const ADD_HINT = 'ADD_HINT';
-const SET_HINT = 'SET_HINT';
+const ADD_DATA = 'ADD_DATA';
+const SET_DATA = 'SET_DATA';
 const SET_ENTITY_TO_TEXT = 'SET_ENTITY_TO_TEXT';
 const SET_FILTER_MODE = 'SET_FILTER_MODE';
 const SET_FILTER = 'SET_FILTER';
@@ -14,7 +14,7 @@ const DELETE = 'DELETE';
 
 const getAliasState = (state, alias) => state.getIn(['filter', alias]);
 
-const DropdownField = {
+const DropdownFieldOld = {
   /*
    ACTIONS
   */
@@ -26,19 +26,19 @@ const DropdownField = {
   		};
   	},
 
-  	addHint(list, alias, paging, bool) {
+  	addData(list, alias, paging, bool) {
   		return {
-  			type: ADD_HINT,
-  			hint: list,
+  			type: ADD_DATA,
+  			data: list,
   			alias,
   			paging,
   			bool
   		};
   	},
 
-  	setHint(list, alias, paging, bool) {
+  	setData(list, alias, paging, bool) {
   		return {
-  			type: SET_HINT,
+  			type: SET_DATA,
   			list,
   			alias,
   			paging,
@@ -48,7 +48,7 @@ const DropdownField = {
 
   	setValueOfEntityToText(id, alias) {
   		return dispatch => {
-  				serviceRequestOnInsertedId(id).then(data => dispatch(DropdownField.setEntityToText(data.winstrom.kontakt[0], alias)));
+  				serviceRequestOnInsertedId(id).then(dataServer => dispatch(DropdownFieldOld.setEntityToText(dataServer.winstrom.kontakt[0], alias)));
   			};
   	},
 
@@ -86,15 +86,15 @@ const DropdownField = {
 
     setList(filter, alias, paging, resultsToDisplay) {
   		return dispatch => {
-        dispatch(DropdownField.setFilter(filter, alias));
+        dispatch(DropdownFieldOld.setFilter(filter, alias));
   			if (paging === 0) {
-  				dispatch(DropdownField.setLoading(true, alias));
+  				dispatch(DropdownFieldOld.setLoading(true, alias));
   			};
   			if (filter !== '') {
           dispatch(progressMedium(filter, paging, paging, alias, resultsToDisplay));
   			};
   			if (filter === '') {
-  				dispatch(DropdownField.setHint([], alias, paging, true));
+  				dispatch(DropdownFieldOld.setData([], alias, paging, true));
   			};
   		};
   	},
@@ -106,13 +106,13 @@ const DropdownField = {
     reducer(state = Immutable.fromJS({}), action) {
       switch (action.type) {
 
-        case SET_HINT:
-          return state.setIn([action.alias, 'hint'], Immutable.fromJS(action.list))
+        case SET_DATA:
+          return state.setIn([action.alias, 'data'], Immutable.fromJS(action.list))
                       .setIn([action.alias, 'lastPaging'], action.paging)
                       .setIn([action.alias, 'nextRequestPossible'], action.bool);
 
-        case ADD_HINT:
-          return state.updateIn([action.alias, 'hint'], list => list.concat(Immutable.fromJS(action.hint)))
+        case ADD_DATA:
+          return state.updateIn([action.alias, 'data'], list => list.concat(Immutable.fromJS(action.data)))
                       .setIn([action.alias, 'lastPaging'], action.paging)
                       .setIn([action.alias, 'nextRequestPossible'], action.bool);
 
@@ -129,8 +129,8 @@ const DropdownField = {
         case DELETE:
           let obj = state;
           action.subjects.forEach(subject => {
-            if (subject === 'hint') {
-              obj = obj.setIn([action.alias, 'hint'], Immutable.fromJS([]));
+            if (subject === 'data') {
+              obj = obj.setIn([action.alias, 'data'], Immutable.fromJS([]));
             } else {
               obj = obj.setIn([action.alias, subject], undefined);
             }
@@ -157,8 +157,8 @@ const DropdownField = {
       return getEntityToText(state, alias);
     },
 
-    getHint(state, alias) {
-      return getHint(state, alias);
+    getData(state, alias) {
+      return getData(state, alias);
     },
 
     getFilterMode(state, alias) {
@@ -178,11 +178,11 @@ const getEntityToText = createSelector(getAliasState, x => {
 	};
 });
 
-const getHint = createSelector(getAliasState, x => {
+const getData = createSelector(getAliasState, x => {
 	if (x === undefined) {
 		return undefined;
 	} else {
-		return x.get('hint');
+		return x.get('data');
 	};
 });
 
@@ -222,7 +222,7 @@ const getFilterMode = createSelector(getAliasState, x => {
 logic
 */
 
-function processRequest(data, filter, paging, alias, resultsToDisplay) {
+function processRequest(dataServer, filter, paging, alias, resultsToDisplay) {
 	return (dispatch, getState) => {
     // dispatch(Progress.start());
     // dispatch(Progress.step(10));
@@ -235,21 +235,21 @@ function processRequest(data, filter, paging, alias, resultsToDisplay) {
 
     // dispatch(Progress.step(Progress.getProgressBar(getState())))
 		if (getFilter(getState(), alias) === filter) {
-			const totalCount = parseInt(data['@rowCount']);
+			const totalCount = parseInt(dataServer['@rowCount']);
 			if (totalCount === 0) {
-				console.log('No data found!');
-				// dispatch(DropdownField.setHint([], alias, paging, totalCount > paging+ data.kontakt.length));
-        // dispatch(DropdownField.setLoading(false, alias));
-        dispatch(DropdownField.setDelete(alias, ['hint', 'loading']));
+				console.log('No dataServer found!');
+				// dispatch(DropdownFieldOld.setData([], alias, paging, totalCount > paging+ dataServer.kontakt.length));
+        // dispatch(DropdownFieldOld.setLoading(false, alias));
+        dispatch(DropdownFieldOld.setDelete(alias, ['data', 'loading']));
 			} else {
 					if (paging + 20 > totalCount)  {
-						dispatch(setLimit(data.kontakt, alias, true, resultsToDisplay, paging, totalCount > paging+ data.kontakt.length));
+						dispatch(setLimit(dataServer.kontakt, alias, true, resultsToDisplay, paging, totalCount > paging+ dataServer.kontakt.length));
 					} else {
-						dispatch(setLimit(data.kontakt, alias, false, resultsToDisplay, paging, totalCount > paging+ data.kontakt.length));
+						dispatch(setLimit(dataServer.kontakt, alias, false, resultsToDisplay, paging, totalCount > paging+ dataServer.kontakt.length));
 					}
-					const count = paging + data.kontakt.length;
-					const hintCount = getHint(getState(), alias).size;
-					if (totalCount > count && hintCount < resultsToDisplay) {
+					const count = paging + dataServer.kontakt.length;
+					const dataCount = getData(getState(), alias).size;
+					if (totalCount > count && dataCount < resultsToDisplay) {
             dispatch(progressMedium(filter, count, paging, alias, resultsToDisplay));
 					}
 			}
@@ -260,13 +260,13 @@ function processRequest(data, filter, paging, alias, resultsToDisplay) {
 function progressMedium(filter, count, paging, alias, resultsToDisplay) {
   return (dispatch) => {
     dispatch(Progress.start());
-    serviceRequestOnChangeInput(filter, count).then(data => dispatch(processRequest(data.winstrom, filter, paging, alias, resultsToDisplay)));
+    serviceRequestOnChangeInput(filter, count).then(dataServer => dispatch(processRequest(dataServer.winstrom, filter, paging, alias, resultsToDisplay)));
   };
 };
 
 function setLimit(list, alias, boolLast, toDisplayLimit, paging, nextLoading) {
 	return (dispatch, getState) => {
-		let counter = getHint(getState(), alias).size;
+		let counter = getData(getState(), alias).size;
 		let loading = getLoading(getState(), alias);
 		if (loading) {
 			counter = 0;
@@ -280,10 +280,10 @@ function setLimit(list, alias, boolLast, toDisplayLimit, paging, nextLoading) {
 			pom = list;
 		}
 		if (loading) {
-			dispatch(DropdownField.setLoading(false, alias));
-			if (paging === 0) dispatch(DropdownField.setHint(pom, alias, paging, nextLoading));
+			dispatch(DropdownFieldOld.setLoading(false, alias));
+			if (paging === 0) dispatch(DropdownFieldOld.setData(pom, alias, paging, nextLoading));
 		} else if(pom.length > 0) {
-			dispatch(DropdownField.addHint(pom, alias, paging, nextLoading));
+			dispatch(DropdownFieldOld.addData(pom, alias, paging, nextLoading));
 		}
 	}
 };
@@ -336,4 +336,4 @@ function serviceRequestOnInsertedId(initId) {
 	});
 };
 
-export default DropdownField;
+export default DropdownFieldOld;

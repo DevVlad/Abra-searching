@@ -4,6 +4,8 @@ import DropdownFieldDumb from './DropdownFieldDumb.jsx';
 import SvgIcon from 'material-ui/SvgIcon';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 
+import DropdownFieldDuck from '../redux/ducks/dropdownfieldDuck.jsx';
+
 import CONSTANTS from './CONSTANTS.jsx';
 
 import './App.css';
@@ -23,8 +25,8 @@ class DropdownField extends React.Component{
     warnText: PropTypes.string,
     onChange: PropTypes.func,
     onBlur: PropTypes.func,
-    entityId: PropTypes.number,
     entityToText: PropTypes.func,
+    entityType: PropTypes.string,
     filterToCondition: PropTypes.func,
     loadingNotify: PropTypes.bool
   };
@@ -34,21 +36,101 @@ class DropdownField extends React.Component{
     this.state = {
       toDisplay: ''
     };
-    this.list = [];
-    this.typing = false;
-    this.decideOpen = false;
+    this.initDataFotInitId = [];
   }
 
+  componentWillMount() {
+    if (this.props.entityId) {
+      this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, this.props.entityId, this.props.alias));
+    }
+  }
 
-	render() {
+  componentWillUpdate(newProps) {
 
-		return (
+    if (parseInt(newProps.entityIdIsThis.id) === newProps.entityId && !newProps.data) {
+      this.initDataFotInitId.push(newProps.entityIdIsThis);
+    }
+
+    //   const resultEntity = newProps.entityIdIsThis;
+    //   const whatToDispl = newProps.entityToText(resultEntity);
+    //   if (whatToDispl != this.state.toDisplay) {
+    //     console.log(whatToDispl);
+    //     this.setState({toDisplay: whatToDispl});
+    //   }
+  // } else if (parseInt(newProps.entityIdIsThis.id) !== newProps.entityId) this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, this.props.entityId, this.props.alias));
+
+  }
+
+  handleOnChange(e) {
+    console.log('onChange', e);
+  }
+
+  handleOnBLur(e) {
+    console.log('onBlur', e);
+  }
+
+  handleTyping(e) {
+    if (e) {
+      this.props.dispatch(DropdownFieldDuck.setData(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
+    }
+  }
+
+  handleCurrentLoading(loading) {
+    if (loading && this.props.loadingNotify) {
+      return (
+        <RefreshIndicator
+          size={40}
+          left={10}
+          top={0}
+          status="loading"
+          style={ {
+              display: 'inline-block',
+              position: 'relative'
+          } }
+        />
+      );
+    }
+  }
+
+  handleDeleteFromIcon() {
+    this.props.onChange(undefined);
+		this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['filter']));
+  }
+
+  render() {
+    console.log('render', this.props, this.initDataFotInitId);
+
+    return (
       <div id="DropdownField">
-
+        <DropdownFieldDumb
+          alias={ this.props.alias }
+          label={ this.props.label }
+          data={ this.props.data ? this.props.data.toJS() : this.initDataFotInitId}
+          errorText={ this.props.errorText }
+          warnText={ this.props.warnText }
+          onChange={ this.handleOnChange.bind(this) }
+          onBlur={ this.handleOnBLur.bind(this) }
+          entityToText={ this.props.entityToText }
+          entityToValue={ object => object.id }
+          value={ this.props.entityIdIsThis || this.props.data ? this.props.entityId : null }
+          onTyping={ this.handleTyping.bind(this) }
+          filter={ item => item }
+          />
+      { this.handleCurrentLoading(this.props.loading) }
       </div>
-		);
-	};
+    );
+  };
 
 };
 
-export default DropdownField;
+function mapStateToProps(state, props) {
+  return {...props,
+    filter: DropdownFieldDuck.getFilter(state, props.alias),
+    data: DropdownFieldDuck.getData(state, props.alias),
+    loading: DropdownFieldDuck.getLoading(state, props.alias),
+    entityIdIsThis: DropdownFieldDuck.getEntityfromId(state, props.alias)
+  };
+};
+
+const appConnect = connect(mapStateToProps)(DropdownField);
+export default appConnect;

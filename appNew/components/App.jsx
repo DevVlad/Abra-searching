@@ -143,20 +143,21 @@ class App extends React.Component{
 					alias='timefield'
 					timeFormat={24}
 					label="TimeField"
-					onBlur={ (x) => { this.setValue('timefield', x)} }
+					onBlur={ (x) => console.log('timefield onBlur', x) }
+					onChange={ (x) => console.log('timefield onChange', x) }
 					disabled={false}
 					locale='cs'
-					value={ this.props.valueOfTimefield }
+					// value={ this.props.valueOfTimefield }
 					enableMousePicker={ true }
 				/>
 				<br/>
 				<DateField
 					alias='datefield'
 					label="DateField"
-					onChange={ (x) => this.setValue('datefield', x) }
-					onBlur={ (x) => this.setValue('datefield', x) }
+					onChange={ (x) => console.log('datefield onChange', x) }
+					onBlur={ (x) => console.log('datefield onBlur', x) }
 					disabled={false}
-					value={ this.props.valueOfDatefield }
+					// value={ this.props.valueOfDatefield }
 					enableMousePicker={ true }
 					locale='cs'
 					// displayFormat="YYYY/MM/DD"
@@ -216,13 +217,13 @@ class App extends React.Component{
 				<DropdownField
 					alias='cleverDropdown'
 					label='clever dropdown new a'
-					entityName="kontakt"
+					entityType="kontakt"
 					errorText={ '' }
 					warnText={ '' }
-					onChange={ this.changeTestValue.bind(this) }
+					onChange={ (e) => console.log('DropdownNewClever on Blur', e) }
 					onBlur={ (e) => console.log('DropdownNewClever on Blur', e) }
-					entityId={ this.props.testId }
-					entityToText={ object => [object.jmeno, object.prijmeni].join(' ') }
+					entityId={ 17 }
+					entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
 					filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 					loadingNotify={ true }
 				/>

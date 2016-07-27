@@ -129,6 +129,16 @@ class DateField extends React.Component{
     }
   }
 
+  getDateFormat(date) {
+    let result;
+    if (this.props.displayFormat) {
+      result = moment.parseZone(date).format(this.props.displayFormat);
+    } else {
+      result = Intl.DateTimeFormat(this.props.locale).format(date);
+    }
+    return result;
+  }
+
   handleOnClick() {
     this.refs.DatePickerDialog.show();
   }
@@ -136,9 +146,17 @@ class DateField extends React.Component{
   handleOnKeyDown(e) {
     if (e.keyCode === 13) {
       const elem = e.target.value;
-      const newDate = parseDate(getDateParts(this.props.locale), elem);
+      this.newDate = parseDate(getDateParts(this.props.locale), elem);
       this.typing = false;
-      this.props.onChange(newDate);
+      this.newDate = parseDate(getDateParts(this.props.locale), elem);
+      let toDisplayValue;
+      if (this.props.displayFormat) {
+        toDisplayValue = moment.parseZone(this.newDate).format(this.props.displayFormat);
+      } else {
+        toDisplayValue = Intl.DateTimeFormat(this.props.locale).format(this.newDate);
+      }
+      this.props.onChange(this.newDate);
+      this.setState({toDisplay: toDisplayValue});
     }
 
   }
@@ -148,14 +166,19 @@ class DateField extends React.Component{
     if (elem) {
       this.typing = false;
       // const newDate = parseDate(['D', 'M', 'Y'], elem);
-      const newDate = parseDate(getDateParts(this.props.locale), elem);
-      this.props.onBlur(newDate);
+      this.newDate = parseDate(getDateParts(this.props.locale), elem);
+      this.props.onBlur(this.newDate);
+      const resultToDisplay = this.getDateFormat(this.newDate);
+      if (this.state.toDisplay !== resultToDisplay) this.setState({toDisplay: resultToDisplay});
     }
 
   }
 
   handleOnChangeOfDatePicker(e) {
     this.props.onBlur(e);
+    const resultToDisplay = this.getDateFormat(e);
+    this.newDate = e;
+    if (this.state.toDisplay !== resultToDisplay) this.setState({toDisplay: resultToDisplay});
   }
 
   handleOnChange(e) {
@@ -188,7 +211,7 @@ class DateField extends React.Component{
           firstDayOfWeek={ 1 }
           onAccept={ this.handleOnChangeOfDatePicker.bind(this) }
           DateTimeFormat={ global.Intl.DateTimeFormat }
-          initialDate={ this.props.value }
+          initialDate={ this.newDate }
           locale={ this.props.locale }
         />
       </div>

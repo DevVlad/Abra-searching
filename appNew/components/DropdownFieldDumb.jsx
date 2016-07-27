@@ -24,6 +24,7 @@ class DropdownFieldDumb extends React.Component{
     entityToText: PropTypes.func,
     entityToValue: PropTypes.func,
     filter: PropTypes.func,
+    onTyping: PropTypes.func,
   };
 
   constructor(props) {
@@ -39,23 +40,27 @@ class DropdownFieldDumb extends React.Component{
 
   handleTyping(e) {
     if (!this.typing) this.typing = true;
-    if (this.typing) this.setState({toDisplay: e});
+    if (this.props.onTyping) this.props.onTyping(e);
+    if (this.typing) {
+      this.setState({toDisplay: e});
+    }
   }
 
   handleOnBlur(e) {
     if (this.typing) this.typing = false;
     this.props.onBlur(e);
-    if (this.state.toDisplay != this.text && !this.state.toDisplay) {
+    if (this.state.toDisplay != this.text) {
       if (!this.state.toDisplay) this.text = this.state.toDisplay;
-      this.setState({});
+      this.setState({toDisplay: this.text});
     }
   }
 
   handleOnSelect(e) {
     if (this.typing) this.typing = false;
     const output = this.props.entityToValue(e);
-    this.props.onChange(output);
-    // this.setState({toDisplay: this.props.entityToText(e)});
+    this.handleOnChange(output);
+    this.text = this.props.entityToText(e);
+    this.setState({toDisplay: this.props.entityToText(e)});
   }
 
   handleRenderWithInsertedValue(val) {
@@ -66,10 +71,15 @@ class DropdownFieldDumb extends React.Component{
   }
 
   handleDeleteFromIcon() {
+    this.handleOnChange(undefined);
     if (this.state.toDisplay && this.text ) {
       this.text = '';
       this.setState({toDisplay: ''});
     }
+  }
+
+  handleOnChange(e) {
+    this.props.onChange(e);
   }
 
 	render() {
@@ -86,9 +96,8 @@ class DropdownFieldDumb extends React.Component{
 		}
     const reTYPE = new RegExp('\\b('+ this.props.value + ')');
     const resultTYPE = reTYPE.exec(typeOfValue);
-    // console.log(resultTYPE, this.props.value, typeOfValue);
     if (this.props.value && !resultTYPE) {
-      console.error('DropdownDumb, alias: ' + this.props.alias + ' -> Inserted type of value "' + typeof(this.props.value) + '" is not included as value on key: "' + resultVAL[1] + '" in props data! Check data on props or inserted value.');
+      console.error('DropdownDumb, alias: ' + this.props.alias + ' -> Inserted type of value "' + typeof(this.props.value) + '" is not included as value-type on key: "' + resultVAL[1] + '" in props data. At this moment there is "' + this.props.data[resultVAL[1]] + '". Check data on props or inserted value.');
     }
     if (this.props.value && !this.typing && this.state.toDisplay != this.text) {
       this.props.data.forEach( obj => {

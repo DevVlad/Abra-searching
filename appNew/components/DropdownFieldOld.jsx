@@ -5,7 +5,7 @@ import SvgIcon from 'material-ui/SvgIcon';
 // import { red500 } from 'material-ui/styles/colors';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 
-import DropdownField from '../redux/ducks/dropdownfield.jsx';
+import DropdownFieldOld from '../redux/ducks/dropdownfieldold.jsx';
 import CONSTANTS from './CONSTANTS.jsx';
 
 import './App.css';
@@ -34,29 +34,29 @@ class ContactDropdown extends React.Component{
 	};
 
   componentWillMount() {
-    this.props.dispatch(DropdownField.setDelete(this.props.alias,['hint']));
-    // this.props.dispatch(DropdownField.setHint([], this.props.alias, 0, false));
+    this.props.dispatch(DropdownFieldOld.setDelete(this.props.alias,['data']));
+    // this.props.dispatch(DropdownFieldOld.setData([], this.props.alias, 0, false));
   };
 
 	handleInput(e) {
 		if(e) {
 			this.inputDeleted = false;
-			this.props.dispatch(DropdownField.setList(e, this.props.alias, 0, 10));
+			this.props.dispatch(DropdownFieldOld.setList(e, this.props.alias, 0, 10));
 			this.props.filterToCondition(e);
-			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, true));
+			this.props.dispatch(DropdownFieldOld.setFilterMode(this.props.alias, true));
 		} else {
 			this.inputDeleted = true;
-			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
+			this.props.dispatch(DropdownFieldOld.setFilterMode(this.props.alias, false));
 		}
 	};
 
 	handleOnSelect(e) {
-		if(this.props.hint) this.props.dispatch(DropdownField.setHint([], this.props.alias, 0, false));
+		if(this.props.hint) this.props.dispatch(DropdownFieldOld.setData([], this.props.alias, 0, false));
 		if (this.props.onChange) this.props.onChange(e.id);
-		this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
+		this.props.dispatch(DropdownFieldOld.setFilterMode(this.props.alias, false));
 		this.inputDeleted = false;
 		setTimeout( () => { this.refs.textfield.focus() }, 0 );
-		this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter', 'loading']));
+		this.props.dispatch(DropdownFieldOld.setDelete(this.props.alias,['filter', 'loading']));
 	};
 
 	handleOnBlur() {
@@ -69,15 +69,15 @@ class ContactDropdown extends React.Component{
       pom = [this.props.entityToText.prijmeni, this.props.entityToText.jmeno].join(' ').trim();
     }
     if (this.text !== pom && this.props.filterMode && this.props.entityToText !== undefined && this.props.hint.size === 0) {
-      this.props.dispatch(DropdownField.setFilter(pom ,this.props.alias));
+      this.props.dispatch(DropdownFieldOld.setFilter(pom ,this.props.alias));
     }
 		if (!this.props.entityToText && this.entityId && this.props.filter) {
-      this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'loading']));
+      this.props.dispatch(DropdownFieldOld.setDelete(this.props.alias, ['filter', 'loading']));
     }
  		if (this.props.entityToText && this.inputDeleted) {
 			//previous selected and deleted input => nothing to display
-			this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter', 'loading']));
-			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
+			this.props.dispatch(DropdownFieldOld.setDelete(this.props.alias,['filter', 'loading']));
+			this.props.dispatch(DropdownFieldOld.setFilterMode(this.props.alias, false));
 			if (this.inputDeleted && !this.props.filterMode) {
 				this.props.onChange(undefined);
 				this.inputDeleted = false;
@@ -85,25 +85,25 @@ class ContactDropdown extends React.Component{
 		}
 		if (this.props.filter && this.props.hint && this.props.entityToText && !this.props.filterMode) {
 			//delete input and leave
-			this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter', 'hint', 'loading']));
-			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
+			this.props.dispatch(DropdownFieldOld.setDelete(this.props.alias,['filter', 'data', 'loading']));
+			this.props.dispatch(DropdownFieldOld.setFilterMode(this.props.alias, false));
 		}
 		//handle if selected, start typing and leave
 
 		if (this.props.filterMode && this.props.entityId !== undefined && this.InMenu.length === 0) {//this.InMenu[this.InMenu.length-1] === false) {
-			this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter']));
+			this.props.dispatch(DropdownFieldOld.setDelete(this.props.alias, ['filter']));
 		}
 		//handle write, nothing selected a leave
 		if (!this.props.entityId && this.props.filter && this.InMenu.length === 0) {
-			this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'hint', 'loading']));
+			this.props.dispatch(DropdownFieldOld.setDelete(this.props.alias, ['filter', 'data', 'loading']));
 		}
 	};
 
 	handleOnKeyDown(e) {
 		//handle press ESC
 		if (e.keyCode === 27) {
-			this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter', 'hint', 'loading']));
-			if (this.props.hint && this.props.entityToText) this.props.dispatch(DropdownField.setDelete(this.props.alias,['filter']));
+			this.props.dispatch(DropdownFieldOld.setDelete(this.props.alias,['filter', 'data', 'loading']));
+			if (this.props.hint && this.props.entityToText) this.props.dispatch(DropdownFieldOld.setDelete(this.props.alias,['filter']));
 			setTimeout( () => { this.refs.textfield.focus() }, 0 );
 		}
 		if (e.keyCode === 40 || e.keyCode == 38) this.InMenu.push(true);
@@ -111,14 +111,14 @@ class ContactDropdown extends React.Component{
 
 	handleDeleteFromIcon() {
 		this.props.onChange(undefined);
-		this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter']));
+		this.props.dispatch(DropdownFieldOld.setDelete(this.props.alias, ['filter']));
 	};
 
 	handleOnBlurMenu() {
 		this.InMenu.push(false);
 		if (this.InMenu[this.InMenu.length-2] === false) {
-			this.props.dispatch(DropdownField.setFilterMode(this.props.alias, false));
-			this.props.dispatch(DropdownField.setDelete(this.props.alias, ['filter', 'hint', 'loading']));
+			this.props.dispatch(DropdownFieldOld.setFilterMode(this.props.alias, false));
+			this.props.dispatch(DropdownFieldOld.setDelete(this.props.alias, ['filter', 'data', 'loading']));
 			this.InMenu = [];
 		}
 	};
@@ -141,7 +141,7 @@ class ContactDropdown extends React.Component{
   }
 
 	render() {
-		if (!this.props.entityId && this.props.entityToText) setTimeout( () => { this.props.dispatch(DropdownField.setDelete(this.props.alias, ['entityId', 'entityToText', 'filter'])) }, 0 );
+		if (!this.props.entityId && this.props.entityToText) setTimeout( () => { this.props.dispatch(DropdownFieldOld.setDelete(this.props.alias, ['entityId', 'entityToText', 'filter'])) }, 0 );
 		let list = [];
 		if (this.props.hint !== undefined) {
 			list = this.props.hint.toJS().map(item => {
@@ -157,10 +157,10 @@ class ContactDropdown extends React.Component{
 			if (pom !== undefined) {
 				this.text = [pom.prijmeni, pom.jmeno].join(' ').trim();
 				if (this.props.entityId !== pom.id) {
-					this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
+					this.props.dispatch(DropdownFieldOld.setValueOfEntityToText(this.props.entityId, this.props.alias));
 				}
 			} else if (!this.props.filter) {
-				this.props.dispatch(DropdownField.setValueOfEntityToText(this.props.entityId, this.props.alias));
+				this.props.dispatch(DropdownFieldOld.setValueOfEntityToText(this.props.entityId, this.props.alias));
 			}
 		}
 
@@ -192,11 +192,11 @@ class ContactDropdown extends React.Component{
 
 function mapStateToProps(state, props) {
   return {
-    filter: DropdownField.getFilter(state, props.alias),
-  			entityToText: DropdownField.getEntityToText(state, props.alias),
-  			hint: DropdownField.getHint(state, props.alias),
-        filterMode: DropdownField.getFilterMode(state, props.alias),
-        loading: DropdownField.getLoading(state, props.alias)
+    filter: DropdownFieldOld.getFilter(state, props.alias),
+  			entityToText: DropdownFieldOld.getEntityToText(state, props.alias),
+  			hint: DropdownFieldOld.getData(state, props.alias),
+        filterMode: DropdownFieldOld.getFilterMode(state, props.alias),
+        loading: DropdownFieldOld.getLoading(state, props.alias)
   };
 };
 

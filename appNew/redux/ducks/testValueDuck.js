@@ -24,7 +24,7 @@ const testValueDuck = {
 	reducer(state = initialState, action) {
 		switch (action.type) {
 			case SET_TEST_ID:
-				return state.set(action.name, action.value);
+				return state.set(action.alias, action.value);
 			case SET_VALUE:
 				return state.set(action.alias, action.text);
 			default:
@@ -40,10 +40,10 @@ const testValueDuck = {
 		};
 	},
 
-	setTestId(name, value) {
+	setTestId(alias, value) {
 		return {
 			type: SET_TEST_ID,
-			name,
+			alias,
 			value
 		};
 	},
