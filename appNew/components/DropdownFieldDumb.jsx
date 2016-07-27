@@ -85,6 +85,7 @@ class DropdownFieldDumb extends React.Component{
 	render() {
     let typeOfValue = [];
     const reVAL = /.*\b(?:return)\D+(?:(?:\.([a-z]+)))/i;
+    //on resultVAL[1] is "key" what is suspected while entering value on props
     const resultVAL = reVAL.exec(''+this.props.entityToValue);
     if (this.props.data) {
 			this.list = this.props.data.map(entity => {
@@ -94,25 +95,29 @@ class DropdownFieldDumb extends React.Component{
 				};
 			});
 		}
-    const reTYPE = new RegExp('\\b('+ this.props.value + ')');
-    const resultTYPE = reTYPE.exec(typeOfValue);
-    if (this.props.value && !resultTYPE) {
-      console.error('DropdownDumb, alias: ' + this.props.alias + ' -> Inserted type of value "' + typeof(this.props.value) + '" is not included as value-type on key: "' + resultVAL[1] + '" in props data. At this moment there is "' + this.props.data[resultVAL[1]] + '". Check data on props or inserted value.');
-    }
-    if (this.props.value && !this.typing && this.state.toDisplay != this.text) {
-      this.props.data.forEach( obj => {
-        if (this.props.value == obj[resultVAL[1]]) {
-          this.handleRenderWithInsertedValue(this.props.entityToText(obj));
+    if (typeOfValue.length > 0) {
+      // const reTYPE = new RegExp('\\b('+ this.props.value + ')');
+      // const resultTYPE = reTYPE.exec(typeOfValue);
+      // console.log('prdel', this.props.value, typeOfValue, resultTYPE);
+      // if (this.props.value && !resultTYPE) {
+      //   console.error('DropdownDumb, alias: ' + this.props.alias + ' -> Inserted type of value "' + typeof(this.props.value) + '" is not included as value-type on key: "' + resultVAL[1] + '" in props data. At this moment there is "' + this.props.data[resultVAL[1]] + '". Check data on props or inserted value.');
+      // }
+      if (this.props.value && !this.typing && this.state.toDisplay != this.text) {
+        this.props.data.forEach( obj => {
+          if (this.props.value == obj[resultVAL[1]]) {
+            this.handleRenderWithInsertedValue(this.props.entityToText(obj));
+          }
+        });
+      }
+      if (this.props.errorText || this.props.warnText) {
+        if (this.props.errorText) {
+          this.notificationText = this.props.errorText;
+        } else {
+          this.notificationText = this.props.warnText;
         }
-      });
-    }
-    if (this.props.errorText || this.props.warnText) {
-      if (this.props.errorText) {
-        this.notificationText = this.props.errorText;
-      } else {
-        this.notificationText = this.props.warnText;
       }
     }
+
 
 		return (
       <div id="DropdownFieldDumb">

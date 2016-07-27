@@ -216,13 +216,13 @@ class App extends React.Component{
 				<br/>
 				<DropdownField
 					alias='cleverDropdown'
-					label='clever dropdown new a'
+					label='clever dropdown new'
 					entityType="kontakt"
 					errorText={ '' }
 					warnText={ '' }
-					onChange={ (e) => console.log('DropdownNewClever on Blur', e) }
+					onChange={ this.changeTestValue.bind(this) }
 					onBlur={ (e) => console.log('DropdownNewClever on Blur', e) }
-					entityId={ 17 }
+					entityId={ 213 }
 					entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
 					filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 					loadingNotify={ true }

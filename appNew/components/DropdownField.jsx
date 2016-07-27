@@ -62,11 +62,11 @@ class DropdownField extends React.Component{
   }
 
   handleOnChange(e) {
-    console.log('onChange', e);
+    this.props.onChange(e);
   }
 
   handleOnBLur(e) {
-    console.log('onBlur', e);
+    this.props.onBlur(e);
   }
 
   handleTyping(e) {
@@ -98,8 +98,6 @@ class DropdownField extends React.Component{
   }
 
   render() {
-    console.log('render', this.props, this.initDataFotInitId);
-
     return (
       <div id="DropdownField">
         <DropdownFieldDumb
