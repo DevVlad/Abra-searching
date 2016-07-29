@@ -14,6 +14,7 @@ const ClearIcon = (props) => (
 );
 
 class DropdownFieldDumb extends React.Component{
+
   static propTypes = {
     alias: PropTypes.string,
     label: PropTypes.string,
@@ -49,10 +50,13 @@ class DropdownFieldDumb extends React.Component{
     if (newProps.value && newProps.data && newProps.data.length === 1) {
       this.text = this.props.entityToText(newProps.data[0]);
     }
-    // !newProps.value && this.state.toDisplay ? this.setState({toDisplay: ''}) : null;
-    // if (newProps.entity) {
-    //   this.setState({toDisplay: this.props.entityToText(newProps.entity)});
-    // }
+  }
+
+  componentWillUpdate(newProps) {
+    if (this.props.enableDev && !newProps.value && this.state.toDisplay === this.text && this.state.toDisplay !== '') {
+      newProps.onChange(undefined)
+      this.setState({toDisplay: ''});
+    }
   }
 
   handleTyping(e) {
@@ -107,6 +111,7 @@ class DropdownFieldDumb extends React.Component{
   };
 
   handleOnChange(e) {
+    this.selectedVal = e;
     if (this.props.onChange) this.props.onChange(e);
   }
 
@@ -145,7 +150,7 @@ class DropdownFieldDumb extends React.Component{
           if (this.props.value && !resultTYPE && !this.props.enableDev) {
             console.error('DropdownDumb, alias: ' + this.props.alias + ' -> Inserted type of value "' + typeof(this.props.value) + '" is not included as value-type on key: "' + resultVAL[1] + '" in props data. At this moment there is "' + this.props.data[resultVAL[1]] + '". Check data on props or inserted value.');
           }
-          if ((this.props.value || this.props.value === 0) && !this.typing && this.state.toDisplay != this.text) {
+          if ((this.props.value || this.props.value === 0) && !this.typing && this.state.toDisplay !== this.text) {
             this.props.data.forEach( obj => {
               if (this.props.value == obj[resultVAL[1]]) {
                 this.handleRenderWithInsertedValue(this.props.entityToText(obj));
@@ -171,15 +176,13 @@ class DropdownFieldDumb extends React.Component{
             errorStyle={ this.props.errorText ? {color: CONSTANTS.COLORS.error} : {color: CONSTANTS.COLORS.warning} }
             dataSourceConfig={ {  text: 'text', value: 'text' } }
             dataSource={ this.list }
-            // dataSource={ this.props.entity ? this.props.entity : this.list }
             openOnFocus={ true }
             disabled={ false }
             open={ this.props.showMenu }
             ref='textfield'
-						filter={ this.props.filter ? this.props.filter : AutoComplete.fuzzyFilter }
-						searchText={ this.state.toDisplay }
-						menuStyle = { { maxHeight: '300px' } }
-		        animated = { false }
+            filter={ this.props.filter ? this.props.filter : AutoComplete.fuzzyFilter }
+            menuStyle = { { maxHeight: '300px' } }
+            animated = { false }
             onUpdateInput={ this.handleTyping.bind(this) }
             searchText={ this.state.toDisplay }
             onBlur={ this.handleOnBlur.bind(this) }

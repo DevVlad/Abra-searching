@@ -44,8 +44,14 @@ class DropdownField extends React.Component{
       this.list = [];
       this.list[0] = newProps.entity;
       this.insertMode = false;
+      newProps.onChange(newProps.entity.id);
     }
     if (newProps.data && newProps.data.size > 0) this.list = newProps.data.toJS();
+    if (!newProps.value && newProps.entity && !newProps.filter) {
+      this.list = [];
+      newProps.dispatch(DropdownFieldDuck.setDelete(newProps.alias, ['entity']));
+    }
+
   }
 
   componentDidUpdate() {
@@ -83,10 +89,6 @@ class DropdownField extends React.Component{
     this.props.onChange(e.id);
   }
 
-  handleOnChange(e) {
-    this.props.onChange(e);
-  }
-
   handleIncoming(e) {
     if (this.insertMode) {
       if (!this.props.entity || (parseInt(this.props.entity.id) !== this.props.value)) {
@@ -110,7 +112,6 @@ class DropdownField extends React.Component{
 
   handleTyping(e) {
     this.insertMode = false;
-    this.setState({toDisplay: e});
     this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
   }
 
@@ -135,7 +136,6 @@ class DropdownField extends React.Component{
           entityToText={ this.props.entityToText }
           entityToValue={ object => object.id }
           value={ this.props.value }
-          // value={ this.insertMode ? this.props.value : this.state.toDisplay }
           onTyping={ this.handleTyping.bind(this) }
           filter={ item => item }
           enableDev={ true }
