@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import DropdownFieldDumb from './DropdownFieldDumb.jsx';
 import SvgIcon from 'material-ui/SvgIcon';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
+import Immutable from 'immutable';
 
 import DropdownFieldDuck from '../redux/ducks/dropdownfieldDuck.jsx';
 
@@ -28,50 +29,29 @@ class DropdownField extends React.Component{
     entityToText: PropTypes.func,
     entityType: PropTypes.string,
     filterToCondition: PropTypes.func,
-    loadingNotify: PropTypes.bool
+    loadingNotify: PropTypes.bool,
+    value: PropTypes.number,
   };
 
   constructor(props) {
     super(props);
-    this.state = {
-      toDisplay: ''
-    };
-    this.initDataFotInitId = [];
+    this.list = [];
+    this.insertMode = true;
   }
 
-  componentWillMount() {
-    if (this.props.entityId) {
-      this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, this.props.entityId, this.props.alias));
+  componentWillReceiveProps(newProps) {
+    if (newProps.entity && parseInt(newProps.entity.id) === newProps.value) {
+      this.list = [];
+      this.list[0] = newProps.entity;
+      this.insertMode = false;
     }
+    if (newProps.data && newProps.data.size > 0) this.list = newProps.data.toJS();
   }
 
-  componentWillUpdate(newProps) {
-
-    if (parseInt(newProps.entityIdIsThis.id) === newProps.entityId && !newProps.data) {
-      this.initDataFotInitId.push(newProps.entityIdIsThis);
-    }
-
-    //   const resultEntity = newProps.entityIdIsThis;
-    //   const whatToDispl = newProps.entityToText(resultEntity);
-    //   if (whatToDispl != this.state.toDisplay) {
-    //     console.log(whatToDispl);
-    //     this.setState({toDisplay: whatToDispl});
-    //   }
-  // } else if (parseInt(newProps.entityIdIsThis.id) !== newProps.entityId) this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, this.props.entityId, this.props.alias));
-
-  }
-
-  handleOnChange(e) {
-    this.props.onChange(e);
-  }
-
-  handleOnBLur(e) {
-    this.props.onBlur(e);
-  }
-
-  handleTyping(e) {
-    if (e) {
-      this.props.dispatch(DropdownFieldDuck.setData(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
+  componentDidUpdate() {
+    if (this.props.entity && parseInt(this.props.entity.id) === this.props.value) {
+      this.insertMode = true;
+      this.list = [];
     }
   }
 
@@ -92,9 +72,51 @@ class DropdownField extends React.Component{
     }
   }
 
+  handleOnBLur(e) {
+    if (!this.insertMode) this.insertMode = true;
+    if (this.props.data || this.props.filter) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['filter', 'data']));
+  }
+
+  handleOnSelect(e) {
+    if (!this.insertMode) this.insertMode = true;
+    this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['filter', 'data']));
+    this.props.onChange(e.id);
+  }
+
+  handleOnChange(e) {
+    this.props.onChange(e);
+  }
+
+  handleIncoming(e) {
+    if (this.insertMode) {
+      if (!this.props.entity || (parseInt(this.props.entity.id) !== this.props.value)) {
+        this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, this.props.value, this.props.alias));
+      }
+    }
+  }
+
+  handleOnKeyDown(e) {
+    //handle press ESC
+    // if (e.keyCode === 27) {
+    //   this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias,['filter', 'data', 'loading']));
+    //   if (this.props.hint && this.props.entityToText) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias,['filter']));
+    // }
+    // if (e.keyCode === 40 || e.keyCode == 38) this.InMenu.push(true);
+  }
+
+  handleOnFocus(e) {
+    this.list.length === 0 ? this.showMenu = false : this.showMenu = undefined;
+  }
+
+  handleTyping(e) {
+    this.insertMode = false;
+    this.setState({toDisplay: e});
+    this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
+  }
+
   handleDeleteFromIcon() {
     this.props.onChange(undefined);
-		this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['filter']));
+    this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['filter']));
   }
 
   render() {
@@ -103,16 +125,24 @@ class DropdownField extends React.Component{
         <DropdownFieldDumb
           alias={ this.props.alias }
           label={ this.props.label }
-          data={ this.props.data ? this.props.data.toJS() : this.initDataFotInitId}
+          data={ this.list }
           errorText={ this.props.errorText }
           warnText={ this.props.warnText }
-          onChange={ this.handleOnChange.bind(this) }
-          onBlur={ this.handleOnBLur.bind(this) }
+          onKeyDown={ this.handleOnKeyDown.bind(this) }
+          onChange={ this.props.onChange.bind(this) }
+          onSelect={ this.handleOnSelect.bind(this) }
+          // onBlur={ this.handleOnBLur.bind(this) }
           entityToText={ this.props.entityToText }
           entityToValue={ object => object.id }
-          value={ this.props.entityIdIsThis || this.props.data ? this.props.entityId : null }
+          value={ this.props.value }
+          // value={ this.insertMode ? this.props.value : this.state.toDisplay }
           onTyping={ this.handleTyping.bind(this) }
           filter={ item => item }
+          enableDev={ true }
+          entity={ this.props.entity ? this.props.entity : null }
+          notIncludedInData={ this.handleIncoming.bind(this) }
+          onFocus={ this.handleOnFocus.bind(this) }
+          showMenu={ this.showMenu }
           />
       { this.handleCurrentLoading(this.props.loading) }
       </div>
@@ -126,7 +156,7 @@ function mapStateToProps(state, props) {
     filter: DropdownFieldDuck.getFilter(state, props.alias),
     data: DropdownFieldDuck.getData(state, props.alias),
     loading: DropdownFieldDuck.getLoading(state, props.alias),
-    entityIdIsThis: DropdownFieldDuck.getEntityfromId(state, props.alias)
+    entity: DropdownFieldDuck.getEntityfromId(state, props.alias)
   };
 };
 

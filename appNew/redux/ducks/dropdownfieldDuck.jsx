@@ -75,7 +75,7 @@ const DropdownFieldDuck = {
       };
     },
 
-    setData(entity, condition, alias) {
+    setDataForMenu(entity, condition, alias) {
       return (dispatch, getState) => {
         dispatch(DropdownFieldDuck.setDelete(alias, ['data']));
         if (!DropdownFieldDuck.getLoading(getState())) dispatch(DropdownFieldDuck.setLoading(true, alias));
@@ -120,7 +120,7 @@ const DropdownFieldDuck = {
           return state.setIn([action.alias, 'loading'], action.loading);
 
         case FIND_ENTITY_FROM_ID:
-          return state.setIn([action.alias, 'entityValue'], action.object);
+          return state.setIn([action.alias, 'entity'], action.object);
 
         case SET_FILTER:
           return state.setIn([action.alias, 'filter'], action.filter);
@@ -166,7 +166,7 @@ const getValueOfEntityFromId = createSelector(getAliasState, x => {
 	if (x === undefined) {
 		return undefined;
 	} else {
-		return x.get('entityValue');
+		return x.get('entity');
 	};
 });
 

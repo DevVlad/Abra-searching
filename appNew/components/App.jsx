@@ -202,17 +202,20 @@ class App extends React.Component{
 				/>
 				<br/>
 				<DropdownFieldDumb
-					alias='DropdownDumb'
-					label='dumb dropdown'
-					data={ CONSTANTS.FAKEENTITY }
-					errorText={ '' }
-					warnText={ '' }
-					onChange={ (e) => console.log('DropdownDumb onChange', e) }
-					onBlur={ (e) => console.log('DropdownDumb on Blur', e) }
-					entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
-					entityToValue={ object => object.id }
-					value={ 107 }
-				/>
+						alias='DropdownDumb'
+						label='dumb dropdown'
+						data={ [{id: 0, text: 'pondeli'}, {id: 1, text: 'utery'}] }
+						// data={ CONSTANTS.FAKEENTITY }
+						errorText={ '' }
+						warnText={ '' }
+						onChange={ (e) => console.log('DropdownDumb onChange', e) }
+						onBlur={ (e) => console.log('DropdownDumb on Blur', e) }
+						entityToText={ obj => obj.text}
+						entityToValue={ obj => obj.id }
+						// entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
+						// entityToValue={ object => object.id }
+						value={ 0 }
+					/>
 				<br/>
 				<DropdownField
 					alias='cleverDropdown'
@@ -222,7 +225,7 @@ class App extends React.Component{
 					warnText={ '' }
 					onChange={ this.changeTestValue.bind(this) }
 					onBlur={ (e) => console.log('DropdownNewClever on Blur', e) }
-					entityId={ 213 }
+					value={ parseInt(this.props.testId) }
 					entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
 					filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 					loadingNotify={ true }
