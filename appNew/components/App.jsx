@@ -233,6 +233,7 @@ class App extends React.Component{
 						filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 						loadingNotify={ true }
 					/>
+				<br/>
 					<NumberField
 						alias='numberField'
 						label='enter a number'
@@ -241,6 +242,7 @@ class App extends React.Component{
 						value={ 108 }
 						onBlur={ (x) => {console.log('numberField onBlur ', x)} }
 					/>
+				<br/>
 					<TextareaField
 						alias='textarea'
 						label='textfieldarea'
@@ -249,6 +251,7 @@ class App extends React.Component{
 						value='aloha'
 						onBlur={ (x) => {console.log('TextareaField onBlur ', x)} }
 					/>
+				<br/>
 					<PasswordField
 						alias='passfield'
 						label='enter password'

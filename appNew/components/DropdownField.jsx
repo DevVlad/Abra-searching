@@ -79,7 +79,7 @@ class DropdownField extends React.Component{
 
   handleOnBLur(e) {
     if (!this.insertMode) this.insertMode = true;
-    if (this.props.data || this.props.filter) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['filter', 'data']));
+    if (this.props.data || this.props.filter) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['filter', 'data', 'loading']));
     this.list = [];
     if (this.deleteMode) this.deleteMode = false;
     this.setState({});
