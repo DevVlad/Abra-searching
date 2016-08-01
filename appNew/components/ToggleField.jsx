@@ -28,21 +28,22 @@ class ToggleField extends React.Component{
   }
 
   handleOnToggle(e) {
-    this.props.onChange(e);
+    this.props.onChange(this.refs.toggleButton);
   }
 
   handleOnBlur(e) {
-    this.props.onBlur(e);
+    this.props.onBlur(this.refs.toggleButton);
   }
 
 	render() {
 		return (
       <div style={styles.block}>
         <Toggle
+          ref="toggleButton"
           alias={ this.props.alias }
           label={ this.props.label }
           labelPosition={ this.props.labelPosition }
-          defaultToggled={ this.props.toggledDefault }
+          defaultToggled={ this.props.value }
           disabled={ this.props.disabled }
           style={ styles.toggle }
           onBlur={ this.handleOnBlur.bind(this) }

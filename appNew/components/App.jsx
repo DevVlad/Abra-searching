@@ -195,7 +195,7 @@ class App extends React.Component{
 					alias='togglefield'
 					label='toggle button'
 					labelPosition='right'
-					toggledDefault={ false }
+					value={ true }
 					disabled={ false }
 					onChange={ (x) => console.log('ToggleField onChange', x) }
 					onBlur={ (x) => console.log('ToggleField onBlur', x) }
