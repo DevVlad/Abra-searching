@@ -202,9 +202,8 @@ class App extends React.Component{
 						onChange={ (e) => console.log('DropdownDumb onChange', e) }
 						onBlur={ (e) => console.log('DropdownDumb on Blur', e) }
 						entityToText={ obj => obj.text}
-						entityToValue={ obj => obj.id }
 						// entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
-						// entityToValue={ object => object.id }
+						entityToValue={ object => object.id }
 						value={ 0 }
 					/>
 				<br/>

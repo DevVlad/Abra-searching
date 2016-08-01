@@ -56,7 +56,9 @@ class TextareaField extends React.Component{
             onBlur={ this.handleOnBlur.bind(this) }
             value={ this.state.toDisplay }
             multiLine={ true }
-            rows={1}
+            disabled={ this.props.disabled }
+            textareaStyle={ {height: '125px'} }
+            rowsMax={5}
             onChange={ this.handleOnChange.bind(this) }
           />
       </div>
