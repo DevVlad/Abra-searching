@@ -18,7 +18,6 @@ import DropdownFieldDumb from './DropdownFieldDumb.jsx';
 import DropdownField from './DropdownField.jsx';
 import NumberField from './NumberField.jsx';
 import TextareaField from './TextareaField.jsx';
-import PasswordField from './PasswordField.jsx';
 
 import ActionFavorite from 'material-ui/svg-icons/action/favorite';
 import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
@@ -99,16 +98,6 @@ class App extends React.Component{
 					loadingNotify={ true }
 				/>
 				<br/>
-				<DropdownFieldOld
-					alias='b'
-					label='clever dropdown old b'
-					entityName="kontakt"
-					onChange={ this.changeTestValue.bind(this) }
-					entityId={ this.props.testId }
-					entityToText={ object => [object.jmeno, object.prijmeni].join(' ') }
-					filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
-				/>
-				<br/>
 				<Loading />
 				<MenuList
 					alias='SelectField'
@@ -133,10 +122,11 @@ class App extends React.Component{
 				<TextField
 					alias='textfield'
 					label='TextField'
+					type='text'
 					errorText=''
 					disabled={false}
 					onBlur={ (x) => {
-						if (this.props.valueOfTextfield !== x.textFieldValue) this.setValue('textfield', x.target.value);
+						if (this.props.valueOfTextfield !== x) this.setValue('textfield', x);
 						console.log('Textfield onBlur()', x);
 					 } }
 					value={ this.props.valueOfTextfield }
@@ -252,14 +242,7 @@ class App extends React.Component{
 						onBlur={ (x) => {console.log('TextareaField onBlur ', x)} }
 					/>
 				<br/>
-					<PasswordField
-						alias='passfield'
-						label='enter password'
-						errorText=''
-						warnText=''
-						value=''
-						onBlur={ (x) => {console.log('passwordfield onBlur ', x)} }
-					/>
+
 				</div>
 			</div>
 		)
