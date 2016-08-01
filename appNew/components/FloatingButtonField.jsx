@@ -10,7 +10,6 @@ class FloatingButtonField extends React.Component{
     alias: PropTypes.string,
     label: PropTypes.string,
     onClick: PropTypes.func,
-    buttonValue: PropTypes.string,
     backgroundColor: PropTypes.oneOf(Object.keys(CONSTANTS.COLORS)),
     icon: PropTypes.object,
     onBlur: PropTypes.func,
@@ -26,8 +25,6 @@ class FloatingButtonField extends React.Component{
       <div id={`FloatingButtonField_${this.props.alias}`}>
           <FloatingActionButton
             label={ this.props.label }
-            primary={ this.props.buttonValue === 'primary' ? true : false }
-            secondary={ this.props.buttonValue === 'secondary' ? true : false }
             disabled={ this.props.disabled }
             onClick={ this.props.onClick.bind(this) }
             onMouseEnter={ this.props.onMouseEnter.bind(this) }

@@ -188,9 +188,8 @@ class App extends React.Component{
 					onMouseEnter={ (x) => console.log("FloatingActionButton onMouseEnter! ", x) }
 					disabled={ false }
 					label='button'
-					buttonValue='' //primary or secondary
 					onBlur={ (x) => console.log('FloatingActionButton onBlur! ', x) }
-					backgroundColor='warning'
+					backgroundColor='info'
 					icon={ <ContentAdd /> }
 				/>
 				<br/>

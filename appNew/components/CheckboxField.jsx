@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import RadioButton from 'material-ui/RadioButton';
-import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import './App.css';
 
