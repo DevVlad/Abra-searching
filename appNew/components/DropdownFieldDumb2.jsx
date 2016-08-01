@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import AutoComplete from 'material-ui/AutoComplete';
+import AbstractAutoComplete from './AbstractAutoComplete.jsx';
 import SvgIcon from 'material-ui/SvgIcon';
 
 import CONSTANTS from './CONSTANTS.jsx';
@@ -15,7 +15,7 @@ const ClearIcon = (props) => (
 
 const MenuIcon = (props) => (
   <SvgIcon {...props} color={ CONSTANTS.COLORS.disabled }>
-    <path d="M2 13.5h14V12H2v1.5zm0-4h14V8H2v1.5zM2 4v1.5h14V4H2z"/>
+    <path d="M7 10l5 5 5-5z" />
   </SvgIcon>
 );
 
@@ -38,7 +38,7 @@ class DropdownFieldDumb extends React.Component{
     onKeyDown: PropTypes.func,
     notIncludedInData: PropTypes.func,
     enableDev: PropTypes.bool,
-    showMenu: PropTypes.bool,
+    // showMenu: PropTypes.bool,
   };
 
   constructor(props) {
@@ -48,7 +48,7 @@ class DropdownFieldDumb extends React.Component{
     };
     this.list = [];
     this.typing = false;
-    this.decideOpen = false;
+    this.showMenuHandler = false;
     this.notificationText = '';
   }
 
@@ -69,6 +69,7 @@ class DropdownFieldDumb extends React.Component{
     if (!this.typing) this.typing = true;
     if (this.props.onTyping) this.props.onTyping(e);
     this.InMenuMode = false;
+    this.showMenuHandler = true;
     if (this.typing) {
       this.setState({toDisplay: e});
     }
@@ -76,7 +77,7 @@ class DropdownFieldDumb extends React.Component{
 
   handleOnBlur(e) {
     if (!this.InMenuMode) {
-      this.handleMenuOpen = false;
+      this.showMenuHandler = false;
       if (this.typing) this.typing = false;
       if (this.props.onBlur) this.props.onBlur(e);
       if (this.state.toDisplay != this.text) {
@@ -84,7 +85,6 @@ class DropdownFieldDumb extends React.Component{
         this.setState({toDisplay: this.text});
       }
     }
-
   }
 
   handleOnSelect(e) {
@@ -117,20 +117,31 @@ class DropdownFieldDumb extends React.Component{
     if (this.props.onKeyDown) this.props.onKeyDown(e);
     //handle press ESC
     if (e.keyCode === 27) {
-      this.handleMenuOpen = false;
+      if (this.InMenuMode) this.showMenuHandler = false;
       setTimeout( () => { this.refs.textfield.focus() }, 0 );
     }
-    if (e.keyCode === 40 || e.keyCode == 38) this.InMenuMode = true;
+    if (e.keyCode === 40 || e.keyCode == 38) {
+      this.showMenuHandler = true;
+      this.InMenuMode = true;
+      this.setState({});
+    }
   };
 
   handleOnChange(e) {
     this.selectedVal = e;
+    this.InMenuMode = false;
     if (this.props.onChange) this.props.onChange(e);
   }
 
   handleFocus(e) {
-    this.handleMenuOpen = true;
+    // this.showMenuHandler = true;
     if (this.props.onFocus) this.props.onFocus(this.props);
+  }
+
+  handleMenuDisplay() {
+    this.showMenuHandler = this.showMenuHandler ? this.showMenuHandler = false : this.showMenuHandler = true;
+    this.InMenuMode = true;
+    this.setState({});
   }
 
 	render() {
@@ -180,22 +191,28 @@ class DropdownFieldDumb extends React.Component{
         this.notificationText = this.props.warnText;
       }
     }
-
+    if (!this.typing) {
+      this.currentFilter = obj => obj;
+    } else {
+      this.props.filter ? this.currentFilter = this.props.filter : this.currentFilter = AbstractAutoComplete.fuzzyFilter;
+    }
 		return (
       <div id={`DropdownFieldDumb_${this.props.alias}`}>
-	      <AutoComplete
+	      <AbstractAutoComplete
 		        floatingLabelText={ this.props.label }
             errorText={ this.notificationText }
             errorStyle={ this.props.errorText ? {color: CONSTANTS.COLORS.error} : {color: CONSTANTS.COLORS.warning} }
             dataSourceConfig={ {  text: 'text', value: 'text' } }
             dataSource={ this.list }
-            openOnFocus={ true }
             disabled={ false }
-            open={ this.props.showMenu }
+            open={ this.showMenuHandler }
+            // open={ this.props.showMenu }
+            // openOnFocus={ true }
             ref='textfield'
-            filter={ this.props.filter ? this.props.filter : AutoComplete.fuzzyFilter }
+            filter={ this.currentFilter }
+            // filter={ this.props.filter ? this.props.filter : AbstractAutoComplete.fuzzyFilter }
             menuStyle = { { maxHeight: '300px' } }
-            animated = { false }
+            // animated = { false }
             onUpdateInput={ this.handleTyping.bind(this) }
             searchText={ this.state.toDisplay }
             onBlur={ this.handleOnBlur.bind(this) }
@@ -206,12 +223,13 @@ class DropdownFieldDumb extends React.Component{
         <ClearIcon
           style={ CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.second }
           visibility={ this.state.toDisplay ? 'visible' : 'hidden' }
-          hoverColor={CONSTANTS.COLORS.error}
+          hoverColor={ CONSTANTS.COLORS.normal }
           onClick={ this.handleDeleteFromIcon.bind(this) }
         />
       <MenuIcon
           style={ CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.first }
-          hoverColor={CONSTANTS.COLORS.normal}
+          hoverColor={ CONSTANTS.COLORS.normal }
+          onClick={ this.handleMenuDisplay.bind(this) }
         />
       </div>
 		);

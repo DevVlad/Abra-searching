@@ -202,7 +202,7 @@ class DateField extends React.Component{
               onChange={ this.handleOnChange.bind(this) }
         />
         <IconForDatePicker
-          style={ CONSTANTS.COMPONENT_ICONS_INLINE_STYLE }
+          style={ CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.first }
             visibility={ this.props.enableMousePicker ? 'visible' : 'hidden' }
             onClick={ this.handleOnClick.bind(this) }
         />

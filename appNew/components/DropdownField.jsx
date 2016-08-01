@@ -137,7 +137,7 @@ class DropdownField extends React.Component{
           enableDev={ true }
           entity={ this.props.entity ? this.props.entity : null }
           notIncludedInData={ this.handleIncoming.bind(this) }
-          showMenu={ this.list.length === 0 && !this.props.data ? false : true }
+          // showMenu={ this.list.length === 0 && !this.props.data ? false : true }
           />
       { this.handleCurrentLoading(this.props.loading) }
       </div>

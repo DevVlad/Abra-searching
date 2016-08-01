@@ -19,6 +19,8 @@ import DropdownField from './DropdownField.jsx';
 import NumberField from './NumberField.jsx';
 import TextareaField from './TextareaField.jsx';
 
+import AbstractBlbej from './DropdownFieldDumb2.jsx';
+
 import ActionFavorite from 'material-ui/svg-icons/action/favorite';
 import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
 import SvgIcon from 'material-ui/SvgIcon';
@@ -240,7 +242,20 @@ class App extends React.Component{
 						onBlur={ (x) => {console.log('TextareaField onBlur ', x)} }
 					/>
 				<br/>
-
+					<AbstractBlbej
+							alias='AbstractBlbej'
+							label='AbstractBlbej'
+							data={ [{id: 0, text: 'pondeli'}, {id: 1, text: 'utery'}] }
+							// data={ CONSTANTS.FAKEENTITY }
+							errorText={ '' }
+							warnText={ '' }
+							onChange={ (e) => console.log('AbstractBlbej onChange', e) }
+							onBlur={ (e) => console.log('AbstractBlbej on Blur', e) }
+							entityToText={ obj => obj.text}
+							// entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
+							entityToValue={ object => object.id }
+							value={ 0 }
+						/>
 				</div>
 			</div>
 		)

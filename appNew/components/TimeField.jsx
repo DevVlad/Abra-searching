@@ -130,7 +130,7 @@ class TimeField extends React.Component{
             onKeyDown={this.handleOnKeyDown.bind(this)}
         />
         <IconForTimePicker
-          style={ CONSTANTS.COMPONENT_ICONS_INLINE_STYLE }
+          style={ CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.first }
           visibility={ this.props.enableMousePicker ? 'visible' : 'hidden' }
           onClick={ this.handleOnClick.bind(this) }
         />

@@ -1,4 +1,4 @@
-import { red500, blue500, grey500, orange500, green500 } from 'material-ui/styles/colors';
+import { red500, blue500, grey500, orange500, green500, grey900 } from 'material-ui/styles/colors';
 
 import ActionFavorite from 'material-ui/svg-icons/action/favorite';
 import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
@@ -51,9 +51,17 @@ const CONSTANTS = {
     error: red500,
     disabled: grey500,
     warning: orange500,
-    pass: green500
+    pass: green500,
+    normal: grey900,
   },
-  COMPONENT_ICONS_INLINE_STYLE: { width: '20px', height: '20px', transform: 'translateX(-20px)'},
+  COMPONENT_ICONS_INLINE_STYLE: {
+    first: {
+      width: '20px', height: '20px', transform: 'translateX(-20px)'
+    },
+    second: {
+      width: '20px', height: '20px', position: 'absolute', transform: 'translate(-40px, +35px)'
+    }
+  },
 
 };
 
