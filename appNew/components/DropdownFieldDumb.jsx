@@ -62,19 +62,23 @@ class DropdownFieldDumb extends React.Component{
   handleTyping(e) {
     if (!this.typing) this.typing = true;
     if (this.props.onTyping) this.props.onTyping(e);
+    this.InMenuMode = false;
     if (this.typing) {
       this.setState({toDisplay: e});
     }
   }
 
   handleOnBlur(e) {
-    this.handleMenuOpen = false;
-    if (this.typing) this.typing = false;
-    if (this.props.onBlur) this.props.onBlur(e);
-    if (this.state.toDisplay != this.text) {
-      if (!this.state.toDisplay) this.text = this.state.toDisplay;
-      this.setState({toDisplay: this.text});
+    if (!this.InMenuMode) {
+      this.handleMenuOpen = false;
+      if (this.typing) this.typing = false;
+      if (this.props.onBlur) this.props.onBlur(e);
+      if (this.state.toDisplay != this.text) {
+        if (!this.state.toDisplay) this.text = this.state.toDisplay;
+        this.setState({toDisplay: this.text});
+      }
     }
+
   }
 
   handleOnSelect(e) {
@@ -84,6 +88,7 @@ class DropdownFieldDumb extends React.Component{
     if (this.props.onChange) this.handleOnChange(output);
     this.text = this.props.entityToText(e);
     if (this.props.onSelect) this.props.onSelect(e);
+    this.InMenuMode = false;
     this.setState({toDisplay: this.props.entityToText(e)});
   }
 
@@ -103,11 +108,13 @@ class DropdownFieldDumb extends React.Component{
   }
 
   handleOnKeyDown(e) {
+    if (this.props.onKeyDown) this.props.onKeyDown(e);
     //handle press ESC
     if (e.keyCode === 27) {
       this.handleMenuOpen = false;
       setTimeout( () => { this.refs.textfield.focus() }, 0 );
     }
+    if (e.keyCode === 40 || e.keyCode == 38) this.InMenuMode = true;
   };
 
   handleOnChange(e) {

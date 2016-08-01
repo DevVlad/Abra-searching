@@ -11,5 +11,5 @@ ReactDOM.render(
 			<App />
 		</MuiThemeProvider>
 	</Provider>,
-	document.body.appendChild(document.createElement('div'))
+	document.body.appendChild(document.createElement('app'))
 );

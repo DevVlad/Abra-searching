@@ -51,7 +51,6 @@ class DropdownField extends React.Component{
       this.list = [];
       newProps.dispatch(DropdownFieldDuck.setDelete(newProps.alias, ['entity']));
     }
-
   }
 
   componentDidUpdate() {
@@ -81,6 +80,9 @@ class DropdownField extends React.Component{
   handleOnBLur(e) {
     if (!this.insertMode) this.insertMode = true;
     if (this.props.data || this.props.filter) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['filter', 'data']));
+    this.list = [];
+    if (this.deleteMode) this.deleteMode = false;
+    this.setState({});
   }
 
   handleOnSelect(e) {
@@ -98,21 +100,15 @@ class DropdownField extends React.Component{
   }
 
   handleOnKeyDown(e) {
-    //handle press ESC
-    // if (e.keyCode === 27) {
-    //   this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias,['filter', 'data', 'loading']));
-    //   if (this.props.hint && this.props.entityToText) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias,['filter']));
-    // }
-    // if (e.keyCode === 40 || e.keyCode == 38) this.InMenu.push(true);
-  }
-
-  handleOnFocus(e) {
-    this.list.length === 0 ? this.showMenu = false : this.showMenu = undefined;
+    //handle delete mode
+    if (e.keyCode === 8 || e.keyCode === 46) {
+      this.deleteMode = true;
+    } else this.deleteMode = false;
   }
 
   handleTyping(e) {
     this.insertMode = false;
-    this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
+    if (e && !this.deleteMode) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
   }
 
   handleDeleteFromIcon() {
@@ -132,7 +128,7 @@ class DropdownField extends React.Component{
           onKeyDown={ this.handleOnKeyDown.bind(this) }
           onChange={ this.props.onChange.bind(this) }
           onSelect={ this.handleOnSelect.bind(this) }
-          // onBlur={ this.handleOnBLur.bind(this) }
+          onBlur={ this.handleOnBLur.bind(this) }
           entityToText={ this.props.entityToText }
           entityToValue={ object => object.id }
           value={ this.props.value }
@@ -141,8 +137,7 @@ class DropdownField extends React.Component{
           enableDev={ true }
           entity={ this.props.entity ? this.props.entity : null }
           notIncludedInData={ this.handleIncoming.bind(this) }
-          onFocus={ this.handleOnFocus.bind(this) }
-          showMenu={ this.showMenu }
+          showMenu={ this.list.length === 0 && !this.props.data ? false : true }
           />
       { this.handleCurrentLoading(this.props.loading) }
       </div>
