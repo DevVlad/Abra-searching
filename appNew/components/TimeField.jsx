@@ -117,7 +117,7 @@ class TimeField extends React.Component{
 
 	render() {
 		return (
-      <div id="timefield">
+      <div id={`timefield_${this.props.alias}`}>
         <TextField
             floatingLabelText={ this.props.label }
             errorText={ this.props.errorText}

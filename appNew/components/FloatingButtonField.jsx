@@ -23,7 +23,7 @@ class FloatingButtonField extends React.Component{
 
 	render() {
 		return (
-      <div id="FloatingButtonField">
+      <div id={`FloatingButtonField_${this.props.alias}`}>
           <FloatingActionButton
             label={ this.props.label }
             primary={ this.props.buttonValue === 'primary' ? true : false }

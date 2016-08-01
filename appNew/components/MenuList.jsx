@@ -34,7 +34,7 @@ class MenuList extends React.Component{
     });
 
 		return (
-      <div id="MenuList">
+      <div id={`MenuList_${this.props.alias}`}>
         <SelectField
           value={ this.props.value }
           onChange={ this.handleOnChange.bind(this) }

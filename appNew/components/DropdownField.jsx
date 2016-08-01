@@ -118,7 +118,7 @@ class DropdownField extends React.Component{
 
   render() {
     return (
-      <div id="DropdownField">
+      <div id={`DropdownFieldClever_${this.props.alias}`}>
         <DropdownFieldDumb
           alias={ this.props.alias }
           label={ this.props.label }

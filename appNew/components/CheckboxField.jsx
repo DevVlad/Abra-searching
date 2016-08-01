@@ -38,7 +38,7 @@ class CheckboxField extends React.Component{
 
 	render() {
 		return (
-      <div id="radiobutton">
+      <div id={`checkbox_${this.props.alias}`}>
           <RadioButton
             checkedIcon={ this.props.checkedIcon }
             uncheckedIcon={this.props.uncheckedIcon }

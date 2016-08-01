@@ -176,7 +176,7 @@ class DropdownFieldDumb extends React.Component{
     }
 
 		return (
-      <div id="DropdownFieldDumb">
+      <div id={`DropdownFieldDumb_${this.props.alias}`}>
 	      <AutoComplete
 		        floatingLabelText={ this.props.label }
             errorText={ this.notificationText }

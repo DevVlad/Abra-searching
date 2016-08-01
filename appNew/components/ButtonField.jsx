@@ -23,7 +23,7 @@ class ButtonField extends React.Component{
 
 	render() {
 		return (
-      <div id="ButtonField">
+      <div id={`ButtonField_${this.props.alias}`}>
           <RaisedButton
             label={ this.props.label }
             primary={ this.props.buttonValue === 'primary' ? true : false }

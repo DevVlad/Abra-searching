@@ -165,7 +165,7 @@ class ContactDropdown extends React.Component{
 		}
 
 		return (
-      <div id="ContactDropdown">
+      <div id={`ContactDropdown_${this.props.alias}`}>
 	      <AutoComplete
 		        floatingLabelText={this.props.label}
 		        ref="textfield"

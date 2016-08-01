@@ -41,7 +41,7 @@ class TextFieldNew extends React.Component{
 	render() {
 
 		return (
-      <div id="textField">
+      <div id={`textField_${this.props.alias}`}>
           <TextField
             floatingLabelText={ this.props.label }
             errorText={ this.props.errorText}

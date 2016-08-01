@@ -189,7 +189,7 @@ class DateField extends React.Component{
 	render() {
 
 		return (
-      <div id="datefield">
+      <div id={`datefield_${this.props.alias}`}>
         <TextField
               floatingLabelText={ this.props.label }
               errorText={ this.props.errorText}
