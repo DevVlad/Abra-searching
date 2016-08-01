@@ -5,7 +5,7 @@ import TextField from 'material-ui/TextField';
 import './App.css';
 import CONSTANTS from './CONSTANTS.jsx';
 
-class TextFieldNew extends React.Component{
+class PasswordField extends React.Component{
   static propTypes = {
     alias: PropTypes.string,
     label: PropTypes.string,
@@ -44,10 +44,10 @@ class TextFieldNew extends React.Component{
   }
 
 	render() {
-
 		return (
-      <div id={`textField_${this.props.alias}`}>
+      <div id={`passwordfield_${this.props.alias}`}>
           <TextField
+            type='password'
             floatingLabelText={ this.props.label }
             errorText={ this.props.errorText ? this.props.errorText : this.props.warnText }
             errorStyle={ {color: this.props.errorText ? CONSTANTS.COLORS.error : CONSTANTS.COLORS.warning} }
@@ -63,4 +63,4 @@ class TextFieldNew extends React.Component{
 
 };
 
-export default TextFieldNew;
+export default PasswordField;

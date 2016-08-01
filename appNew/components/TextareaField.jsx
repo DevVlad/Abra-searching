@@ -5,7 +5,7 @@ import TextField from 'material-ui/TextField';
 import './App.css';
 import CONSTANTS from './CONSTANTS.jsx';
 
-class TextFieldNew extends React.Component{
+class TextareaField extends React.Component{
   static propTypes = {
     alias: PropTypes.string,
     label: PropTypes.string,
@@ -55,6 +55,8 @@ class TextFieldNew extends React.Component{
             underlineFocusStyle={ {color: CONSTANTS.COLORS.info} }
             onBlur={ this.handleOnBlur.bind(this) }
             value={ this.state.toDisplay }
+            multiLine={ true }
+            rows={1}
             onChange={ this.handleOnChange.bind(this) }
           />
       </div>
@@ -63,4 +65,4 @@ class TextFieldNew extends React.Component{
 
 };
 
-export default TextFieldNew;
+export default TextareaField;

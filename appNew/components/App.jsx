@@ -16,6 +16,9 @@ import FloatingButtonField from './FloatingButtonField.jsx';
 import ToggleField from './ToggleField.jsx';
 import DropdownFieldDumb from './DropdownFieldDumb.jsx';
 import DropdownField from './DropdownField.jsx';
+import NumberField from './NumberField.jsx';
+import TextareaField from './TextareaField.jsx';
+import PasswordField from './PasswordField.jsx';
 
 import ActionFavorite from 'material-ui/svg-icons/action/favorite';
 import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
@@ -217,19 +220,45 @@ class App extends React.Component{
 						value={ 0 }
 					/>
 				<br/>
-				<DropdownField
-					alias='cleverDropdown'
-					label='clever dropdown new'
-					entityType="kontakt"
-					errorText={ '' }
-					warnText={ '' }
-					onChange={ this.changeTestValue.bind(this) }
-					onBlur={ (e) => console.log('DropdownNewClever on Blur', e) }
-					value={ parseInt(this.props.testId) }
-					entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
-					filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
-					loadingNotify={ true }
-				/>
+				<div id='druhacast'>
+					<DropdownField
+						alias='cleverDropdown'
+						label='clever dropdown new'
+						entityType="kontakt"
+						errorText={ '' }
+						warnText={ '' }
+						onChange={ this.changeTestValue.bind(this) }
+						onBlur={ (e) => console.log('DropdownNewClever on Blur', e) }
+						value={ parseInt(this.props.testId) }
+						entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
+						filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
+						loadingNotify={ true }
+					/>
+					<NumberField
+						alias='numberField'
+						label='enter a number'
+						errorText=''
+						warnText=''
+						value={ 108 }
+						onBlur={ (x) => {console.log('numberField onBlur ', x)} }
+					/>
+					<TextareaField
+						alias='textarea'
+						label='textfieldarea'
+						errorText=''
+						warnText=''
+						value='aloha'
+						onBlur={ (x) => {console.log('TextareaField onBlur ', x)} }
+					/>
+					<PasswordField
+						alias='passfield'
+						label='enter password'
+						errorText=''
+						warnText=''
+						value=''
+						onBlur={ (x) => {console.log('passwordfield onBlur ', x)} }
+					/>
+				</div>
 			</div>
 		)
 	}
