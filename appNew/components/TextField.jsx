@@ -13,7 +13,7 @@ class TextFieldNew extends React.Component{
     disabled: PropTypes.bool,
     onBlur: PropTypes.func,
     value: PropTypes.string,
-    type: PropTypes.oneOf(['password', 'text', '']),
+    password: PropTypes.bool,
   };
 
   constructor(props) {
@@ -50,7 +50,7 @@ class TextFieldNew extends React.Component{
       <div id={`textField_${this.props.alias}`}>
           <TextField
             floatingLabelText={ this.props.label }
-            type={ this.props.type ? this.props.type : 'text' }
+            type={ this.props.password ? 'password' : 'text' }
             errorText={ this.props.errorText ? this.props.errorText : this.props.warnText }
             errorStyle={ {color: this.props.errorText ? CONSTANTS.COLORS.error : CONSTANTS.COLORS.warning} }
             disabled={ this.props.disabled }

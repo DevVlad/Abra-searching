@@ -122,7 +122,6 @@ class App extends React.Component{
 				<TextField
 					alias='textfield'
 					label='TextField'
-					type='text'
 					errorText=''
 					disabled={false}
 					onBlur={ (x) => {
@@ -141,7 +140,7 @@ class App extends React.Component{
 					disabled={false}
 					locale='cs'
 					// value={ this.props.valueOfTimefield }
-					enableMousePicker={ true }
+					enableMousePicker
 				/>
 				<br/>
 				<DateField
@@ -151,7 +150,7 @@ class App extends React.Component{
 					onBlur={ (x) => console.log('datefield onBlur', x) }
 					disabled={false}
 					// value={ this.props.valueOfDatefield }
-					enableMousePicker={ true }
+					enableMousePicker
 					locale='cs'
 					// displayFormat="YYYY/MM/DD"
 				/>
