@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import AbstractAutoComplete from './AbstractAutoComplete.jsx';
 import SvgIcon from 'material-ui/SvgIcon';
+import Immutable from 'immutable';
 
 import CONSTANTS from './CONSTANTS.jsx';
 
@@ -38,7 +39,6 @@ class DropdownFieldDumb extends React.Component{
     onKeyDown: PropTypes.func,
     notIncludedInData: PropTypes.func,
     enableDev: PropTypes.bool,
-    // showMenu: PropTypes.bool,
   };
 
   constructor(props) {
@@ -60,9 +60,10 @@ class DropdownFieldDumb extends React.Component{
 
   componentWillUpdate(newProps) {
     if (this.props.enableDev && !newProps.value && this.state.toDisplay === this.text && this.state.toDisplay !== '') {
-      newProps.onChange(undefined)
+      if (newProps.onChange) newProps.onChange(undefined)
       this.setState({toDisplay: ''});
     }
+
   }
 
   handleTyping(e) {
@@ -77,14 +78,14 @@ class DropdownFieldDumb extends React.Component{
 
   handleOnBlur(e) {
     if (!this.InMenuMode) {
-      this.showMenuHandler = false;
       if (this.typing) this.typing = false;
       if (this.props.onBlur) this.props.onBlur(e);
-      if (this.state.toDisplay != this.text) {
+      if (this.showMenuHandler) {
+        this.showMenuHandler = false;
+      } else if (this.state.toDisplay != this.text) {
         if (!this.state.toDisplay) this.text = this.state.toDisplay;
-        console.log('onblur',this.text, this.showMenuHandler);
-        this.setState({toDisplay: this.text});
       }
+      this.setState({toDisplay: this.text});
     }
   }
 
@@ -141,50 +142,58 @@ class DropdownFieldDumb extends React.Component{
 
   handleMenuDisplay() {
     this.showMenuHandler = this.showMenuHandler ? this.showMenuHandler = false : this.showMenuHandler = true;
-    setTimeout( () => { this.setState({}) }, 0 );
+    this.typing = true;
+    setTimeout( () => { this.refs.textfield.focus() }, 0 );
+    setTimeout( () => { this.setState({toDisplay: ''}) }, 0 );
   }
 
-	render() {
-    console.log('render', this.showMenuHandler, this.InMenuMode);
-    // if (!this.props.entity) {
-      if (this.props.data && this.props.data.length > 0 && typeof(this.props.data[0]) === 'string' && !this.props.entityToText && !this.props.entityToValue) {
-        this.list = this.props.data;
-        const reSTR = /\b([a-záčďéěíňóřšťůúýž]+)/i;
-        const resultSTR = reSTR.test(this.list.join(' '));
-        if (!resultSTR) console.error("Value on props is not included in props data!");
-        if (this.props.value) this.handleRenderWithInsertedValue(this.props.value);
-      } else {
-        let typeOfValue = [];
-        const reVAL = /.*\b(?:return)\D+(?:(?:\.([a-z]+)))/i;
-        //on resultVAL[1] is "key" what is suspected while entering value on props
-        const resultVAL = reVAL.exec('' + this.props.entityToValue);
-        this.list = this.props.data.map(entity => {
-          typeOfValue.push(entity[resultVAL[1]]);
-          return {...entity,
-            'text': this.props.entityToText(entity)
-          };
-        });
-        if (this.props.value && resultVAL[1] && this.props.enableDev) {
-          let pom = {};
-          pom[resultVAL[1]] = this.props.value;
-          if (this.props.notIncludedInData) this.props.notIncludedInData(pom);
+  preRenderMethod() {
+    if (this.props.data && this.props.data.length > 0 && typeof(this.props.data[0]) === 'string' && !this.props.entityToText && !this.props.entityToValue) {
+      this.list = this.props.data;
+      const reSTR = /\b([a-záčďéěíňóřšťůúýž]+)/i;
+      const resultSTR = reSTR.test(this.list.join(' '));
+      if (!resultSTR) console.error("Value on props is not included in props data!");
+      if (this.props.value) this.handleRenderWithInsertedValue(this.props.value);
+    } else {
+      let typeOfValue = [];
+      const reVAL = /.*\b(?:return)\D+(?:(?:\.([a-z]+)))/i;
+      //on resultVAL[1] is "key" what is suspected while entering value on props
+      const resultVAL = reVAL.exec('' + this.props.entityToValue);
+      this.list = this.props.data.map(entity => {
+        typeOfValue.push(entity[resultVAL[1]]);
+        return {...entity,
+          'text': this.props.entityToText(entity)
+        };
+      });
+      if (typeOfValue.length > 0) {
+        const reTYPE = new RegExp('\\b('+ this.props.value + ')');
+        const resultTYPE = reTYPE.exec(typeOfValue);
+        if (this.props.value && !resultTYPE && !this.props.enableDev) {
+          console.error('DropdownDumb, alias: ' + this.props.alias + ' -> Inserted type of value "' + typeof(this.props.value) + '" is not included as value-type on key: "' + resultVAL[1] + '" in props data. At this moment there is "' + this.props.data[resultVAL[1]] + '". Check data on props or inserted value.');
         }
-        if (typeOfValue.length > 0) {
-          const reTYPE = new RegExp('\\b('+ this.props.value + ')');
-          const resultTYPE = reTYPE.exec(typeOfValue);
-          if (this.props.value && !resultTYPE && !this.props.enableDev) {
-            console.error('DropdownDumb, alias: ' + this.props.alias + ' -> Inserted type of value "' + typeof(this.props.value) + '" is not included as value-type on key: "' + resultVAL[1] + '" in props data. At this moment there is "' + this.props.data[resultVAL[1]] + '". Check data on props or inserted value.');
-          }
-          if ((this.props.value || this.props.value === 0) && !this.typing && this.state.toDisplay !== this.text) {
-            this.props.data.forEach( obj => {
-              if (this.props.value == obj[resultVAL[1]]) {
-                this.handleRenderWithInsertedValue(this.props.entityToText(obj));
-              }
-            });
-          }
+        if ((this.props.value || this.props.value === 0) && !this.typing && this.state.toDisplay !== this.text) {
+          this.props.data.forEach( obj => {
+            if (this.props.value == obj[resultVAL[1]]) {
+              this.handleRenderWithInsertedValue(this.props.entityToText(obj));
+            }
+          });
         }
       }
-    // }
+      const reISTHERE = new RegExp('\\b('+ this.props.value + ')');
+      const resultISTHERE = reISTHERE.exec(typeOfValue);
+      if (!resultISTHERE && this.props.value) {
+        let pom = {};
+        pom[resultVAL[1]] = this.props.value;
+        if (this.props.notIncludedInData) {
+          this.props.notIncludedInData(pom);
+        } else console.error('Inserted value ${pom} is not known value!');
+      }
+      // if (this.props.value && resultVAL[1] && this.props.enableDev && typeOfValue.length === 0) {
+      //   let pom = {};
+      //   pom[resultVAL[1]] = this.props.value;
+      //   if (this.props.notIncludedInData) this.props.notIncludedInData(pom);
+      // }
+    }
     if (this.props.errorText || this.props.warnText) {
       if (this.props.errorText) {
         this.notificationText = this.props.errorText;
@@ -197,6 +206,10 @@ class DropdownFieldDumb extends React.Component{
     } else {
       this.props.filter ? this.currentFilter = this.props.filter : this.currentFilter = AbstractAutoComplete.fuzzyFilter;
     }
+  }
+
+	render() {
+    this.preRenderMethod();
 		return (
       <div id={`DropdownFieldDumb_${this.props.alias}`}>
 	      <AbstractAutoComplete
@@ -207,13 +220,9 @@ class DropdownFieldDumb extends React.Component{
             dataSource={ this.list }
             disabled={ false }
             open={ this.showMenuHandler }
-            // open={ this.props.showMenu }
-            // openOnFocus={ true }
             ref='textfield'
             filter={ this.currentFilter }
-            // filter={ this.props.filter ? this.props.filter : AbstractAutoComplete.fuzzyFilter }
             menuStyle = { { maxHeight: '300px' } }
-            // animated = { false }
             onUpdateInput={ this.handleTyping.bind(this) }
             searchText={ this.state.toDisplay }
             onBlur={ this.handleOnBlur.bind(this) }

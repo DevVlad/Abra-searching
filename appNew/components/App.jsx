@@ -20,6 +20,7 @@ import NumberField from './NumberField.jsx';
 import TextareaField from './TextareaField.jsx';
 
 import AbstractBlbej from './DropdownFieldDumb2.jsx';
+import DropdownField2 from './DropdownField2.jsx';
 
 import ActionFavorite from 'material-ui/svg-icons/action/favorite';
 import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
@@ -254,7 +255,21 @@ class App extends React.Component{
 							entityToText={ obj => obj.text}
 							// entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
 							entityToValue={ object => object.id }
-							value={ 0 }
+							value={ 1 }
+						/>
+					<br/>
+						<DropdownField2
+							alias='cleverDropdown2'
+							label='clever dropdown new2'
+							entityType="kontakt"
+							errorText={ '' }
+							warnText={ '' }
+							onChange={ this.changeTestValue.bind(this) }
+							onBlur={ (e) => console.log('DropdownNewClever on Blur', e) }
+							value={ parseInt(this.props.testId) }
+							entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
+							filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
+							loadingNotify={ true }
 						/>
 				</div>
 			</div>
