@@ -17,6 +17,9 @@ const ClearIcon = (props) => (
   </SvgIcon>
 );
 
+let list = [];
+let insertMode = true;
+
 class DropdownField extends React.Component{
   static propTypes = {
     alias: PropTypes.string,
@@ -35,28 +38,26 @@ class DropdownField extends React.Component{
 
   constructor(props) {
     super(props);
-    this.list = [];
-    this.insertMode = true;
   }
 
   componentWillReceiveProps(newProps) {
     if (newProps.entity && parseInt(newProps.entity.id) === newProps.value) {
-      this.list = [];
-      this.list[0] = newProps.entity;
-      this.insertMode = false;
+      list = [];
+      list[0] = newProps.entity;
+      insertMode = false;
       newProps.onChange(newProps.entity.id);
     }
-    if (newProps.data && newProps.data.size > 0) this.list = newProps.data.toJS();
+    if (newProps.data && newProps.data.size > 0) list = newProps.data.toJS();
     if (!newProps.value && newProps.entity && !newProps.filter) {
-      this.list = [];
+      list = [];
       newProps.dispatch(DropdownFieldDuck.setDelete(newProps.alias, ['entity']));
     }
   }
 
   componentDidUpdate() {
     if (this.props.entity && parseInt(this.props.entity.id) === this.props.value) {
-      this.insertMode = true;
-      this.list = [];
+      insertMode = true;
+      list = [];
     }
   }
 
@@ -78,21 +79,21 @@ class DropdownField extends React.Component{
   }
 
   handleOnBLur(e) {
-    if (!this.insertMode) this.insertMode = true;
+    if (!insertMode) insertMode = true;
     if (this.props.data || this.props.filter) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['filter', 'data', 'loading']));
-    this.list = [];
+    list = [];
     if (this.deleteMode) this.deleteMode = false;
-    this.setState({});
+    if (this.props.onBlur) this.props.onBlur(e)
   }
 
   handleOnSelect(e) {
-    if (!this.insertMode) this.insertMode = true;
+    if (!insertMode) insertMode = true;
     this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['filter', 'data']));
     this.props.onChange(e.id);
   }
 
   handleIncoming(e) {
-    if (this.insertMode) {
+    if (insertMode) {
       if (!this.props.entity || (parseInt(this.props.entity.id) !== this.props.value)) {
         this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, this.props.value, this.props.alias));
       }
@@ -107,7 +108,7 @@ class DropdownField extends React.Component{
   }
 
   handleTyping(e) {
-    this.insertMode = false;
+    insertMode = false;
     if (e && !this.deleteMode) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
   }
 
@@ -122,7 +123,7 @@ class DropdownField extends React.Component{
         <DropdownFieldDumb
           alias={ this.props.alias }
           label={ this.props.label }
-          data={ this.list }
+          data={ list }
           errorText={ this.props.errorText }
           warnText={ this.props.warnText }
           onKeyDown={ this.handleOnKeyDown.bind(this) }
@@ -137,7 +138,7 @@ class DropdownField extends React.Component{
           enableDev={ true }
           entity={ this.props.entity ? this.props.entity : null }
           notIncludedInData={ this.handleIncoming.bind(this) }
-          // showMenu={ this.list.length === 0 && !this.props.data ? false : true }
+          // showMenu={ list.length === 0 && !this.props.data ? false : true }
           />
       { this.handleCurrentLoading(this.props.loading) }
       </div>

@@ -87,7 +87,7 @@ class DropdownFieldDumb extends React.Component{
         if (!this.state.toDisplay) this.text = this.state.toDisplay;
       }
       this.setState({toDisplay: this.text});
-    }
+    } else menuShow = false;
   }
 
   handleOnSelect(e) {
@@ -137,7 +137,6 @@ class DropdownFieldDumb extends React.Component{
   }
 
   handleFocus(e) {
-    // menuShow = true;
     if (this.props.onFocus) this.props.onFocus(this.props);
   }
 

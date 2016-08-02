@@ -38,8 +38,6 @@ class DropdownField extends React.Component{
 
   constructor(props) {
     super(props);
-    list = [];
-    insertMode = true;
   }
 
   componentWillReceiveProps(newProps) {
@@ -66,7 +64,6 @@ class DropdownField extends React.Component{
 
   handleDeleteFromIcon() {
     this.props.onChange(undefined);
-    // this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['filter']));
   }
 
   handleOnSelect(e) {
@@ -76,6 +73,7 @@ class DropdownField extends React.Component{
   handleOnBLur(e) {
     insertMode = true;
     isTyping = false;
+    if (this.props.onBlur) this.props.onBlur(e);
   }
 
   handleCurrentLoading(loading) {
