@@ -248,6 +248,7 @@ function processRequest(dataServer, filter, paging, alias, resultsToDisplay) {
         dispatch(DropdownFieldDuck.setErrorMessage(alias, msg))
         dispatch(DropdownFieldDuck.setDelete(alias, ['data', 'loading']));
 			} else {
+          if (getErrorText(getState(), alias)) dispatch(DropdownFieldDuck.setDelete(alias, ['errorText']));
 					if (paging + 20 > totalCount)  {
 						dispatch(setLimit(dataServer.kontakt, alias, true, resultsToDisplay, paging, totalCount > paging+ dataServer.kontakt.length));
 					} else {

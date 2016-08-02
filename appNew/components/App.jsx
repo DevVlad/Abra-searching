@@ -215,8 +215,6 @@ class App extends React.Component{
 						alias='cleverDropdown'
 						label='clever dropdown new'
 						entityType="kontakt"
-						errorText={ '' }
-						warnText={ '' }
 						onChange={ this.changeTestValue.bind(this) }
 						onBlur={ (e) => console.log('DropdownNewClever on Blur', e) }
 						value={ parseInt(this.props.testId) }
@@ -248,8 +246,6 @@ class App extends React.Component{
 							label='AbstractBlbej'
 							data={ [{id: 0, text: 'pondeli'}, {id: 1, text: 'utery'}] }
 							// data={ CONSTANTS.FAKEENTITY }
-							errorText={ '' }
-							warnText={ '' }
 							onChange={ (e) => console.log('AbstractBlbej onChange', e) }
 							onBlur={ (e) => console.log('AbstractBlbej on Blur', e) }
 							entityToText={ obj => obj.text}
@@ -262,8 +258,6 @@ class App extends React.Component{
 							alias='cleverDropdown2'
 							label='clever dropdown new2'
 							entityType="kontakt"
-							errorText={ '' }
-							warnText={ '' }
 							onChange={ this.changeTestValue.bind(this) }
 							onBlur={ (e) => console.log('DropdownNewClever on Blur', e) }
 							value={ parseInt(this.props.testId) }

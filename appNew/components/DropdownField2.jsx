@@ -16,6 +16,9 @@ const ClearIcon = (props) => (
     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
   </SvgIcon>
 );
+let list = [];
+let insertMode = true;
+let isTyping = false;
 
 class DropdownField extends React.Component{
   static propTypes = {
@@ -35,29 +38,29 @@ class DropdownField extends React.Component{
 
   constructor(props) {
     super(props);
-    this.list = [];
-    this.insertMode = true;
+    list = [];
+    insertMode = true;
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.entity && parseInt(newProps.entity.id) === newProps.value && this.insertMode) {
-      this.list = [];
-      this.list[0] = newProps.entity;
+    if (newProps.entity && parseInt(newProps.entity.id) === newProps.value && insertMode) {
+      list = [];
+      list[0] = newProps.entity;
     }
-    if (newProps.data && (!this.insertMode || this.typing)) {
-      this.list = newProps.data.toJS();
+    if (newProps.data && (!insertMode || isTyping)) {
+      list = newProps.data.toJS();
     }
     if (!newProps.value && newProps.entity) newProps.dispatch(DropdownFieldDuck.setDelete(newProps.alias, ['entity']));
   }
 
   handleIncoming(e) {
-    this.insertMode = true;
-    if (!this.typing) this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, e.id, this.props.alias));
+    insertMode = true;
+    if (!isTyping) this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, e.id, this.props.alias));
   }
 
   handleTyping(e) {
-    this.insertMode = false;
-    this.typing = true;
+    insertMode = false;
+    isTyping = true;
     if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
   }
 
@@ -71,8 +74,8 @@ class DropdownField extends React.Component{
   }
 
   handleOnBLur(e) {
-    this.insertMode = true;
-    this.typing = false;
+    insertMode = true;
+    isTyping = false;
   }
 
   handleCurrentLoading(loading) {
@@ -98,7 +101,7 @@ class DropdownField extends React.Component{
         <DropdownFieldDumb2
           alias={ this.props.alias }
           label={ this.props.label }
-          data={ this.list }
+          data={ list }
           errorText={ this.props.errorText }
           warnText={ this.props.warnText }
           // onKeyDown={ this.handleOnKeyDown.bind(this) }

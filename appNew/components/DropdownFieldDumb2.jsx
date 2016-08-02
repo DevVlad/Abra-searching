@@ -20,6 +20,11 @@ const MenuIcon = (props) => (
   </SvgIcon>
 );
 
+let notificationText;
+let list = [];
+let typing = false;
+let menuShow = false;
+
 class DropdownFieldDumb extends React.Component{
 
   static propTypes = {
@@ -46,10 +51,6 @@ class DropdownFieldDumb extends React.Component{
     this.state = {
       toDisplay: ''
     };
-    this.list = [];
-    this.typing = false;
-    this.showMenuHandler = false;
-    this.notificationText = '';
   }
 
   componentWillReceiveProps(newProps) {
@@ -67,21 +68,21 @@ class DropdownFieldDumb extends React.Component{
   }
 
   handleTyping(e) {
-    if (!this.typing) this.typing = true;
+    if (!typing) typing = true;
     if (this.props.onTyping) this.props.onTyping(e);
     this.InMenuMode = false;
-    this.showMenuHandler = true;
-    if (this.typing) {
+    menuShow = true;
+    if (typing) {
       this.setState({toDisplay: e});
     }
   }
 
   handleOnBlur(e) {
     if (!this.InMenuMode) {
-      if (this.typing) this.typing = false;
+      if (typing) typing = false;
       if (this.props.onBlur) this.props.onBlur(e);
-      if (this.showMenuHandler) {
-        this.showMenuHandler = false;
+      if (menuShow) {
+        menuShow = false;
       } else if (this.state.toDisplay != this.text) {
         if (!this.state.toDisplay) this.text = this.state.toDisplay;
       }
@@ -90,7 +91,7 @@ class DropdownFieldDumb extends React.Component{
   }
 
   handleOnSelect(e) {
-    if (this.typing) this.typing = false;
+    if (typing) typing = false;
     setTimeout( () => { this.refs.textfield.focus() }, 0 );
     const output = this.props.entityToValue(e);
     if (this.props.onChange) this.handleOnChange(output);
@@ -119,11 +120,11 @@ class DropdownFieldDumb extends React.Component{
     if (this.props.onKeyDown) this.props.onKeyDown(e);
     //handle press ESC
     if (e.keyCode === 27) {
-      if (this.InMenuMode) this.showMenuHandler = false;
+      if (this.InMenuMode) menuShow = false;
       setTimeout( () => { this.refs.textfield.focus() }, 0 );
     }
     if (e.keyCode === 40 || e.keyCode == 38) {
-      this.showMenuHandler = true;
+      menuShow = true;
       this.InMenuMode = true;
       this.setState({});
     }
@@ -136,22 +137,22 @@ class DropdownFieldDumb extends React.Component{
   }
 
   handleFocus(e) {
-    // this.showMenuHandler = true;
+    // menuShow = true;
     if (this.props.onFocus) this.props.onFocus(this.props);
   }
 
   handleMenuDisplay() {
-    this.showMenuHandler = this.showMenuHandler ? this.showMenuHandler = false : this.showMenuHandler = true;
-    this.typing = true;
+    menuShow = menuShow ? menuShow = false : menuShow = true;
+    typing = true;
     setTimeout( () => { this.refs.textfield.focus() }, 0 );
     setTimeout( () => { this.setState({toDisplay: ''}) }, 0 );
   }
 
   preRenderMethod() {
     if (this.props.data && this.props.data.length > 0 && typeof(this.props.data[0]) === 'string' && !this.props.entityToText && !this.props.entityToValue) {
-      this.list = this.props.data;
+      list = this.props.data;
       const reSTR = /\b([a-záčďéěíňóřšťůúýž]+)/i;
-      const resultSTR = reSTR.test(this.list.join(' '));
+      const resultSTR = reSTR.test(list.join(' '));
       if (!resultSTR) console.error("Value on props is not included in props data!");
       if (this.props.value) this.handleRenderWithInsertedValue(this.props.value);
     } else {
@@ -159,7 +160,7 @@ class DropdownFieldDumb extends React.Component{
       const reVAL = /.*\b(?:return)\D+(?:(?:\.([a-z]+)))/i;
       //on resultVAL[1] is "key" what is suspected while entering value on props
       const resultVAL = reVAL.exec('' + this.props.entityToValue);
-      this.list = this.props.data.map(entity => {
+      list = this.props.data.map(entity => {
         typeOfValue.push(entity[resultVAL[1]]);
         return {...entity,
           'text': this.props.entityToText(entity)
@@ -171,7 +172,7 @@ class DropdownFieldDumb extends React.Component{
         if (this.props.value && !resultTYPE && !this.props.enableDev) {
           console.error('DropdownDumb, alias: ' + this.props.alias + ' -> Inserted type of value "' + typeof(this.props.value) + '" is not included as value-type on key: "' + resultVAL[1] + '" in props data. At this moment there is "' + this.props.data[resultVAL[1]] + '". Check data on props or inserted value.');
         }
-        if ((this.props.value || this.props.value === 0) && !this.typing && this.state.toDisplay !== this.text) {
+        if ((this.props.value || this.props.value === 0) && !typing && this.state.toDisplay !== this.text) {
           this.props.data.forEach( obj => {
             if (this.props.value == obj[resultVAL[1]]) {
               this.handleRenderWithInsertedValue(this.props.entityToText(obj));
@@ -196,12 +197,14 @@ class DropdownFieldDumb extends React.Component{
     }
     if (this.props.errorText || this.props.warnText) {
       if (this.props.errorText) {
-        this.notificationText = this.props.errorText;
+        notificationText = this.props.errorText;
       } else {
-        this.notificationText = this.props.warnText;
+        notificationText = this.props.warnText;
       }
+    } else {
+      notificationText = undefined;
     }
-    if (!this.state.toDisplay || !this.typing) {
+    if (!this.state.toDisplay || !typing) {
       this.currentFilter = AbstractAutoComplete.noFilter;
     } else {
       this.props.filter ? this.currentFilter = this.props.filter : this.currentFilter = AbstractAutoComplete.fuzzyFilter;
@@ -214,12 +217,12 @@ class DropdownFieldDumb extends React.Component{
       <div id={`DropdownFieldDumb_${this.props.alias}`}>
 	      <AbstractAutoComplete
 		        floatingLabelText={ this.props.label }
-            errorText={ this.notificationText }
+            errorText={ notificationText }
             errorStyle={ this.props.errorText ? {color: CONSTANTS.COLORS.error} : {color: CONSTANTS.COLORS.warning} }
             dataSourceConfig={ {  text: 'text', value: 'text' } }
-            dataSource={ this.list }
+            dataSource={ list }
             disabled={ false }
-            open={ this.showMenuHandler }
+            open={ menuShow }
             ref='textfield'
             filter={ this.currentFilter }
             menuStyle = { { maxHeight: '300px' } }
