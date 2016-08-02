@@ -40,22 +40,23 @@ class CheckboxField extends React.Component{
   }
 
   handleError() {
-    if (this.props.errorText) {
+    if (this.props.errorText || this.props.warnText) {
+      const notifMsg = this.props.errorText ? this.props.errorText : this.props.warnText;
+      const color = this.props.errorText ? CONSTANTS.COLORS.error : CONSTANTS.COLORS.warning;
       return (
         <TextFieldUnderline
           id={`${this.props.alias}_errorTexting`}
           style={ {
             position: 'relative',
-            display: this.props.errorText ? '' : 'none',
             bottom: 1,
             fontSize: 12,
             lineHeight: '12px',
-            color: CONSTANTS.COLORS.error,
+            color: { color },
             transition: transitions.easeOut(),
             transform: 'translateY(-30px)',
             width: 'inhereit'
           } }
-          errorText={ this.props.errorText }
+          errorText={ notifMsg }
           disabled
         />
       );

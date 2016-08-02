@@ -107,7 +107,6 @@ class App extends React.Component{
 					menuItems={ CONSTANTS.FAKEDATA }
 					onChange={ this.setValueForSelectField.bind(this) }
 					value={ this.props.textForSelectField }
-          errorText='OMG what did u choose !?'
 				/>
 				<br/>
 				<CheckboxField
@@ -120,7 +119,6 @@ class App extends React.Component{
 					onChange={ this.setValueForCheckbox.bind(this) }
 					onBlur={ (x) => console.log('Checkbox onBlur()', x) }
 					value={ this.props.valueOfCheckbox }
-					errorText=''
 				/>
 				<br/>
 				<TextField
@@ -198,6 +196,7 @@ class App extends React.Component{
 					disabled={ false }
 					onChange={ (x) => console.log('ToggleField onChange', x) }
 					onBlur={ (x) => console.log('ToggleField onBlur', x) }
+					warnText='sdfosfosfo'
 				/>
 				<br/>
 				<DropdownFieldDumb
