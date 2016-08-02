@@ -10,6 +10,7 @@ const FIND_ENTITY_FROM_ID = 'FIND_ENTITY_FROM_ID';
 const SET_FILTER_MODE = 'SET_FILTER_MODE';
 const SET_FILTER = 'SET_FILTER';
 const DELETE = 'DELETE';
+const SET_ERROR_MSG = 'SET_ERROR_MSG';
 
 const getAliasState = (state, alias) => state.getIn(['dropdown', alias]);
 
@@ -99,6 +100,14 @@ const DropdownFieldDuck = {
   		};
   	},
 
+    setErrorMessage(alias, msg) {
+      return {
+        type: SET_ERROR_MSG,
+        alias,
+        msg
+      };
+    },
+
     /*
     * REDUCER
     */
@@ -136,6 +145,9 @@ const DropdownFieldDuck = {
           });
           return obj;
 
+        case SET_ERROR_MSG:
+          return state.setIn([action.alias, 'errorText'], action.msg);
+
         default:
           return state;
       }
@@ -160,7 +172,19 @@ const DropdownFieldDuck = {
     getLoading(state, alias) {
       return getLoading(state, alias);
     },
+
+    getErrorText(state, alias) {
+      return getErrorText(state, alias);
+    }
 };
+
+const getErrorText = createSelector(getAliasState, x => {
+	if (x === undefined) {
+		return undefined;
+	} else {
+		return x.get('errorText');
+	};
+});
 
 const getValueOfEntityFromId = createSelector(getAliasState, x => {
 	if (x === undefined) {
@@ -220,9 +244,11 @@ function processRequest(dataServer, filter, paging, alias, resultsToDisplay) {
 		if (getFilter(getState(), alias) === filter) {
 			const totalCount = parseInt(dataServer['@rowCount']);
 			if (totalCount === 0) {
-				console.error('No data found on server!');
+        const msg = `No data found on server for inserted filter: ${filter}.`
+        dispatch(DropdownFieldDuck.setErrorMessage(alias, msg))
         dispatch(DropdownFieldDuck.setDelete(alias, ['data', 'loading']));
 			} else {
+          if (getErrorText(getState(), alias)) dispatch(DropdownFieldDuck.setDelete(alias, ['errorText']));
 					if (paging + 20 > totalCount)  {
 						dispatch(setLimit(dataServer.kontakt, alias, true, resultsToDisplay, paging, totalCount > paging+ dataServer.kontakt.length));
 					} else {

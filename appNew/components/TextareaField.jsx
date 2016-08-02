@@ -10,6 +10,7 @@ class TextareaField extends React.Component{
     alias: PropTypes.string,
     label: PropTypes.string,
     errorText: PropTypes.string,
+    warnText: PropTypes.string,
     disabled: PropTypes.bool,
     onBlur: PropTypes.func,
     value: PropTypes.string

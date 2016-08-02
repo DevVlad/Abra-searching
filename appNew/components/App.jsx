@@ -19,6 +19,9 @@ import DropdownField from './DropdownField.jsx';
 import NumberField from './NumberField.jsx';
 import TextareaField from './TextareaField.jsx';
 
+import AbstractBlbej from './DropdownFieldDumb2.jsx';
+import DropdownField2 from './DropdownField2.jsx';
+
 import ActionFavorite from 'material-ui/svg-icons/action/favorite';
 import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
 import SvgIcon from 'material-ui/SvgIcon';
@@ -104,7 +107,6 @@ class App extends React.Component{
 					menuItems={ CONSTANTS.FAKEDATA }
 					onChange={ this.setValueForSelectField.bind(this) }
 					value={ this.props.textForSelectField }
-          errorText='OMG what did u choose !?'
 				/>
 				<br/>
 				<CheckboxField
@@ -139,6 +141,8 @@ class App extends React.Component{
 					onChange={ (x) => console.log('timefield onChange', x) }
 					disabled={false}
 					locale='cs'
+					errorText=''
+					warnText=''
 					// value={ this.props.valueOfTimefield }
 					enableMousePicker
 				/>
@@ -152,6 +156,8 @@ class App extends React.Component{
 					// value={ this.props.valueOfDatefield }
 					enableMousePicker
 					locale='cs'
+					errorText=''
+					warnText=''
 					// displayFormat="YYYY/MM/DD"
 				/>
 				<br/>
@@ -169,6 +175,7 @@ class App extends React.Component{
 							<path d="M19 13v-2c-1.54.02-3.09-.75-4.07-1.83l-1.29-1.43c-.17-.19-.38-.34-.61-.45-.01 0-.01-.01-.02-.01H13c-.35-.2-.75-.3-1.19-.26C10.76 7.11 10 8.04 10 9.09V15c0 1.1.9 2 2 2h5v5h2v-5.5c0-1.1-.9-2-2-2h-3v-3.45c1.29 1.07 3.25 1.94 5 1.95zm-6.17 5c-.41 1.16-1.52 2-2.83 2-1.66 0-3-1.34-3-3 0-1.31.84-2.41 2-2.83V12.1c-2.28.46-4 2.48-4 4.9 0 2.76 2.24 5 5 5 2.42 0 4.44-1.72 4.9-4h-2.07z"/>
 						</SvgIcon>
 					}
+					
 				/>
 				<br/>
 				<FloatingButtonField
@@ -190,6 +197,7 @@ class App extends React.Component{
 					disabled={ false }
 					onChange={ (x) => console.log('ToggleField onChange', x) }
 					onBlur={ (x) => console.log('ToggleField onBlur', x) }
+					warnText='sdfosfosfo'
 				/>
 				<br/>
 				<DropdownFieldDumb
@@ -212,8 +220,6 @@ class App extends React.Component{
 						alias='cleverDropdown'
 						label='clever dropdown new'
 						entityType="kontakt"
-						errorText={ '' }
-						warnText={ '' }
 						onChange={ this.changeTestValue.bind(this) }
 						onBlur={ (e) => console.log('DropdownNewClever on Blur', e) }
 						value={ parseInt(this.props.testId) }
@@ -240,7 +246,30 @@ class App extends React.Component{
 						onBlur={ (x) => {console.log('TextareaField onBlur ', x)} }
 					/>
 				<br/>
-
+					<AbstractBlbej
+							alias='AbstractBlbej'
+							label='AbstractBlbej'
+							data={ [{id: 0, text: 'pondeli'}, {id: 1, text: 'utery'}] }
+							// data={ CONSTANTS.FAKEENTITY }
+							onChange={ (e) => console.log('AbstractBlbej onChange', e) }
+							onBlur={ (e) => console.log('AbstractBlbej on Blur', e) }
+							entityToText={ obj => obj.text}
+							// entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
+							entityToValue={ object => object.id }
+							value={ 1 }
+						/>
+					<br/>
+						<DropdownField2
+							alias='cleverDropdown2'
+							label='clever dropdown new2'
+							entityType="kontakt"
+							onChange={ this.changeTestValue.bind(this) }
+							onBlur={ (e) => console.log('DropdownNewClever on Blur', e) }
+							value={ parseInt(this.props.testId) }
+							entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
+							filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
+							loadingNotify={ true }
+						/>
 				</div>
 			</div>
 		)
