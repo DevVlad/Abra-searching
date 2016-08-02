@@ -82,6 +82,7 @@ class DropdownFieldDumb extends React.Component{
       if (this.props.onBlur) this.props.onBlur(e);
       if (this.state.toDisplay != this.text) {
         if (!this.state.toDisplay) this.text = this.state.toDisplay;
+        console.log('onblur',this.text, this.showMenuHandler);
         this.setState({toDisplay: this.text});
       }
     }
@@ -125,7 +126,7 @@ class DropdownFieldDumb extends React.Component{
       this.InMenuMode = true;
       this.setState({});
     }
-  };
+  }
 
   handleOnChange(e) {
     this.selectedVal = e;
@@ -140,11 +141,11 @@ class DropdownFieldDumb extends React.Component{
 
   handleMenuDisplay() {
     this.showMenuHandler = this.showMenuHandler ? this.showMenuHandler = false : this.showMenuHandler = true;
-    this.InMenuMode = true;
-    this.setState({});
+    setTimeout( () => { this.setState({}) }, 0 );
   }
 
 	render() {
+    console.log('render', this.showMenuHandler, this.InMenuMode);
     // if (!this.props.entity) {
       if (this.props.data && this.props.data.length > 0 && typeof(this.props.data[0]) === 'string' && !this.props.entityToText && !this.props.entityToValue) {
         this.list = this.props.data;
@@ -191,8 +192,8 @@ class DropdownFieldDumb extends React.Component{
         this.notificationText = this.props.warnText;
       }
     }
-    if (!this.typing) {
-      this.currentFilter = obj => obj;
+    if (!this.state.toDisplay || !this.typing) {
+      this.currentFilter = AbstractAutoComplete.noFilter;
     } else {
       this.props.filter ? this.currentFilter = this.props.filter : this.currentFilter = AbstractAutoComplete.fuzzyFilter;
     }
@@ -219,6 +220,7 @@ class DropdownFieldDumb extends React.Component{
             onNewRequest={ this.handleOnSelect.bind(this) }
             onFocus={ this.handleFocus.bind(this) }
             onKeyDown={ this.handleOnKeyDown.bind(this) }
+            onClick={ this.handleMenuDisplay.bind(this) }
 	      />
         <ClearIcon
           style={ CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.second }
