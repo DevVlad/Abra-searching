@@ -120,6 +120,7 @@ class App extends React.Component{
 					onChange={ this.setValueForCheckbox.bind(this) }
 					onBlur={ (x) => console.log('Checkbox onBlur()', x) }
 					value={ this.props.valueOfCheckbox }
+					errorText=''
 				/>
 				<br/>
 				<TextField
@@ -142,6 +143,8 @@ class App extends React.Component{
 					onChange={ (x) => console.log('timefield onChange', x) }
 					disabled={false}
 					locale='cs'
+					errorText=''
+					warnText=''
 					// value={ this.props.valueOfTimefield }
 					enableMousePicker
 				/>
@@ -155,6 +158,8 @@ class App extends React.Component{
 					// value={ this.props.valueOfDatefield }
 					enableMousePicker
 					locale='cs'
+					errorText=''
+					warnText=''
 					// displayFormat="YYYY/MM/DD"
 				/>
 				<br/>

@@ -14,7 +14,8 @@ class MenuList extends React.Component{
       alias: PropTypes.string,
       menuItems: PropTypes.array,
       onChange: PropTypes.func,
-      errorText: PropTypes.string
+      errorText: PropTypes.string,
+      warnText: PropTypes.string,
   };
 
   constructor(props) {
@@ -38,8 +39,8 @@ class MenuList extends React.Component{
         <SelectField
           value={ this.props.value }
           onChange={ this.handleOnChange.bind(this) }
-          errorText={ ErrorCondition && this.props.errorText }
-          errorStyle={ {color: CONSTANTS.COLORS.error} }
+          errorText={ this.props.errorText ? this.props.errorText : this.props.warnText }
+          errorStyle={ {color: this.props.errorText ? CONSTANTS.COLORS.error : CONSTANTS.COLORS.warning} }
         >{items}</SelectField>
       </div>
 		);

@@ -26,7 +26,9 @@ class TimeField extends React.Component{
     disabled: PropTypes.bool,
     locale: PropTypes.string,
     value: PropTypes.object,
-    enableMousePicker: PropTypes.bool
+    enableMousePicker: PropTypes.bool,
+    errorText: PropTypes.string,
+    warnText: PropTypes.string,
   };
 
   constructor(props) {
@@ -128,6 +130,8 @@ class TimeField extends React.Component{
             onChange={ this.handleOnChange.bind(this) }
             value={ this.state.toDisplay }
             onKeyDown={this.handleOnKeyDown.bind(this)}
+            errorText={ this.props.errorText ? this.props.errorText : this.props.warnText }
+            errorStyle={ {color: this.props.errorText ? CONSTANTS.COLORS.error : CONSTANTS.COLORS.warning} }
         />
         <IconForTimePicker
           style={ CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.first }

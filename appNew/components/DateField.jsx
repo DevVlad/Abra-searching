@@ -105,7 +105,9 @@ class DateField extends React.Component{
     disabled: PropTypes.bool,
     value: PropTypes.object,
     enableMousePicker: PropTypes.bool,
-    locale: PropTypes.string
+    locale: PropTypes.string,
+    warnText: PropTypes.string,
+    errorText: PropTypes.string,
   };
 
   constructor(props) {
@@ -200,6 +202,8 @@ class DateField extends React.Component{
               value={ this.state.toDisplay }
               onKeyDown={ this.handleOnKeyDown.bind(this) }
               onChange={ this.handleOnChange.bind(this) }
+              errorText={ this.props.errorText ? this.props.errorText : this.props.warnText }
+              errorStyle={ {color: this.props.errorText ? CONSTANTS.COLORS.error : CONSTANTS.COLORS.warning} }
         />
         <IconForDatePicker
           style={ CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.first }
