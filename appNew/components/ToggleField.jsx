@@ -55,7 +55,7 @@ class ToggleField extends React.Component{
             lineHeight: '12px',
             color: { color },
             transition: transitions.easeOut(),
-            transform: 'translateY(-30px)',
+            transform: 'translateY(-50px)',
             width: 'inhereit'
           } }
           errorText={ notifMsg }
