@@ -275,7 +275,6 @@ class AbstractAutoComplete extends Component {
 
   handleItemTouchTap = (event, child) => {
     const dataSource = this.props.dataSource;
-
     const index = parseInt(child.key, 10);
     const chosenRequest = dataSource[index];
     const searchText = this.chosenRequestText(chosenRequest);
@@ -426,7 +425,6 @@ class AbstractAutoComplete extends Component {
     const styles = getStyles(this.props, this.context, this.state);
 
     const requestsList = [];
-
     dataSource.every((item, index) => {
       switch (typeof item) {
         case 'string':
@@ -448,7 +446,8 @@ class AbstractAutoComplete extends Component {
         case 'object':
           if (item && typeof item[this.props.dataSourceConfig.text] === 'string') {
             const itemText = item[this.props.dataSourceConfig.text];
-            if (!this.props.filter(searchText, itemText, item)) break;
+            if (!this.props.filter(itemText, item)) break;
+            // if (!this.props.filter(searchText, itemText, item)) break;
 
             const itemValue = item[this.props.dataSourceConfig.value];
             if (itemValue.type && (itemValue.type.muiName === MenuItem.muiName ||
@@ -483,7 +482,6 @@ class AbstractAutoComplete extends Component {
     });
 
     this.requestsList = requestsList;
-
     const menu = open && requestsList.length > 0 && (
       <Menu
         {...menuProps}

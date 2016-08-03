@@ -19,6 +19,8 @@ const ClearIcon = (props) => (
 let list = [];
 let insertMode = true;
 let isTyping = false;
+// let isEntity = false;
+let isEntity = true;
 
 class DropdownField extends React.Component{
   static propTypes = {
@@ -41,24 +43,29 @@ class DropdownField extends React.Component{
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.entity && parseInt(newProps.entity.id) === newProps.value && insertMode) {
+    if (newProps.entity && parseInt(newProps.entity.id) === newProps.value && insertMode && isEntity) {
       list = [];
       list[0] = newProps.entity;
     }
-    if (newProps.data && (!insertMode || isTyping)) {
+    if (newProps.data && (!insertMode || isTyping || !isEntity)) {
       list = newProps.data.toJS();
+      isEntity = true;
     }
     if (!newProps.value && newProps.entity) newProps.dispatch(DropdownFieldDuck.setDelete(newProps.alias, ['entity']));
   }
 
   handleIncoming(e) {
-    insertMode = true;
-    if (!isTyping) this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, e.id, this.props.alias));
+    if (!isTyping) {
+      insertMode = true;
+      isEntity = true;
+      this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, e.id, this.props.alias));
+    }
   }
 
   handleTyping(e) {
     insertMode = false;
     isTyping = true;
+    isEntity = false;
     if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
   }
 
@@ -67,13 +74,20 @@ class DropdownField extends React.Component{
   }
 
   handleOnSelect(e) {
+    console.log('select');
+    // isEntity = false;
+    // insertMode = false;
+    if (this.props.entity) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['entity']));
+    this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
     this.props.onChange(e.id);
   }
 
   handleOnBLur(e) {
+    console.log('blur');
     insertMode = true;
     isTyping = false;
     if (this.props.onBlur) this.props.onBlur(e);
+    if (this.props.errorText) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['errorText']));
   }
 
   handleCurrentLoading(loading) {
@@ -94,6 +108,7 @@ class DropdownField extends React.Component{
   }
 
   render() {
+    // console.log(isEntity, this.props);
     return (
       <div id={`DropdownFieldCleverNEW_${this.props.alias}`}>
         <DropdownFieldDumb2
@@ -108,12 +123,13 @@ class DropdownField extends React.Component{
           onBlur={ this.handleOnBLur.bind(this) }
           entityToText={ this.props.entityToText }
           entityToValue={ object => object.id }
-          value={ this.props.value }
+          value={ insertMode ? this.props.value : null }
           onTyping={ this.handleTyping.bind(this) }
           filter={ item => item }
           enableDev={ true }
           entity={ this.props.entity ? this.props.entity : null }
           notIncludedInData={ this.handleIncoming.bind(this) }
+          isEntity={ isEntity }
           />
       { this.handleCurrentLoading(this.props.loading) }
       </div>
