@@ -47,6 +47,7 @@ class DropdownFieldDumb extends React.Component{
     onKeyDown: PropTypes.func,
     notIncludedInData: PropTypes.func,
     enableDev: PropTypes.bool,
+    menuToggled: PropTypes.func,
   };
 
   constructor(props) {
@@ -59,6 +60,8 @@ class DropdownFieldDumb extends React.Component{
   componentWillReceiveProps(newProps) {
     if (newProps.value && newProps.data && newProps.data.length === 1) {
       this.text = this.props.entityToText(newProps.data[0]);
+    } else if (newProps.value) {
+      this.text = '';
     }
   }
 
@@ -88,26 +91,16 @@ class DropdownFieldDumb extends React.Component{
       if (deleteMode && !this.state.toDisplay) this.text = '';
       this.setState({toDisplay: this.text});
     }
-    // if (!InMenuMode) {
-    //   if (typing) typing = false;
-    //   if (this.props.onBlur) this.props.onBlur(e);
-    //   if (menuShow) {
-    //     menuShow = false;
-    //   } else if (this.state.toDisplay != this.text) {
-    //     if (!this.state.toDisplay) this.text = this.state.toDisplay;
-    //   }
-    //   this.setState({toDisplay: this.text});
-    // } //else menuShow = false;
   }
 
   handleOnSelect(e) {
-    setTimeout( () => { this.refs.textfieldDumb.focus() }, 0 );
     if (typing) typing = false;
     const output = this.props.entityToValue(e);
     if (this.props.onChange) this.handleOnChange(output);
     this.text = this.props.entityToText(e);
     if (this.props.onSelect) this.props.onSelect(e);
     InMenuMode = false;
+    setTimeout( () => { this.refs[`DropdownFieldDumb_${this.props.alias}`].focus() }, 0 );
     this.setState({toDisplay: this.props.entityToText(e)});
   }
 
@@ -131,7 +124,7 @@ class DropdownFieldDumb extends React.Component{
     //handle press ESC
     if (e.keyCode === 27) {
       if (InMenuMode) menuShow = false;
-      setTimeout( () => { this.refs.textfieldDumb.focus() }, 0 );
+      setTimeout( () => { this.refs[`DropdownFieldDumb_${this.props.alias}`].focus() }, 0 );
       if (deleteMode)  {
         this.text = '';
         this.setState({toDisplay: ''});
@@ -158,14 +151,13 @@ class DropdownFieldDumb extends React.Component{
 
   handleMenuDisplay() {
     menuShow ? menuShow = false : menuShow = true;
+    if (this.props.menuToggled) this.props.menuToggled(menuShow);
     if (menuShow) {
-      // InMenuMode = true;
       typing = true;
-      setTimeout( () => { this.refs.textfieldDumb.focus() }, 0 );
+      setTimeout( () => { this.refs[`DropdownFieldDumb_${this.props.alias}`].focus() }, 0 );
       this.setState({toDisplay: ''});
     } else {
       typing = false;
-      // InMenuMode = false;
       this.setState({toDisplay: this.text});
     }
   }
@@ -194,7 +186,7 @@ class DropdownFieldDumb extends React.Component{
         if (this.props.value && !resultTYPE && !this.props.enableDev) {
           console.error('DropdownDumb, alias: ' + this.props.alias + ' -> Inserted type of value "' + typeof(this.props.value) + '" is not included as value-type on key: "' + resultVAL[1] + '" in props data. At this moment there is "' + this.props.data[resultVAL[1]] + '". Check data on props or inserted value.');
         }
-        if ((this.props.value || this.props.value === 0) && !typing && this.state.toDisplay !== this.text) {
+        if ((this.props.value || this.props.value === 0) && !typing && (this.state.toDisplay !== this.text )) {
           this.props.data.forEach( obj => {
             if (this.props.value == obj[resultVAL[1]]) {
               this.handleRenderWithInsertedValue(this.props.entityToText(obj));
@@ -204,7 +196,7 @@ class DropdownFieldDumb extends React.Component{
       }
       const reISTHERE = new RegExp('\\b('+ this.props.value + ')');
       const resultISTHERE = reISTHERE.exec(typeOfValue);
-      if (!resultISTHERE && this.props.value && this.props.isEntity) {
+      if (!resultISTHERE && this.props.value) { //&& this.props.isEntity) {
         let pom = {};
         pom[resultVAL[1]] = this.props.value;
         if (this.props.notIncludedInData) {
@@ -228,16 +220,11 @@ class DropdownFieldDumb extends React.Component{
     } else {
       currentFilter = AbstractAutoComplete.noFilter;
     }
-    // if (!this.state.toDisplay || !typing) {
-    //   this.currentFilter = AbstractAutoComplete.noFilter;
-    // } else {
-    //   this.props.filter ? this.currentFilter = this.props.filter : this.currentFilter = AbstractAutoComplete.fuzzyFilter;
-    // }
   }
 
 	render() {
     this.preRenderMethod();
-    if (list.length > 0) console.log(`DropdownFieldDumb_${this.props.alias}`,list);
+    console.log(list);
 		return (
       <div id={`DropdownFieldDumb_${this.props.alias}`}>
 	      <AbstractAutoComplete
@@ -248,7 +235,7 @@ class DropdownFieldDumb extends React.Component{
             dataSource={ list }
             disabled={ false }
             open={ menuShow }
-            ref='textfieldDumb'
+            ref={`DropdownFieldDumb_${this.props.alias}`}
             filter={ currentFilter }
             menuStyle = { { maxHeight: '300px' } }
             onUpdateInput={ this.handleTyping.bind(this) }
@@ -259,6 +246,7 @@ class DropdownFieldDumb extends React.Component{
             onKeyDown={ this.handleOnKeyDown.bind(this) }
             onClick={ this.handleMenuDisplay.bind(this) }
             menuProps={ { onKeyDown: this.handleOnKeyDown.bind(this), onBlur: this.handleOnBlur.bind(this) } }
+            menuCloseDelay={ 0 }
 	      />
         <ClearIcon
           style={ CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.second }

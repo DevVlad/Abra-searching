@@ -14,7 +14,6 @@ import DateField from './DateField.jsx';
 import ButtonField from './ButtonField.jsx';
 import FloatingButtonField from './FloatingButtonField.jsx';
 import ToggleField from './ToggleField.jsx';
-import DropdownFieldDumb from './DropdownFieldDumb.jsx';
 import DropdownField from './DropdownField.jsx';
 import NumberField from './NumberField.jsx';
 import TextareaField from './TextareaField.jsx';
@@ -175,7 +174,7 @@ class App extends React.Component{
 							<path d="M19 13v-2c-1.54.02-3.09-.75-4.07-1.83l-1.29-1.43c-.17-.19-.38-.34-.61-.45-.01 0-.01-.01-.02-.01H13c-.35-.2-.75-.3-1.19-.26C10.76 7.11 10 8.04 10 9.09V15c0 1.1.9 2 2 2h5v5h2v-5.5c0-1.1-.9-2-2-2h-3v-3.45c1.29 1.07 3.25 1.94 5 1.95zm-6.17 5c-.41 1.16-1.52 2-2.83 2-1.66 0-3-1.34-3-3 0-1.31.84-2.41 2-2.83V12.1c-2.28.46-4 2.48-4 4.9 0 2.76 2.24 5 5 5 2.42 0 4.44-1.72 4.9-4h-2.07z"/>
 						</SvgIcon>
 					}
-					
+
 				/>
 				<br/>
 				<FloatingButtonField
@@ -200,23 +199,8 @@ class App extends React.Component{
 					warnText='sdfosfosfo'
 				/>
 				<br/>
-				<DropdownFieldDumb
-						alias='DropdownDumb'
-						label='dumb dropdown'
-						data={ [{id: 0, text: 'pondeli'}, {id: 1, text: 'utery'}] }
-						// data={ CONSTANTS.FAKEENTITY }
-						errorText={ '' }
-						warnText={ '' }
-						onChange={ (e) => console.log('DropdownDumb onChange', e) }
-						onBlur={ (e) => console.log('DropdownDumb on Blur', e) }
-						entityToText={ obj => obj.text}
-						// entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
-						entityToValue={ object => object.id }
-						value={ 0 }
-					/>
-				<br/>
 				<div id='druhacast'>
-					<DropdownField
+					{/*<DropdownField
 						alias='cleverDropdown'
 						label='clever dropdown new'
 						entityType="kontakt"
@@ -226,7 +210,7 @@ class App extends React.Component{
 						entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
 						filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 						loadingNotify={ true }
-					/>
+					/>*/}
 				<br/>
 					<NumberField
 						alias='numberField'
@@ -247,7 +231,7 @@ class App extends React.Component{
 					/>
 				<br/>
 					<AbstractBlbej
-							alias='AbstractBlbej'
+							alias='dropdownDumb'
 							label='AbstractBlbej'
 							data={ [{id: 0, text: 'pondeli'}, {id: 1, text: 'utery'}] }
 							// data={ CONSTANTS.FAKEENTITY }

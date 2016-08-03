@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import DropdownFieldDumb2 from './DropdownFieldDumb2.jsx';
 import SvgIcon from 'material-ui/SvgIcon';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
-import Immutable from 'immutable';
 
 import DropdownFieldDuck from '../redux/ducks/dropdownfieldDuck.jsx';
 
@@ -16,10 +15,10 @@ const ClearIcon = (props) => (
     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
   </SvgIcon>
 );
+
 let list = [];
 let insertMode = true;
 let isTyping = false;
-// let isEntity = false;
 let isEntity = true;
 
 class DropdownField extends React.Component{
@@ -43,30 +42,47 @@ class DropdownField extends React.Component{
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.entity && parseInt(newProps.entity.id) === newProps.value && insertMode && isEntity) {
+    if (insertMode && newProps.entity) {
+      console.log('a', isTyping);
       list = [];
       list[0] = newProps.entity;
-    }
-    if (newProps.data && (!insertMode || isTyping || !isEntity)) {
+      insertMode = false;
+    } else if (isTyping || !insertMode && newProps.data) {
       list = newProps.data.toJS();
-      isEntity = true;
+      console.log('b', isTyping);
     }
-    if (!newProps.value && newProps.entity) newProps.dispatch(DropdownFieldDuck.setDelete(newProps.alias, ['entity']));
+    // if (newProps.entity && parseInt(newProps.entity.id) === newProps.value && insertMode && isEntity) {
+    //   list = [];
+    //   list[0] = newProps.entity;
+    // }
+    // if (newProps.data && (!insertMode || isTyping || !isEntity)) {
+    //   list = newProps.data.toJS();
+    //   isEntity = true;
+    // }
+    // if (!newProps.value && newProps.entity) newProps.dispatch(DropdownFieldDuck.setDelete(newProps.alias, ['entity']));
   }
 
   handleIncoming(e) {
     if (!isTyping) {
       insertMode = true;
-      isEntity = true;
+      console.log(e);
       this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, e.id, this.props.alias));
     }
+    // if (!isTyping) {
+    //   insertMode = true;
+    //   isEntity = true;
+    //   this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, e.id, this.props.alias));
+    // }
   }
 
   handleTyping(e) {
-    insertMode = false;
     isTyping = true;
-    isEntity = false;
+    insertMode = false;
     if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
+    // insertMode = false;
+    // isTyping = true;
+    // isEntity = false;
+    // if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
   }
 
   handleDeleteFromIcon() {
@@ -74,19 +90,19 @@ class DropdownField extends React.Component{
   }
 
   handleOnSelect(e) {
-    console.log('select');
+    // console.log('select');
     // isEntity = false;
     // insertMode = false;
-    if (this.props.entity) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['entity']));
+    // if (this.props.entity) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['entity']));
     this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
     this.props.onChange(e.id);
   }
 
   handleOnBLur(e) {
-    console.log('blur');
-    insertMode = true;
-    isTyping = false;
-    if (this.props.onBlur) this.props.onBlur(e);
+    // insertMode = true;
+    // isTyping = false;
+    // isEntity = true;
+    // if (this.props.onBlur) this.props.onBlur(e);
     if (this.props.errorText) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['errorText']));
   }
 
@@ -123,13 +139,14 @@ class DropdownField extends React.Component{
           onBlur={ this.handleOnBLur.bind(this) }
           entityToText={ this.props.entityToText }
           entityToValue={ object => object.id }
-          value={ insertMode ? this.props.value : null }
+          value={ this.props.value }
           onTyping={ this.handleTyping.bind(this) }
           filter={ item => item }
           enableDev={ true }
           entity={ this.props.entity ? this.props.entity : null }
           notIncludedInData={ this.handleIncoming.bind(this) }
-          isEntity={ isEntity }
+          // isEntity={ isEntity }
+          isEntity={ !isTyping }
           />
       { this.handleCurrentLoading(this.props.loading) }
       </div>

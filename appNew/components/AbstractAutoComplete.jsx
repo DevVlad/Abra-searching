@@ -446,8 +446,8 @@ class AbstractAutoComplete extends Component {
         case 'object':
           if (item && typeof item[this.props.dataSourceConfig.text] === 'string') {
             const itemText = item[this.props.dataSourceConfig.text];
-            if (!this.props.filter(itemText, item)) break;
-            // if (!this.props.filter(searchText, itemText, item)) break;
+            // if (!this.props.filter(itemText, item)) break;
+            if (!this.props.filter(searchText, itemText, item)) break;
 
             const itemValue = item[this.props.dataSourceConfig.value];
             if (itemValue.type && (itemValue.type.muiName === MenuItem.muiName ||
