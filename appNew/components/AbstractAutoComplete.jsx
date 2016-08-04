@@ -42,6 +42,8 @@ function getStyles(props, context, state) {
   return styles;
 }
 
+let saveInput;
+
 class AbstractAutoComplete extends Component {
   static propTypes = {
     /**
@@ -226,11 +228,11 @@ class AbstractAutoComplete extends Component {
         searchText: nextProps.searchText,
       });
     }
-    if (this.props.open !== nextProps.open) {
+    if (this.props.open !== nextProps.open && nextProps.dataSource.length > 1) {
       this.setState({
         open: nextProps.open,
         anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
-      })
+      });
     }
   }
 
@@ -244,6 +246,13 @@ class AbstractAutoComplete extends Component {
       anchorEl: null,
     });
   }
+
+  open() {
+    this.setState({
+        open: true,
+        anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
+    });
+  };
 
   handleRequestClose = () => {
     // Only take into account the Popover clickAway when we are
@@ -278,6 +287,7 @@ class AbstractAutoComplete extends Component {
     const index = parseInt(child.key, 10);
     const chosenRequest = dataSource[index];
     const searchText = this.chosenRequestText(chosenRequest);
+    saveInput = searchText;
 
     this.timerTouchTapCloseId = setTimeout(() => {
       this.timerTouchTapCloseId = null;
@@ -300,6 +310,7 @@ class AbstractAutoComplete extends Component {
 
   handleEscKeyDown = () => {
     this.close();
+    this.focus();
   };
 
   handleKeyDown = (event) => {
@@ -315,7 +326,8 @@ class AbstractAutoComplete extends Component {
         break;
 
       case 'esc':
-        this.close();
+        this.handleEscKeyDown();
+        // this.close();
         break;
 
       case 'down':
@@ -330,6 +342,26 @@ class AbstractAutoComplete extends Component {
       default:
         break;
     }
+  };
+
+  handleOnClick = (e, par) => {
+    if (this.state.open) {
+      this.setState({
+        open: false,
+        focusTextField: true,
+        searchText: saveInput,
+      });
+    } else if (!this.state.open && this.requestsList && this.requestsList.length > 1) {
+      console.log('prdel');
+      saveInput = this.state.searchText;
+      this.setState({
+        open: true,
+        focusTextField: true,
+        searchText: '',
+        anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
+      });
+    }
+    if (this.props.onClick && !par) this.props.onClick(e);
   };
 
   handleChange = (event) => {
@@ -352,7 +384,15 @@ class AbstractAutoComplete extends Component {
 
   handleBlur = (event) => {
     if (this.state.focusTextField && this.timerTouchTapCloseId === null) {
-      this.close();
+      if (this.state.searchText !== saveInput || !saveInput) {
+        this.setState({
+          searchText: saveInput,
+          open: false,
+          focusTextField: true,
+        });
+      } else {
+        this.close();
+      }
     }
 
     if (this.props.onBlur) {
@@ -516,6 +556,7 @@ class AbstractAutoComplete extends Component {
           multiLine={false}
           errorStyle={errorStyle}
           style={textFieldStyle}
+          onClick={this.handleOnClick}
         />
         <Popover
           style={styles.popover}

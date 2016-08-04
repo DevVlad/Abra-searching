@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import DropdownFieldDumb2 from './DropdownFieldDumb2.jsx';
 import SvgIcon from 'material-ui/SvgIcon';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
+import Immutable from 'immutable';
 
 import DropdownFieldDuck from '../redux/ducks/dropdownfieldDuck.jsx';
 
@@ -15,7 +16,6 @@ const ClearIcon = (props) => (
     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
   </SvgIcon>
 );
-
 let list = [];
 let insertMode = true;
 let isTyping = false;
@@ -41,15 +41,16 @@ class DropdownField extends React.Component{
     super(props);
   }
 
+  componentWillMount() {
+    this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
+  }
+
   componentWillReceiveProps(newProps) {
-    if (insertMode && newProps.entity) {
-      console.log('a', isTyping);
+    if (newProps.entity) {
       list = [];
       list[0] = newProps.entity;
-      insertMode = false;
-    } else if (isTyping || !insertMode && newProps.data) {
+    } else if (newProps.data) {
       list = newProps.data.toJS();
-      console.log('b', isTyping);
     }
     // if (newProps.entity && parseInt(newProps.entity.id) === newProps.value && insertMode && isEntity) {
     //   list = [];
@@ -58,31 +59,26 @@ class DropdownField extends React.Component{
     // if (newProps.data && (!insertMode || isTyping || !isEntity)) {
     //   list = newProps.data.toJS();
     //   isEntity = true;
+    // } else if (!newProps.entity && newProps.data) {
+    //   list = newProps.data.toJS();
+    //   insertMode = true;
+    //   isEntity = true;
     // }
-    // if (!newProps.value && newProps.entity) newProps.dispatch(DropdownFieldDuck.setDelete(newProps.alias, ['entity']));
   }
 
   handleIncoming(e) {
     if (!isTyping) {
-      insertMode = true;
-      console.log(e);
+      // insertMode = true;
+      // isEntity = true;
       this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, e.id, this.props.alias));
     }
-    // if (!isTyping) {
-    //   insertMode = true;
-    //   isEntity = true;
-    //   this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, e.id, this.props.alias));
-    // }
   }
 
   handleTyping(e) {
-    isTyping = true;
-    insertMode = false;
-    if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
     // insertMode = false;
-    // isTyping = true;
+    isTyping = true;
     // isEntity = false;
-    // if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
+    if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
   }
 
   handleDeleteFromIcon() {
@@ -90,19 +86,15 @@ class DropdownField extends React.Component{
   }
 
   handleOnSelect(e) {
-    // console.log('select');
-    // isEntity = false;
-    // insertMode = false;
     // if (this.props.entity) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['entity']));
     this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
     this.props.onChange(e.id);
   }
 
   handleOnBLur(e) {
-    // insertMode = true;
-    // isTyping = false;
-    // isEntity = true;
-    // if (this.props.onBlur) this.props.onBlur(e);
+    insertMode = true;
+    isTyping = false;
+    if (this.props.onBlur) this.props.onBlur(e);
     if (this.props.errorText) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['errorText']));
   }
 
@@ -124,7 +116,7 @@ class DropdownField extends React.Component{
   }
 
   render() {
-    // console.log(isEntity, this.props);
+    console.log(this.props.value);
     return (
       <div id={`DropdownFieldCleverNEW_${this.props.alias}`}>
         <DropdownFieldDumb2
@@ -133,20 +125,19 @@ class DropdownField extends React.Component{
           data={ list }
           errorText={ this.props.errorText }
           warnText={ this.props.warnText }
-          // onKeyDown={ this.handleOnKeyDown.bind(this) }
           onChange={ this.props.onChange.bind(this) }
           onSelect={ this.handleOnSelect.bind(this) }
           onBlur={ this.handleOnBLur.bind(this) }
           entityToText={ this.props.entityToText }
           entityToValue={ object => object.id }
-          value={ this.props.value }
+          value={ insertMode ? this.props.value : null }
           onTyping={ this.handleTyping.bind(this) }
           filter={ item => item }
           enableDev={ true }
           entity={ this.props.entity ? this.props.entity : null }
           notIncludedInData={ this.handleIncoming.bind(this) }
-          // isEntity={ isEntity }
-          isEntity={ !isTyping }
+          isEntity={ isEntity }
+          // menuToggled={ this.handleMenuIcon.bind(this) }
           />
       { this.handleCurrentLoading(this.props.loading) }
       </div>
