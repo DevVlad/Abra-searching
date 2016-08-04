@@ -42,7 +42,7 @@ function getStyles(props, context, state) {
   return styles;
 }
 
-let saveInput;
+
 
 class AbstractAutoComplete extends Component {
   static propTypes = {
@@ -214,6 +214,7 @@ class AbstractAutoComplete extends Component {
   };
 
   componentWillMount() {
+    this.saveInput;
     this.requestsList = [];
     this.setState({
       open: this.props.open,
@@ -287,7 +288,7 @@ class AbstractAutoComplete extends Component {
     const index = parseInt(child.key, 10);
     const chosenRequest = dataSource[index];
     const searchText = this.chosenRequestText(chosenRequest);
-    saveInput = searchText;
+    this.saveInput = searchText;
 
     this.timerTouchTapCloseId = setTimeout(() => {
       this.timerTouchTapCloseId = null;
@@ -349,10 +350,10 @@ class AbstractAutoComplete extends Component {
       this.setState({
         open: false,
         focusTextField: true,
-        searchText: saveInput,
+        searchText: this.saveInput,
       });
     } else if (!this.state.open && this.requestsList && this.requestsList.length > 1) {
-      saveInput = this.state.searchText;
+      this.saveInput = this.state.searchText;
       this.setState({
         open: true,
         focusTextField: true,
@@ -384,9 +385,9 @@ class AbstractAutoComplete extends Component {
 
   handleBlur = (event) => {
     if (this.state.focusTextField && this.timerTouchTapCloseId === null) {
-      if (this.state.searchText !== saveInput || !saveInput) {
+      if (this.state.searchText !== this.saveInput || !this.saveInput) {
         this.setState({
-          searchText: saveInput,
+          searchText: this.saveInput,
           open: false,
           focusTextField: true,
         });

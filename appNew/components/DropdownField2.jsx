@@ -16,10 +16,6 @@ const ClearIcon = (props) => (
     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
   </SvgIcon>
 );
-let list = [];
-let insertMode = true;
-let isTyping = false;
-let isEntity = true;
 
 class DropdownField extends React.Component{
   static propTypes = {
@@ -39,6 +35,10 @@ class DropdownField extends React.Component{
 
   constructor(props) {
     super(props);
+    this.list = [];
+    this.insertMode = true;
+    this.isTyping = false;
+    this.isEntity = true;
   }
 
   componentWillMount() {
@@ -47,37 +47,37 @@ class DropdownField extends React.Component{
 
   componentWillReceiveProps(newProps) {
     // if (newProps.entity) {
-    //   list = [];
-    //   list[0] = newProps.entity;
+    //   this.list = [];
+    //   this.list[0] = newProps.entity;
     // } else if (newProps.data) {
-    //   list = newProps.data.toJS();
+    //   this.list = newProps.data.toJS();
     // }
-    if (newProps.entity && parseInt(newProps.entity.id) === newProps.value && insertMode && isEntity) {
-      list = [];
-      list[0] = newProps.entity;
+    if (newProps.entity && parseInt(newProps.entity.id) === newProps.value && this.insertMode && this.isEntity) {
+      this.list = [];
+      this.list[0] = newProps.entity;
     }
-    if (newProps.data && (!insertMode || isTyping || !isEntity)) {
-      list = newProps.data.toJS();
-      isEntity = true;
+    if (newProps.data && (!this.insertMode || this.isTyping || !this.isEntity)) {
+      this.list = newProps.data.toJS();
+      this.isEntity = true;
     } else if (!newProps.entity && newProps.data) {
-      list = newProps.data.toJS();
-      insertMode = true;
-      isEntity = true;
+      this.list = newProps.data.toJS();
+      this.insertMode = true;
+      this.isEntity = true;
     }
   }
 
   handleIncoming(e) {
-    if (!isTyping) {
-      insertMode = true;
-      isEntity = true;
+    if (!this.isTyping) {
+      this.insertMode = true;
+      this.isEntity = true;
       this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, e.id, this.props.alias));
     }
   }
 
   handleTyping(e) {
-    insertMode = false;
-    isTyping = true;
-    isEntity = false;
+    this.insertMode = false;
+    this.isTyping = true;
+    this.isEntity = false;
     if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
   }
 
@@ -92,8 +92,8 @@ class DropdownField extends React.Component{
   }
 
   handleOnBLur(e) {
-    insertMode = true;
-    isTyping = false;
+    this.insertMode = true;
+    this.isTyping = false;
     if (this.props.onBlur) this.props.onBlur(e);
     if (this.props.errorText) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['errorText']));
   }
@@ -122,7 +122,7 @@ class DropdownField extends React.Component{
         <DropdownFieldDumb2
           alias={ this.props.alias }
           label={ this.props.label }
-          data={ list }
+          data={ this.list }
           errorText={ this.props.errorText }
           warnText={ this.props.warnText }
           onChange={ this.props.onChange.bind(this) }
@@ -130,13 +130,13 @@ class DropdownField extends React.Component{
           onBlur={ this.handleOnBLur.bind(this) }
           entityToText={ this.props.entityToText }
           entityToValue={ object => object.id }
-          value={ insertMode ? this.props.value : null }
+          value={ this.insertMode ? this.props.value : null }
           onTyping={ this.handleTyping.bind(this) }
           filter={ item => item }
           enableDev={ true }
           entity={ this.props.entity ? this.props.entity : null }
           notIncludedInData={ this.handleIncoming.bind(this) }
-          isEntity={ isEntity }
+          isEntity={ this.isEntity }
           // menuToggled={ this.handleMenuIcon.bind(this) }
           />
       { this.handleCurrentLoading(this.props.loading) }
