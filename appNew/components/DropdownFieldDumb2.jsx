@@ -20,9 +20,9 @@ const MenuIcon = (props) => (
   </SvgIcon>
 );
 
-function comparingStrings(arr) {
+function comparingStrings(data) {
   const regArr = /\b([a-záčďéěíňóřšťůúýž]+)/i;
-  return regArr.test(arr.join(' '));
+  return regArr.test(data.join(' '));
 };
 
 function whatIsOnEtv(data, etv) {
@@ -35,24 +35,13 @@ function whatIsOnEtv(data, etv) {
   } else return null;
 };
 
-function dataVerify(arrOfVal, value, alias) {
-  if (arrOfVal.length > 0) {
+function dataVerify(arrOfVal, value) {
+  // if (arrOfVal.length > 0) {
     const reVerify = new RegExp('\\b('+ value + ')');
     const resultVerify = reVerify.exec(arrOfVal);
-    if (!resultVerify) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-};
-
-function verifyKnownData(arrOfVal, value) {
-  const reKnown = new RegExp('\\b('+ value + ')');
-  const resultKnown = reKnown.exec(arrOfVal);
-  if (resultKnown && resultKnown[1]) {
-    return resultKnown[1];
-  } else return null;
+    if (resultVerify && resultVerify[1]) {
+        return resultVerify[1];
+    } else return null;
 };
 
 function resolveStringArrAsInput(data, value) {
@@ -92,11 +81,8 @@ class DropdownFieldDumb extends React.Component{
     this.state = {
       toDisplay: ''
     };
-    // this.notificationText;
-    // this.list = [];
     this.typing = false;
     this.menuShow = false;
-    // this.currentFilter;
     this.InMenuMode = false;
     this.deleteMode = false;
     this.dataForRender;
@@ -112,10 +98,12 @@ class DropdownFieldDumb extends React.Component{
 
   componentWillMount() {
       this.dataForRender = this.calculateDataForRedner(this.props, this.state);
-      this.handleComputedDataBeforeRender(this.dataForRender);
+      if (this.dataForRender.output) {
+        this.computingDataIncomingOnProps(this.dataForRender);
+      }
   }
 
-  handleComputedDataBeforeRender(dataForRender) {
+  computingDataIncomingOnProps(dataForRender) {
     //deciding about inserted vale - if any
     if (!dataForRender.output.verified && this.props.enableDev) {
       let pom = {};
@@ -123,14 +111,14 @@ class DropdownFieldDumb extends React.Component{
         if (this.props.notIncludedInData) {
           this.props.notIncludedInData(pom);
         }
-    } else if (this.state.toDisplay !== this.text) {
+    } else if (this.state.toDisplay !== this.text && this.props.value != this.state.value) {
       let pom;
       this.props.data.forEach( obj => {
         if (dataForRender.output.verified == obj[dataForRender.output.value]) {
           pom = obj;
         }
       });
-      this.handleRenderWithInsertedValue(this.props.entityToText(pom));
+      this.InsertedValueFromPropsToState(this.props.entityToText(pom), this.props.value);
     }
   }
 
@@ -142,7 +130,7 @@ class DropdownFieldDumb extends React.Component{
     //resolving string arr or arr of objects
     if (props.data && props.data.length > 0 && typeof(props.data[0]) === 'string' && !props.entityToText && !props.entityToValue) {
       output = resolveStringArrAsInput(props.data, props.value);
-      if (props.value && strOutput.value) this.handleRenderWithInsertedValue(props.value);
+      // if (props.value && strOutput.value) this.InsertedValueFromPropsToState(props.value, props.value);
     } else {
       output = this.resolveObjArrAsInput(props, this.typing, this.text, state.toDisplay);
 
@@ -167,20 +155,20 @@ class DropdownFieldDumb extends React.Component{
   };
 
   handleTyping(e) {
-    if (!this.typing) this.typing = true;
-    if (this.props.onTyping) this.props.onTyping(e);
+    this.typing = true;
     this.InMenuMode = false;
-    if (this.typing) {
-      this.setState({toDisplay: e});
-    }
+    if (this.props.onTyping) this.props.onTyping(e);
+    this.setState({toDisplay: e});
   }
 
   handleOnBlur(e) {
-    this.typing = false;
     if (!this.InMenuMode) {
-      if (this.deleteMode && !this.state.toDisplay) this.text = '';
-      if (this.props.onBlur) this.props.onBlur(e);
-
+      // if (this.props.onBlur) this.props.onBlur(e);
+      this.typing = false;
+      if (this.deleteMode && !this.state.toDisplay) {
+        this.text = '';
+      }
+      this.deleteMode = false;
       this.setState({toDisplay: this.text});
     }
   }
@@ -192,13 +180,15 @@ class DropdownFieldDumb extends React.Component{
     this.text = this.props.entityToText(e);
     if (this.props.onSelect) this.props.onSelect(e);
     this.InMenuMode = false;
-    setTimeout( () => { this.refs[`DropdownFieldDumb_${this.props.alias}`].focus() }, 0 );
     this.setState({toDisplay: this.props.entityToText(e)});
   }
 
-  handleRenderWithInsertedValue(text) {
+  InsertedValueFromPropsToState(text, value) {
     this.text = text;
-    this.setState({toDisplay: text});
+    this.setState({
+      toDisplay: text,
+      value: value
+    });
   }
 
   handleDeleteFromIcon() {
@@ -236,16 +226,14 @@ class DropdownFieldDumb extends React.Component{
     if (this.props.onChange) this.props.onChange(e);
   }
 
-  handleMenuDisplay() {
+  handleShowMenu() {
     this.menuShow ? this.menuShow = false : this.menuShow = true;
     if (this.props.menuToggled) this.props.menuToggled(this.menuShow);
     if (this.menuShow) {
-      // setTimeout( () => { this.refs[`DropdownFieldDumb_${this.props.alias}`].focus() }, 0 );
       this.setState({});
     } else {
       this.typing = false;
       this.setState({});
-      // this.setState({toDisplay: this.text});
     }
   }
 
@@ -264,81 +252,18 @@ class DropdownFieldDumb extends React.Component{
         };
       });
     }
-    let verificationOfData = dataVerify(typeOfValue, this.props.value, this.props.alias);
+    let verificationOfData = dataVerify(typeOfValue, this.props.value);
     if (!this.props.enableDev && !verificationOfData) {
-      console.error('DropdownDumb, alias: ' + this.props.alias + ' -> Inserted type of value "' + typeof(prop.value) + '" is not included as value-type.');
+      console.error('DropdownDumb, alias: ' + this.props.alias + ' -> Inserted type of value "' + typeof(this.props.value) + '" is not included as value-type.');
     } else {
-      const isValueInData = verifyKnownData(typeOfValue, this.props.value);
-      return {data: list, value: resultEtv, verified: isValueInData};
+      return {data: list, value: resultEtv, verified: verificationOfData};
     }
   }
 
-  // calculateDataForRedner() {
-  //   let data;
-  //   let notificationText;
-  //   let currentFilter;
-  //   let output;
-  //   //resolving string arr or arr of objects
-  //   if (this.props.data && this.props.data.length > 0 && typeof(this.props.data[0]) === 'string' && !this.props.entityToText && !this.props.entityToValue) {
-  //     output = resolveStringArrAsInput(this.props.data, this.props.value);
-  //     if (this.props.value && strOutput.value) this.handleRenderWithInsertedValue(this.props.value);
-  //   } else {
-  //     output = this.resolveObjArrAsInput(this.props, this.typing, this.text, this.state.toDisplay);
-  //
-  //   }
-  //   if (this.props.errorText || this.props.warnText) {
-  //     if (this.props.errorText) {
-  //       notificationText = this.props.errorText;
-  //     } else {
-  //       notificationText = this.props.warnText;
-  //     }
-  //   } else {
-  //     notificationText = undefined;
-  //   }
-  //   if (this.props.filter) {
-  //     currentFilter = this.props.filter;
-  //   } else if (this.typing && !this.menuShow) {
-  //     currentFilter = AbstractAutoComplete.fuzzyFilter;
-  //   } else {
-  //     currentFilter = AbstractAutoComplete.noFilter;
-  //   }
-  //   return { output, notificationText, currentFilter };
-  // };
-
 	render() {
-    // const dataForRender = this.calculateDataForRedner();
     const { notificationText, currentFilter } = this.dataForRender;
     const { data } = this.dataForRender.output;
-    // //deciding about inserted vale - if any
-    // if (!dataForRender.output.verified && this.props.enableDev) {
-    //   let pom = {};
-    //     pom[dataForRender.output.value] = dataForRender.output.verified;
-    //     if (this.props.notIncludedInData) {
-    //       this.props.notIncludedInData(pom);
-    //     }
-    // } else if (this.state.toDisplay !== this.text) {
-    //   let pom;
-    //   this.props.data.forEach( obj => {
-    //     if (dataForRender.output.verified == obj[dataForRender.output.value]) {
-    //       pom = obj;
-    //     }
-    //   });
-    //   this.handleRenderWithInsertedValue(this.props.entityToText(pom));
-    // }
 
-    // if (!objOutput.verified && this.props.value && this.props.isEntity) {
-    //   let pom = {};
-    //   pom[objOutput.value] = this.props.value;
-    //   if (this.props.notIncludedInData) {
-    //     this.props.notIncludedInData(pom);
-    //   } else console.error(`Inserted value ${pom} is not known value!`);
-    // } else if ((this.props.value || this.props.value === 0) && !this.typing && (this.state.toDisplay !== this.text )) {
-    //   this.props.data.forEach( obj => {
-    //     if (this.props.value == obj[objOutput.value]) {
-    //       this.handleRenderWithInsertedValue(this.props.entityToText(obj));
-    //     }
-    //   });
-    // }
 		return (
       <div id={`DropdownFieldDumb_${this.props.alias}`}>
 	      <AbstractAutoComplete
@@ -360,17 +285,18 @@ class DropdownFieldDumb extends React.Component{
             onKeyDown={ this.handleOnKeyDown.bind(this) }
             menuProps={ { onKeyDown: this.handleOnKeyDown.bind(this), onBlur: this.handleOnBlur.bind(this) } }
             menuCloseDelay={ 0 }
+            mode={ this.state.mode }
 	      />
         <ClearIcon
           style={ CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.second }
-          visibility={ this.state.toDisplay ? 'visible' : 'hidden' }
+          visibility={ this.text ? 'visible' : 'hidden' }
           hoverColor={ CONSTANTS.COLORS.normal }
           onClick={ this.handleDeleteFromIcon.bind(this) }
         />
       <MenuIcon
           style={ CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.first }
           hoverColor={ CONSTANTS.COLORS.normal }
-          onClick={ this.handleMenuDisplay.bind(this) }
+          onClick={ this.handleShowMenu.bind(this) }
         />
       </div>
 		);

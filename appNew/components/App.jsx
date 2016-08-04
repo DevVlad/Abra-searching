@@ -240,7 +240,7 @@ class App extends React.Component{
 							entityToText={ obj => obj.text}
 							// entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
 							entityToValue={ object => object.id }
-							value={ 1 }
+							value={ 0 }
 						/>
 					<br/>
 						{/*}<DropdownField2

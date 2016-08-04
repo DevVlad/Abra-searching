@@ -299,6 +299,7 @@ class AbstractAutoComplete extends Component {
       this.close();
       this.props.onNewRequest(chosenRequest, index);
     }, this.props.menuCloseDelay);
+    setTimeout(() => { this.focus() }, 0);
   };
 
   chosenRequestText = (chosenRequest) => {
@@ -361,7 +362,6 @@ class AbstractAutoComplete extends Component {
         anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
       });
     }
-    console.log(this.requestsList, this.props.data);
     if (this.props.onClick && !par) this.props.onClick(e);
   };
 
@@ -385,11 +385,11 @@ class AbstractAutoComplete extends Component {
 
   handleBlur = (event) => {
     if (this.state.focusTextField && this.timerTouchTapCloseId === null) {
+      // Added becouse of inappropriate blur behaviour
       if (this.state.searchText !== this.saveInput || !this.saveInput) {
         this.setState({
-          searchText: this.saveInput,
+          searchText: this.props.searchText,
           open: false,
-          focusTextField: true,
         });
       } else {
         this.close();
