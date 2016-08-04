@@ -46,38 +46,38 @@ class DropdownField extends React.Component{
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.entity) {
-      list = [];
-      list[0] = newProps.entity;
-    } else if (newProps.data) {
-      list = newProps.data.toJS();
-    }
-    // if (newProps.entity && parseInt(newProps.entity.id) === newProps.value && insertMode && isEntity) {
+    // if (newProps.entity) {
     //   list = [];
     //   list[0] = newProps.entity;
-    // }
-    // if (newProps.data && (!insertMode || isTyping || !isEntity)) {
+    // } else if (newProps.data) {
     //   list = newProps.data.toJS();
-    //   isEntity = true;
-    // } else if (!newProps.entity && newProps.data) {
-    //   list = newProps.data.toJS();
-    //   insertMode = true;
-    //   isEntity = true;
     // }
+    if (newProps.entity && parseInt(newProps.entity.id) === newProps.value && insertMode && isEntity) {
+      list = [];
+      list[0] = newProps.entity;
+    }
+    if (newProps.data && (!insertMode || isTyping || !isEntity)) {
+      list = newProps.data.toJS();
+      isEntity = true;
+    } else if (!newProps.entity && newProps.data) {
+      list = newProps.data.toJS();
+      insertMode = true;
+      isEntity = true;
+    }
   }
 
   handleIncoming(e) {
     if (!isTyping) {
-      // insertMode = true;
-      // isEntity = true;
+      insertMode = true;
+      isEntity = true;
       this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, e.id, this.props.alias));
     }
   }
 
   handleTyping(e) {
-    // insertMode = false;
+    insertMode = false;
     isTyping = true;
-    // isEntity = false;
+    isEntity = false;
     if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
   }
 

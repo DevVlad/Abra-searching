@@ -48,7 +48,7 @@ const DropdownFieldDuck = {
 
   	setValueOfEntityId(entity, id, alias) {
   		return dispatch => {
-  				serviceRequestOnInsertedId(id).then(dataServer => dispatch(DropdownFieldDuck.setEntityToText(dataServer.winstrom.kontakt[0], alias)));
+          serviceRequestOnInsertedId(id).then(dataServer => dispatch(DropdownFieldDuck.setEntityToText(dataServer.winstrom.kontakt[0], alias)));
   			};
   	},
 
@@ -78,7 +78,6 @@ const DropdownFieldDuck = {
 
     setDataForMenu(entity, condition, alias) {
       return (dispatch, getState) => {
-        dispatch(DropdownFieldDuck.setDelete(alias, ['data']));
         if (!DropdownFieldDuck.getLoading(getState())) dispatch(DropdownFieldDuck.setLoading(true, alias));
         dispatch(DropdownFieldDuck.setList(condition.right, alias, 0, 10));
       };
@@ -86,7 +85,7 @@ const DropdownFieldDuck = {
 
     setList(filter, alias, paging, resultsToDisplay) {
   		return dispatch => {
-        dispatch(DropdownFieldDuck.setDelete(alias,['data']));
+        dispatch(DropdownFieldDuck.setDelete(alias,['data', 'entity']));
         dispatch(DropdownFieldDuck.setFilter(filter, alias));
   			if (paging === 0) {
   				dispatch(DropdownFieldDuck.setLoading(true, alias));
@@ -165,9 +164,13 @@ const DropdownFieldDuck = {
       return getValueOfEntityFromId(state, alias);
     },
 
-    getData(state, alias) {
-      return getData(state, alias);
-    },
+    getData: createSelector(getAliasState, x => {
+    	if (x === undefined) {
+    		return undefined;
+    	} else {
+    		return x.get('data');
+    	};
+    }),
 
     getLoading(state, alias) {
       return getLoading(state, alias);
@@ -191,14 +194,6 @@ const getValueOfEntityFromId = createSelector(getAliasState, x => {
 		return undefined;
 	} else {
 		return x.get('entity');
-	};
-});
-
-const getData = createSelector(getAliasState, x => {
-	if (x === undefined) {
-		return undefined;
-	} else {
-		return x.get('data');
 	};
 });
 
@@ -248,14 +243,13 @@ function processRequest(dataServer, filter, paging, alias, resultsToDisplay) {
         dispatch(DropdownFieldDuck.setErrorMessage(alias, msg))
         dispatch(DropdownFieldDuck.setDelete(alias, ['data', 'loading']));
 			} else {
-          if (getErrorText(getState(), alias)) dispatch(DropdownFieldDuck.setDelete(alias, ['errorText']));
 					if (paging + 20 > totalCount)  {
 						dispatch(setLimit(dataServer.kontakt, alias, true, resultsToDisplay, paging, totalCount > paging+ dataServer.kontakt.length));
 					} else {
 						dispatch(setLimit(dataServer.kontakt, alias, false, resultsToDisplay, paging, totalCount > paging+ dataServer.kontakt.length));
 					}
 					const count = paging + dataServer.kontakt.length;
-					const dataCount = getData(getState(), alias).size;
+					const dataCount = DropdownFieldDuck.getData(getState(), alias).size;
 					if (totalCount > count && dataCount < resultsToDisplay) {
             dispatch(progressMedium(filter, count, paging, alias, resultsToDisplay));
 					}
@@ -273,7 +267,7 @@ function progressMedium(filter, count, paging, alias, resultsToDisplay) {
 
 function setLimit(list, alias, boolLast, toDisplayLimit, paging, nextLoading) {
 	return (dispatch, getState) => {
-		let counter = getData(getState(), alias).size;
+		let counter = DropdownFieldDuck.getData(getState(), alias).size;
 		let loading = getLoading(getState(), alias);
 		if (loading) {
 			counter = 0;

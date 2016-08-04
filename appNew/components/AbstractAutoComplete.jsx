@@ -352,7 +352,6 @@ class AbstractAutoComplete extends Component {
         searchText: saveInput,
       });
     } else if (!this.state.open && this.requestsList && this.requestsList.length > 1) {
-      console.log('prdel');
       saveInput = this.state.searchText;
       this.setState({
         open: true,
@@ -361,6 +360,7 @@ class AbstractAutoComplete extends Component {
         anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
       });
     }
+    console.log(this.requestsList, this.props.data);
     if (this.props.onClick && !par) this.props.onClick(e);
   };
 
