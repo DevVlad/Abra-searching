@@ -95,7 +95,7 @@ class DropdownFieldDumb extends React.Component{
     }
   }
 
-  componentWillReceiveProps(newProps) {
+  componentWillReceiveProps(newProps, newState) {
     this.dataForRender = this.calculateDataForRedner(newProps, this.state);
     if (this.dataForRender) {
       this.computingDataIncomingOnProps(this.dataForRender, !newProps.value ? true : null);
@@ -107,7 +107,11 @@ class DropdownFieldDumb extends React.Component{
     // } else if (!newProps.value && this.props.onChange) this.setState({toDisplay: ''});
   }
 
-
+  componentWillUpdate(newProps, newState) {
+    if (this.state.toDisplay !== newState.toDisplay) {
+      console.log(this.state, newState);
+    }
+  }
 
   computingDataIncomingOnProps(dataForRender, willmount) {
     //deciding about inserted vale - if any
@@ -166,7 +170,7 @@ class DropdownFieldDumb extends React.Component{
     this.text = this.props.entityToText(e);
     if (this.props.onSelect) this.props.onSelect(e);
     this.InMenuMode = false;
-    this.setState({toDisplay: this.props.entityToText(e)});
+    // this.setState({toDisplay: this.props.entityToText(e)});
   }
 
   InsertedValueFromPropsToState(text, value) {

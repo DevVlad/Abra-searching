@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import DropdownFieldDumb2 from './DropdownFieldDumb2.jsx';
 import SvgIcon from 'material-ui/SvgIcon';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
-import Immutable from 'immutable';
+import AbstractAutoComplete from './AbstractAutoComplete.jsx';
 
 import DropdownFieldDuck from '../redux/ducks/dropdownfieldDuck.jsx';
 
@@ -55,7 +55,12 @@ class DropdownField extends React.Component{
 
   componentWillUpdate(newProps) {
     console.log(newProps);
-    this.list = newProps.data.toJS();
+    if (newProps.entity) {
+
+    } else if (newProps.data) {
+      this.list = newProps.data.toJS();
+    }
+
   }
 
   componentWillReceiveProps(newProps) {
@@ -75,7 +80,7 @@ class DropdownField extends React.Component{
 
   handleIncoming(e) {
 
-    console.log('prdel', e);
+    console.log('INCOMING UNKNOWN VALUE: ', e);
     // if (!this.isTyping) {
     //   this.insertMode = true;
     //   this.isEntity = true;
@@ -84,10 +89,12 @@ class DropdownField extends React.Component{
   }
 
   handleTyping(e) {
+    this.mode = 'typing';
+
     // this.insertMode = false;
     // this.isTyping = true;
     // this.isEntity = false;
-    // if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
+    if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
   }
 
   handleDeleteFromIcon() {
@@ -141,7 +148,7 @@ class DropdownField extends React.Component{
           entityToValue={ object => object.id }
           value={ this.insertMode ? this.props.value : null }
           onTyping={ this.handleTyping.bind(this) }
-          filter={ item => item }
+          filter={ AbstractAutoComplete.noFilter }
           enableDev={ true }
           entity={ this.props.entity ? this.props.entity : null }
           notIncludedInData={ this.handleIncoming.bind(this) }
