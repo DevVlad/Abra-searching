@@ -288,11 +288,11 @@ class DropdownFieldDumb extends React.Component{
           hoverColor={ CONSTANTS.COLORS.normal }
           onClick={ this.handleDeleteFromIcon.bind(this) }
         />
-      <MenuIcon
+      {/*}<MenuIcon
           style={ CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.first }
           hoverColor={ CONSTANTS.COLORS.normal }
           onClick={ this.handleShowMenu.bind(this) }
-        />
+        />*/}
       </div>
 		);
 	};

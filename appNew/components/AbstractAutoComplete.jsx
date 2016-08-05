@@ -10,6 +10,15 @@ import propTypes from 'material-ui/utils/propTypes';
 import warning from 'warning';
 import deprecated from 'material-ui/utils/deprecatedPropType';
 
+import CONSTANTS from './CONSTANTS.jsx';
+import SvgIcon from 'material-ui/SvgIcon';
+
+const MenuIcon = (props) => (
+  <SvgIcon {...props} color={ CONSTANTS.COLORS.disabled }>
+    <path d="M7 10l5 5 5-5z" />
+  </SvgIcon>
+);
+
 function getStyles(props, context, state) {
   const {anchorEl} = state;
   const {fullWidth} = props;
@@ -558,6 +567,11 @@ class AbstractAutoComplete extends Component {
           errorStyle={errorStyle}
           style={textFieldStyle}
           onClick={this.handleOnClick}
+        />
+        <MenuIcon
+            style={ {width: '20px', height: '20px', transform: 'translate(+236px, -35px)'} }
+            hoverColor={ CONSTANTS.COLORS.normal }
+            onClick={ this.handleOnClick }
         />
         <Popover
           style={styles.popover}
