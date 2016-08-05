@@ -98,23 +98,23 @@ class DropdownFieldDumb extends React.Component{
 
   componentWillMount() {
       this.dataForRender = this.calculateDataForRedner(this.props, this.state);
-      if (this.dataForRender.output) {
+      if (this.dataForRender) {
         this.computingDataIncomingOnProps(this.dataForRender);
       }
   }
 
   computingDataIncomingOnProps(dataForRender) {
     //deciding about inserted vale - if any
-    if (!dataForRender.output.verified && this.props.enableDev) {
+    if (!dataForRender.verified && this.props.enableDev) {
       let pom = {};
-        pom[dataForRender.output.value] = dataForRender.output.verified;
+        pom[dataForRender.value] = dataForRender.verified;
         if (this.props.notIncludedInData) {
           this.props.notIncludedInData(pom);
         }
     } else if (this.state.toDisplay !== this.text && this.props.value != this.state.value) {
       let pom;
       this.props.data.forEach( obj => {
-        if (dataForRender.output.verified == obj[dataForRender.output.value]) {
+        if (dataForRender.verified == obj[dataForRender.value]) {
           pom = obj;
         }
       });
@@ -144,14 +144,7 @@ class DropdownFieldDumb extends React.Component{
     } else {
       notificationText = undefined;
     }
-    if (props.filter) {
-      currentFilter = props.filter;
-    } else if (this.typing && !this.menuShow) {
-      currentFilter = AbstractAutoComplete.fuzzyFilter;
-    } else {
-      currentFilter = AbstractAutoComplete.noFilter;
-    }
-    return { output, notificationText, currentFilter };
+    return {...output};
   };
 
   handleTyping(e) {
@@ -261,14 +254,22 @@ class DropdownFieldDumb extends React.Component{
   }
 
 	render() {
-    const { notificationText, currentFilter } = this.dataForRender;
-    const { data } = this.dataForRender.output;
+    const { data } = this.dataForRender;
+
+    let currentFilter;
+    if (this.props.filter) {
+      currentFilter = this.props.filter;
+    } else if (this.typing && !this.menuShow) {
+      currentFilter = AbstractAutoComplete.fuzzyFilter;
+    } else {
+      currentFilter = AbstractAutoComplete.noFilter;
+    }
 
 		return (
       <div id={`DropdownFieldDumb_${this.props.alias}`}>
 	      <AbstractAutoComplete
 		        floatingLabelText={ this.props.label }
-            errorText={ notificationText }
+            errorText={ this.props.errorText || this.props.warnText }
             errorStyle={ this.props.errorText ? {color: CONSTANTS.COLORS.error} : {color: CONSTANTS.COLORS.warning} }
             dataSourceConfig={ {  text: 'text', value: 'text' } }
             dataSource={ data }
