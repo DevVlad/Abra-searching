@@ -78,6 +78,9 @@ class DropdownField extends React.Component{
 
   handleOnSelect(e) {
     this.props.onChange(e.id);
+    if (this.props.filter !== 'a') {
+      this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
+    }
   }
 
   handleOnBLur(e) {
@@ -132,7 +135,7 @@ class DropdownField extends React.Component{
 
 function mapStateToProps(state, props) {
   return {...props,
-    // filter: DropdownFieldDuck.getFilter(state, props.alias),
+    filter: DropdownFieldDuck.getFilter(state, props.alias),
     data: DropdownFieldDuck.getData(state, props.alias),
     loading: DropdownFieldDuck.getLoading(state, props.alias),
     entity: DropdownFieldDuck.getEntityfromId(state, props.alias),
