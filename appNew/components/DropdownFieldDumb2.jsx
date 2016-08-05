@@ -88,27 +88,33 @@ class DropdownFieldDumb extends React.Component{
     this.dataForRender;
   }
 
-  componentWillReceiveProps(newProps) {
-    if (newProps.value && newProps.data && newProps.data.length === 1) {
-      this.text = this.props.entityToText(newProps.data[0]);
-    } else if (newProps.value) {
-      this.text = '';
-    } else if (!newProps.value && this.props.onChange) this.setState({toDisplay: ''});
-  }
-
   componentWillMount() {
-      this.dataForRender = this.calculateDataForRedner(this.props, this.state);
-      if (this.dataForRender) {
-        this.computingDataIncomingOnProps(this.dataForRender);
-      }
+    this.dataForRender = this.calculateDataForRedner(this.props, this.state);
+    if (this.dataForRender) {
+      this.computingDataIncomingOnProps(this.dataForRender, true);
+    }
   }
 
-  computingDataIncomingOnProps(dataForRender) {
+  componentWillReceiveProps(newProps) {
+    this.dataForRender = this.calculateDataForRedner(newProps, this.state);
+    if (this.dataForRender) {
+      this.computingDataIncomingOnProps(this.dataForRender, !newProps.value ? true : null);
+    }
+    // if (newProps.value && newProps.data && newProps.data.length === 1) {
+    //   this.text = this.props.entityToText(newProps.data[0]);
+    // } else if (newProps.value) {
+    //   this.text = '';
+    // } else if (!newProps.value && this.props.onChange) this.setState({toDisplay: ''});
+  }
+
+
+
+  computingDataIncomingOnProps(dataForRender, willmount) {
     //deciding about inserted vale - if any
     if (!dataForRender.verified && this.props.enableDev) {
       let pom = {};
         pom[dataForRender.value] = dataForRender.verified;
-        if (this.props.notIncludedInData) {
+        if (this.props.notIncludedInData && !willmount) {
           this.props.notIncludedInData(pom);
         }
     } else if (this.state.toDisplay !== this.text && this.props.value != this.state.value) {
@@ -123,9 +129,6 @@ class DropdownFieldDumb extends React.Component{
   }
 
   calculateDataForRedner(props, state) {
-    let data;
-    let notificationText;
-    let currentFilter;
     let output;
     //resolving string arr or arr of objects
     if (props.data && props.data.length > 0 && typeof(props.data[0]) === 'string' && !props.entityToText && !props.entityToValue) {
@@ -133,16 +136,6 @@ class DropdownFieldDumb extends React.Component{
       // if (props.value && strOutput.value) this.InsertedValueFromPropsToState(props.value, props.value);
     } else {
       output = this.resolveObjArrAsInput(props, this.typing, this.text, state.toDisplay);
-
-    }
-    if (props.errorText || props.warnText) {
-      if (props.errorText) {
-        notificationText = props.errorText;
-      } else {
-        notificationText = props.warnText;
-      }
-    } else {
-      notificationText = undefined;
     }
     return {...output};
   };
@@ -156,7 +149,7 @@ class DropdownFieldDumb extends React.Component{
 
   handleOnBlur(e) {
     if (!this.InMenuMode) {
-      // if (this.props.onBlur) this.props.onBlur(e);
+      if (this.props.onBlur) this.props.onBlur(e);
       this.typing = false;
       if (this.deleteMode && !this.state.toDisplay) {
         this.text = '';
@@ -230,24 +223,24 @@ class DropdownFieldDumb extends React.Component{
     }
   }
 
-  resolveObjArrAsInput() {
+  resolveObjArrAsInput(props) {
     let typeOfValue = [];
     let pom = {};
     let list;
-    const resultEtv = whatIsOnEtv(this.props.data, this.props.entityToValue);
+    const resultEtv = whatIsOnEtv(props.data, props.entityToValue);
     if (!resultEtv) {
-      console.error(`resultEtv does not exist in ${this.props.alias}`);
+      console.error(`resultEtv does not exist in ${props.alias}`);
     } else {
-      list = this.props.data.map(entity => {
+      list = props.data.map(entity => {
         typeOfValue.push(entity[resultEtv]);
         return {...entity,
-          'text': this.props.entityToText(entity)
+          'text': props.entityToText(entity)
         };
       });
     }
-    let verificationOfData = dataVerify(typeOfValue, this.props.value);
-    if (!this.props.enableDev && !verificationOfData) {
-      console.error('DropdownDumb, alias: ' + this.props.alias + ' -> Inserted type of value "' + typeof(this.props.value) + '" is not included as value-type.');
+    let verificationOfData = dataVerify(typeOfValue, props.value);
+    if (!props.enableDev && !verificationOfData) {
+      console.error('DropdownDumb, alias: ' + props.alias + ' -> Inserted type of value "' + typeof(props.value) + '" is not included as value-type.');
     } else {
       return {data: list, value: resultEtv, verified: verificationOfData};
     }
@@ -264,7 +257,7 @@ class DropdownFieldDumb extends React.Component{
     } else {
       currentFilter = AbstractAutoComplete.noFilter;
     }
-
+    console.log('render Dummy',data, this.state);
 		return (
       <div id={`DropdownFieldDumb_${this.props.alias}`}>
 	      <AbstractAutoComplete

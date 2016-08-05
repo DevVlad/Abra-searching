@@ -243,7 +243,7 @@ class App extends React.Component{
 							value={ 0 }
 						/>
 					<br/>
-						{/*}<DropdownField2
+						<DropdownField2
 							alias='cleverDropdown2'
 							label='clever dropdown new2'
 							entityType="kontakt"
@@ -253,7 +253,7 @@ class App extends React.Component{
 							entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
 							filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 							loadingNotify={ true }
-						/>*/}
+						/>
 				</div>
 			</div>
 		)

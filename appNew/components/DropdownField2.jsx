@@ -45,40 +45,49 @@ class DropdownField extends React.Component{
     this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
   }
 
+  shouldComponentUpdate(newProps) {
+    if (newProps.data !== this.props.data && newProps.data.size > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  componentWillUpdate(newProps) {
+    console.log(newProps);
+    this.list = newProps.data.toJS();
+  }
+
   componentWillReceiveProps(newProps) {
-    // if (newProps.entity) {
+    // if (newProps.entity && parseInt(newProps.entity.id) === newProps.value && this.insertMode && this.isEntity) {
     //   this.list = [];
     //   this.list[0] = newProps.entity;
-    // } else if (newProps.data) {
-    //   this.list = newProps.data.toJS();
     // }
-    if (newProps.entity && parseInt(newProps.entity.id) === newProps.value && this.insertMode && this.isEntity) {
-      this.list = [];
-      this.list[0] = newProps.entity;
-    }
-    if (newProps.data && (!this.insertMode || this.isTyping || !this.isEntity)) {
-      this.list = newProps.data.toJS();
-      this.isEntity = true;
-    } else if (!newProps.entity && newProps.data) {
-      this.list = newProps.data.toJS();
-      this.insertMode = true;
-      this.isEntity = true;
-    }
+    // if (newProps.data && (!this.insertMode || this.isTyping || !this.isEntity)) {
+    //   this.list = newProps.data.toJS();
+    //   this.isEntity = true;
+    // } else if (!newProps.entity && newProps.data) {
+    //   this.list = newProps.data.toJS();
+    //   this.insertMode = true;
+    //   this.isEntity = true;
+    // }
   }
 
   handleIncoming(e) {
-    if (!this.isTyping) {
-      this.insertMode = true;
-      this.isEntity = true;
-      this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, e.id, this.props.alias));
-    }
+
+    console.log('prdel', e);
+    // if (!this.isTyping) {
+    //   this.insertMode = true;
+    //   this.isEntity = true;
+    //   this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, e.id, this.props.alias));
+    // }
   }
 
   handleTyping(e) {
-    this.insertMode = false;
-    this.isTyping = true;
-    this.isEntity = false;
-    if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
+    // this.insertMode = false;
+    // this.isTyping = true;
+    // this.isEntity = false;
+    // if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
   }
 
   handleDeleteFromIcon() {
@@ -87,15 +96,15 @@ class DropdownField extends React.Component{
 
   handleOnSelect(e) {
     // if (this.props.entity) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['entity']));
-    this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
-    this.props.onChange(e.id);
+    // this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
+    // this.props.onChange(e.id);
   }
 
   handleOnBLur(e) {
-    this.insertMode = true;
-    this.isTyping = false;
-    if (this.props.onBlur) this.props.onBlur(e);
-    if (this.props.errorText) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['errorText']));
+    // this.insertMode = true;
+    // this.isTyping = false;
+    // if (this.props.onBlur) this.props.onBlur(e);
+    // if (this.props.errorText) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['errorText']));
   }
 
   handleCurrentLoading(loading) {
@@ -116,7 +125,7 @@ class DropdownField extends React.Component{
   }
 
   render() {
-    console.log(this.props.value);
+    console.log('render', this.list);
     return (
       <div id={`DropdownFieldCleverNEW_${this.props.alias}`}>
         <DropdownFieldDumb2
@@ -148,7 +157,7 @@ class DropdownField extends React.Component{
 
 function mapStateToProps(state, props) {
   return {...props,
-    filter: DropdownFieldDuck.getFilter(state, props.alias),
+    // filter: DropdownFieldDuck.getFilter(state, props.alias),
     data: DropdownFieldDuck.getData(state, props.alias),
     loading: DropdownFieldDuck.getLoading(state, props.alias),
     entity: DropdownFieldDuck.getEntityfromId(state, props.alias),
