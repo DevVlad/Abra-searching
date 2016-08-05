@@ -76,16 +76,12 @@ class DropdownField extends React.Component{
     if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
   }
 
-  handleDeleteFromIcon() {
-    this.props.onChange(undefined);
-  }
-
   handleOnSelect(e) {
     this.props.onChange(e.id);
   }
 
   handleOnBLur(e) {
-    // if (this.props.onBlur) this.props.onBlur(e);
+    if (this.props.onBlur) this.props.onBlur(e);
     if (this.props.errorText) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['errorText']));
   }
 
@@ -107,7 +103,6 @@ class DropdownField extends React.Component{
   }
 
   render() {
-    console.log('render', this.props.value);
     return (
       <div id={`DropdownFieldCleverNEW_${this.props.alias}`}>
         <DropdownFieldDumb2
@@ -127,8 +122,6 @@ class DropdownField extends React.Component{
           enableDev={ true }
           entity={ this.props.entity ? this.props.entity : null }
           notIncludedInData={ this.handleIncoming.bind(this) }
-          isEntity={ this.isEntity }
-          // menuToggled={ this.handleMenuIcon.bind(this) }
           />
       { this.handleCurrentLoading(this.props.loading) }
       </div>

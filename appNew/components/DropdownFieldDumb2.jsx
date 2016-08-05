@@ -73,7 +73,6 @@ class DropdownFieldDumb extends React.Component{
     onKeyDown: PropTypes.func,
     notIncludedInData: PropTypes.func,
     enableDev: PropTypes.bool,
-    menuToggled: PropTypes.func,
   };
 
   constructor(props) {
@@ -222,7 +221,6 @@ class DropdownFieldDumb extends React.Component{
 
   handleShowMenu() {
     this.menuShow ? this.menuShow = false : this.menuShow = true;
-    if (this.props.menuToggled) this.props.menuToggled(this.menuShow);
     if (this.menuShow) {
       this.setState({});
     } else {
