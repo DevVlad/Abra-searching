@@ -120,8 +120,12 @@ class DropdownFieldDumb extends React.Component{
         if (props.notIncludedInData && !willmount && props.value !== this.controlledVal) {
           this.controlledVal = props.value;
           props.notIncludedInData(pom);
+        } else if (this.state.toDisplay && this.state.value && !props.value) {
+          this.text = '';
+          this.setState({toDisplay: '', value: undefined});
         }
-    } else if ((this.state.toDisplay !== this.text && props.value != this.state.value) || (this.state.toDisplay === this.text && dataForRender.verified && props.value != this.state.value)) {
+    } else if ((this.state.toDisplay !== this.text && props.value != this.state.value) ||
+        (this.state.toDisplay === this.text && dataForRender.verified && props.value != this.state.value)) {
       let pom;
       props.data.forEach( obj => {
         if (dataForRender.verified == obj[dataForRender.value]) {
@@ -252,7 +256,6 @@ class DropdownFieldDumb extends React.Component{
 
 	render() {
     const { data } = this.dataForRender;
-
     let currentFilter;
     if (this.props.filter) {
       currentFilter = this.props.filter;

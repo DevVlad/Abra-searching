@@ -46,7 +46,10 @@ class DropdownField extends React.Component{
   }
 
   shouldComponentUpdate(newProps) {
-    if ((newProps.data !== this.props.data && newProps.data.size > 0) || (newProps.value &&  newProps.value !== this.props.value) || (newProps.entity && this.list[0] !== newProps.entity)) {
+    if ((newProps.data !== this.props.data && newProps.data.size > 0) ||
+    (newProps.value && newProps.value !== this.props.value) ||
+    (newProps.entity && this.list[0] !== newProps.entity) ||
+    (!newProps.value && this.props.value)) {
       return true;
     } else {
       return false;
@@ -61,7 +64,6 @@ class DropdownField extends React.Component{
     } else if (newProps.data) {
       this.list = newProps.data.toJS();
     }
-
   }
 
   handleIncoming(e) {
@@ -105,6 +107,7 @@ class DropdownField extends React.Component{
   }
 
   render() {
+    console.log('render', this.props.value);
     return (
       <div id={`DropdownFieldCleverNEW_${this.props.alias}`}>
         <DropdownFieldDumb2
