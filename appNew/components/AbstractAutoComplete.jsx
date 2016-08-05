@@ -229,7 +229,7 @@ class AbstractAutoComplete extends Component {
         searchText: nextProps.searchText,
       });
     }
-    if (this.state.open !== nextProps.open && nextProps.dataSource.length > 1) {
+    if (nextProps.open && this.state.open !== nextProps.open && nextProps.dataSource.length > 1) {
       this.setState({
         open: nextProps.open,
         anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),

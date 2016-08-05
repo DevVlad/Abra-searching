@@ -48,8 +48,7 @@ class DropdownField extends React.Component{
     (newProps.entity && this.list[0] !== newProps.entity) ||
     (!newProps.value && this.props.value) ||
     (this.props.errorText !== newProps.errorText || this.props.errorTextLocale !== newProps.errorTextLocale ) ||
-    (this.props.warnText !== newProps.warnText) ||
-    (newProps.loading !== this.props.loading)
+    (this.props.warnText !== newProps.warnText)
     ) {
       return true;
     } else {
@@ -98,23 +97,6 @@ class DropdownField extends React.Component{
     if (this.props.onBlur) this.props.onBlur(e);
   }
 
-  handleCurrentLoading(loading) {
-    if (loading && this.props.loadingNotify) {
-      return (
-        <RefreshIndicator
-          size={40}
-          left={10}
-          top={0}
-          status="loading"
-          style={ {
-              display: 'inline-block',
-              position: 'relative',
-          } }
-        />
-      );
-    }
-  }
-
   render() {
     return (
       <div id={`DropdownFieldCleverNEW_${this.props.alias}`}>
@@ -136,7 +118,6 @@ class DropdownField extends React.Component{
           entity={ this.props.entity ? this.props.entity : null }
           notIncludedInData={ this.handleIncoming.bind(this) }
           />
-        { this.handleCurrentLoading(this.props.loading) }
       </div>
     );
   };
@@ -147,7 +128,7 @@ function mapStateToProps(state, props) {
   return {...props,
     filter: DropdownFieldDuck.getFilter(state, props.alias),
     data: DropdownFieldDuck.getData(state, props.alias),
-    loading: DropdownFieldDuck.getLoading(state, props.alias),
+    // loading: DropdownFieldDuck.getLoading(state, props.alias),
     entity: DropdownFieldDuck.getEntityfromId(state, props.alias),
     errorTextLocale: DropdownFieldDuck.getErrorText(state, props.alias),
   };
