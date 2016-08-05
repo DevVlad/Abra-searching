@@ -46,7 +46,7 @@ class DropdownField extends React.Component{
   }
 
   shouldComponentUpdate(newProps) {
-    if (newProps.data !== this.props.data && newProps.data.size > 0) {
+    if ((newProps.data !== this.props.data && newProps.data.size > 0) || (newProps.value &&  newProps.value !== this.props.value) || (newProps.entity && this.list[0] !== newProps.entity)) {
       return true;
     } else {
       return false;
@@ -54,46 +54,23 @@ class DropdownField extends React.Component{
   }
 
   componentWillUpdate(newProps) {
-    console.log(newProps);
     if (newProps.entity) {
-
+      this.list = [];
+      this.list.push(newProps.entity);
+      this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
     } else if (newProps.data) {
       this.list = newProps.data.toJS();
     }
 
   }
 
-  componentWillReceiveProps(newProps) {
-    // if (newProps.entity && parseInt(newProps.entity.id) === newProps.value && this.insertMode && this.isEntity) {
-    //   this.list = [];
-    //   this.list[0] = newProps.entity;
-    // }
-    // if (newProps.data && (!this.insertMode || this.isTyping || !this.isEntity)) {
-    //   this.list = newProps.data.toJS();
-    //   this.isEntity = true;
-    // } else if (!newProps.entity && newProps.data) {
-    //   this.list = newProps.data.toJS();
-    //   this.insertMode = true;
-    //   this.isEntity = true;
-    // }
-  }
-
   handleIncoming(e) {
-
-    console.log('INCOMING UNKNOWN VALUE: ', e);
-    // if (!this.isTyping) {
-    //   this.insertMode = true;
-    //   this.isEntity = true;
-    //   this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, e.id, this.props.alias));
-    // }
+    if (e.id) {
+      this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, e.id, this.props.alias));
+    }
   }
 
   handleTyping(e) {
-    this.mode = 'typing';
-
-    // this.insertMode = false;
-    // this.isTyping = true;
-    // this.isEntity = false;
     if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
   }
 
@@ -102,16 +79,12 @@ class DropdownField extends React.Component{
   }
 
   handleOnSelect(e) {
-    // if (this.props.entity) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['entity']));
-    // this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
-    // this.props.onChange(e.id);
+    this.props.onChange(e.id);
   }
 
   handleOnBLur(e) {
-    // this.insertMode = true;
-    // this.isTyping = false;
     // if (this.props.onBlur) this.props.onBlur(e);
-    // if (this.props.errorText) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['errorText']));
+    if (this.props.errorText) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['errorText']));
   }
 
   handleCurrentLoading(loading) {
@@ -132,7 +105,6 @@ class DropdownField extends React.Component{
   }
 
   render() {
-    console.log('render', this.list);
     return (
       <div id={`DropdownFieldCleverNEW_${this.props.alias}`}>
         <DropdownFieldDumb2
@@ -146,7 +118,7 @@ class DropdownField extends React.Component{
           onBlur={ this.handleOnBLur.bind(this) }
           entityToText={ this.props.entityToText }
           entityToValue={ object => object.id }
-          value={ this.insertMode ? this.props.value : null }
+          value={ this.props.value }
           onTyping={ this.handleTyping.bind(this) }
           filter={ AbstractAutoComplete.noFilter }
           enableDev={ true }
