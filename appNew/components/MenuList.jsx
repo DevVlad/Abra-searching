@@ -7,8 +7,6 @@ import CONSTANTS from './CONSTANTS.jsx';
 
 import './App.css';
 
-const ErrorCondition = true;
-
 class MenuList extends React.Component{
   static propTypes = {
       alias: PropTypes.string,

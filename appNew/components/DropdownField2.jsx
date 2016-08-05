@@ -46,7 +46,11 @@ class DropdownField extends React.Component{
     if ((newProps.data !== this.props.data && newProps.data.size > 0) ||
     (newProps.value && newProps.value !== this.props.value) ||
     (newProps.entity && this.list[0] !== newProps.entity) ||
-    (!newProps.value && this.props.value)) {
+    (!newProps.value && this.props.value) ||
+    (this.props.errorText !== newProps.errorText || this.props.errorTextLocale !== newProps.errorTextLocale ) ||
+    (this.props.warnText !== newProps.warnText) ||
+    (newProps.loading !== this.props.loading)
+    ) {
       return true;
     } else {
       return false;
@@ -60,6 +64,15 @@ class DropdownField extends React.Component{
       this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
     } else if (newProps.data) {
       this.list = newProps.data.toJS();
+    }
+  }
+
+  componentWillReceiveProps(newProps, newState) {
+    if (newProps.errorTextLocale !== this.props.errorTextLocale || newProps.errorText !== this.props.errorText) {
+      if (!newProps.errorText && !newProps.errorTextLocale) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
+    }
+    if (newProps.warnText !== this.props.warnText) {
+      if (!newProps.errorText) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
     }
   }
 
@@ -81,8 +94,8 @@ class DropdownField extends React.Component{
   }
 
   handleOnBLur(e) {
+    if (this.props.errorTextLocale) this.props.dispatch(DropdownFieldDuck.setErrorMessage(this.props.alias, undefined));
     if (this.props.onBlur) this.props.onBlur(e);
-    if (this.props.errorText) this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['errorText']));
   }
 
   handleCurrentLoading(loading) {
@@ -109,7 +122,7 @@ class DropdownField extends React.Component{
           alias={ this.props.alias }
           label={ this.props.label }
           data={ this.list }
-          errorText={ this.props.errorText }
+          errorText={ this.props.errorText ? this.props.errorText : this.props.errorTextLocale }
           warnText={ this.props.warnText }
           onChange={ this.props.onChange.bind(this) }
           onSelect={ this.handleOnSelect.bind(this) }
@@ -136,7 +149,7 @@ function mapStateToProps(state, props) {
     data: DropdownFieldDuck.getData(state, props.alias),
     loading: DropdownFieldDuck.getLoading(state, props.alias),
     entity: DropdownFieldDuck.getEntityfromId(state, props.alias),
-    errorText: DropdownFieldDuck.getErrorText(state, props.alias),
+    errorTextLocale: DropdownFieldDuck.getErrorText(state, props.alias),
   };
 };
 
