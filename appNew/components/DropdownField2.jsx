@@ -36,9 +36,6 @@ class DropdownField extends React.Component{
   constructor(props) {
     super(props);
     this.list = [];
-    this.insertMode = true;
-    this.isTyping = false;
-    this.isEntity = true;
   }
 
   componentWillMount() {
@@ -73,7 +70,7 @@ class DropdownField extends React.Component{
   }
 
   handleTyping(e) {
-    if (e) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
+    if (e && e!== 'a') this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
   }
 
   handleOnSelect(e) {
@@ -98,7 +95,7 @@ class DropdownField extends React.Component{
           status="loading"
           style={ {
               display: 'inline-block',
-              position: 'relative'
+              position: 'relative',
           } }
         />
       );
@@ -126,7 +123,7 @@ class DropdownField extends React.Component{
           entity={ this.props.entity ? this.props.entity : null }
           notIncludedInData={ this.handleIncoming.bind(this) }
           />
-      { this.handleCurrentLoading(this.props.loading) }
+        { this.handleCurrentLoading(this.props.loading) }
       </div>
     );
   };

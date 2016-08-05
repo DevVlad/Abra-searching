@@ -151,6 +151,7 @@ class DropdownFieldDumb extends React.Component{
         this.text = '';
       }
       this.deleteMode = false;
+      this.menuShow = false;
       this.setState({toDisplay: this.text});
     }
   }
@@ -220,7 +221,6 @@ class DropdownFieldDumb extends React.Component{
 
   resolveStrArrAsInput(data, value) {
       const resultSTR = compareString(data);
-      console.log(resultSTR);
       let verificationOfData = dataVerify(data, props.value);
       if (!resultSTR && value) console.error("Value on props is not included in props data!");
       return { data, value: value && resultSTR ? value : null,   verified: verificationOfData };
@@ -258,6 +258,7 @@ class DropdownFieldDumb extends React.Component{
     } else {
       currentFilter = AbstractAutoComplete.noFilter;
     }
+
 		return (
       <div id={`DropdownFieldDumb_${this.props.alias}`}>
 	      <AbstractAutoComplete
@@ -268,7 +269,7 @@ class DropdownFieldDumb extends React.Component{
             dataSource={ data }
             disabled={ false }
             open={ this.menuShow }
-            ref={`DropdownFieldDumb_${this.props.alias}`}
+            ref={ `DropdownFieldDumb_${this.props.alias}` }
             filter={ currentFilter }
             menuStyle = { { maxHeight: '300px' } }
             onUpdateInput={ this.handleTyping.bind(this) }

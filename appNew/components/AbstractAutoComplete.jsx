@@ -234,6 +234,7 @@ class AbstractAutoComplete extends Component {
         open: nextProps.open,
         anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
       });
+      if (nextProps.open) setTimeout(() => { this.focus() }, 0);
     }
   }
 
@@ -312,7 +313,7 @@ class AbstractAutoComplete extends Component {
 
   handleEscKeyDown = () => {
     this.close();
-    this.focus();
+    setTimeout(() => { this.focus() }, 0);
   };
 
   handleKeyDown = (event) => {
@@ -350,14 +351,14 @@ class AbstractAutoComplete extends Component {
     if (this.state.open) {
       this.setState({
         open: false,
-        focusTextField: true,
+        // focusTextField: true,
         searchText: this.saveInput,
       });
+      setTimeout(() => { this.focus() }, 0);
     } else if (!this.state.open && this.requestsList && this.requestsList.length > 1) {
       this.saveInput = this.state.searchText;
       this.setState({
         open: true,
-        focusTextField: true,
         searchText: '',
         anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
       });
