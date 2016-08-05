@@ -346,7 +346,7 @@ class AbstractAutoComplete extends Component {
     }
   };
 
-  handleOnClick = (e, par) => {
+  handleOnClick = (e) => {
     if (this.state.open) {
       this.setState({
         open: false,
@@ -362,7 +362,7 @@ class AbstractAutoComplete extends Component {
         anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
       });
     }
-    if (this.props.onClick && !par) this.props.onClick(e);
+    if (this.props.onClick) this.props.onClick(e);
   };
 
   handleChange = (event) => {

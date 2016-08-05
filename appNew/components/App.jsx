@@ -234,13 +234,11 @@ class App extends React.Component{
 							alias='dropdownDumb'
 							label='AbstractBlbej'
 							data={ [{id: 0, text: 'pondeli'}, {id: 1, text: 'utery'}] }
-							// data={ CONSTANTS.FAKEENTITY }
 							onChange={ (e) => console.log('AbstractBlbej onChange', e) }
 							onBlur={ (e) => console.log('AbstractBlbej on Blur', e) }
-							entityToText={ obj => obj.text}
-							// entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
+							entityToText={ obj => obj.text }
 							entityToValue={ object => object.id }
-							value={ 0 }
+							value={ 1 }
 						/>
 					<br/>
 						<DropdownField2

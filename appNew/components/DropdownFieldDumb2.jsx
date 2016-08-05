@@ -36,22 +36,11 @@ function whatIsOnEtv(data, etv) {
 };
 
 function dataVerify(arrOfVal, value) {
-  // if (arrOfVal.length > 0) {
     const reVerify = new RegExp('\\b('+ value + ')');
     const resultVerify = reVerify.exec(arrOfVal);
     if (resultVerify && resultVerify[1]) {
         return resultVerify[1];
     } else return null;
-};
-
-function resolveStringArrAsInput(data, value) {
-    const resultSTR = compareString(data);
-    if (!resultSTR && value) console.error("Value on props is not included in props data!");
-    let output = {
-      data,
-      value: value && resultSTR ? value : null,
-    };
-    return output;
 };
 
 class DropdownFieldDumb extends React.Component{
@@ -138,8 +127,8 @@ class DropdownFieldDumb extends React.Component{
   calculateDataForRedner(props, state) {
     let output;
     //resolving string arr or arr of objects
-    if (props.data && props.data.length > 0 && typeof(props.data[0]) === 'string' && !props.entityToText && !props.entityToValue) {
-      output = resolveStringArrAsInput(props.data, props.value);
+    if (props.data && props.data.length > 0 && typeof(props.data[0]) === 'string') {
+      output = resolveStrArrAsInput(props.data, props.value);
       // if (props.value && strOutput.value) this.InsertedValueFromPropsToState(props.value, props.value);
     } else {
       output = this.resolveObjArrAsInput(props, this.typing, this.text, state.toDisplay);
@@ -229,9 +218,16 @@ class DropdownFieldDumb extends React.Component{
     }
   }
 
+  resolveStrArrAsInput(data, value) {
+      const resultSTR = compareString(data);
+      console.log(resultSTR);
+      let verificationOfData = dataVerify(data, props.value);
+      if (!resultSTR && value) console.error("Value on props is not included in props data!");
+      return { data, value: value && resultSTR ? value : null,   verified: verificationOfData };
+  }
+
   resolveObjArrAsInput(props) {
     let typeOfValue = [];
-    let pom = {};
     let list;
     const resultEtv = whatIsOnEtv(props.data, props.entityToValue);
     if (!resultEtv) {
@@ -248,7 +244,7 @@ class DropdownFieldDumb extends React.Component{
     if (!props.enableDev && !verificationOfData) {
       console.error('DropdownDumb, alias: ' + props.alias + ' -> Inserted type of value "' + typeof(props.value) + '" is not included as value-type.');
     } else {
-      return {data: list, value: resultEtv, verified: verificationOfData};
+      return { data: list, value: resultEtv, verified: verificationOfData };
     }
   }
 
