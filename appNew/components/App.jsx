@@ -37,7 +37,7 @@ import CONSTANTS from './CONSTANTS.jsx';
 		valueOfCheckbox: testValueDuck.getValueOfCheckbox(state),
 		valueOfTextfield: testValueDuck.getValueOfSelectField(state),
 		valueOfTimefield: testValueDuck.getValueOfTimeField(state),
-		valueOfDatefield: testValueDuck.getValueOfDateField(state)
+		valueOfDatefield: testValueDuck.getValueOfDateField(state),
 	};
 })
 class App extends React.Component{
@@ -217,8 +217,7 @@ class App extends React.Component{
 						label='enter a number'
 						errorText=''
 						warnText=''
-						value={ 108 }
-						onBlur={ (x) => {console.log('numberField onBlur ', x)} }
+						value={ 27 }
 					/>
 				<br/>
 					<TextareaField

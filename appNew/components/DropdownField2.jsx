@@ -5,6 +5,7 @@ import SvgIcon from 'material-ui/SvgIcon';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 import AbstractAutoComplete from './AbstractAutoComplete.jsx';
 import Immutable from 'immutable';
+import _ from 'lodash';
 
 import DropdownFieldDuck from '../redux/ducks/dropdownfieldDuck.jsx';
 
@@ -61,18 +62,8 @@ class DropdownField extends React.Component{
       let list = [];
       list.push(newProps.entity);
       this.setState({list});
-      this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
     } else if (newProps.data && !Immutable.is(Immutable.fromJS(this.props.data), Immutable.fromJS(newProps.data))) {
       this.setState({list: newProps.data.toJS()});
-    }
-  }
-
-  componentWillReceiveProps(newProps, newState) {
-    if (newProps.errorTextLocale !== this.props.errorTextLocale || newProps.errorText !== this.props.errorText) {
-      if (!newProps.errorText && !newProps.errorTextLocale) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
-    }
-    if (newProps.warnText !== this.props.warnText) {
-      if (!newProps.errorText) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
     }
   }
 
@@ -83,18 +74,19 @@ class DropdownField extends React.Component{
   }
 
   handleTyping(e) {
-    if (e && e!== 'a') this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
+    this.pom = e;
+    setTimeout(() => {
+      if (e === this.pom) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
+    }, 150);
   }
 
   handleOnSelect(e) {
     this.props.onChange(e.id);
-    if (this.props.filter !== 'a') {
-      this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
-    }
   }
 
   handleOnBLur(e) {
     if (this.props.errorTextLocale) this.props.dispatch(DropdownFieldDuck.setErrorMessage(this.props.alias, undefined));
+    this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['data']));
     if (this.props.onBlur) this.props.onBlur(e);
   }
 

@@ -18,8 +18,8 @@ class TextareaField extends React.Component{
 
   constructor(props) {
     super(props);
-    this.typing = false;
     this.state = {
+      typing: false,
       toDisplay: ''
     };
   }
@@ -30,18 +30,21 @@ class TextareaField extends React.Component{
     }
   }
 
-  componentWillUpdate(newProps) {
-    if (!this.typing && newProps.value && typeof(newProps.value) === 'string' && this.state.toDisplay !== newProps.value) this.setState({toDisplay: newProps.value});
+  componentWillReceiveProps(newProps) {
+    if (!this.state.typing && newProps.value && typeof(newProps.value) === 'string' && this.state.toDisplay !== newProps.value) this.setState({toDisplay: newProps.value});
   }
 
   handleOnBlur(e) {
-    this.props.onBlur(this.state.toDisplay);
-    this.typing = false;
+    if (this.props.onBlur) this.props.onBlur(this.state.toDisplay);
+    this.setState({
+      typing: false,
+      localErrorText: undefined,
+    });
   }
 
   handleOnChange(e) {
-    if (!this.typing) this.typing = true;
-    this.setState({toDisplay: e.target.value});
+    if (this.props.onChange) this.props.onChange(e.target.value);
+    this.setState({toDisplay: e.target.value, typing: true});
   }
 
 	render() {

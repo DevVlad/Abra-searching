@@ -19,9 +19,9 @@ class TextFieldNew extends React.Component{
 
   constructor(props) {
     super(props);
-    this.typing = false;
     this.state = {
-      toDisplay: ''
+      toDisplay: '',
+      typing: false,
     };
   }
 
@@ -32,17 +32,34 @@ class TextFieldNew extends React.Component{
   }
 
   componentWillUpdate(newProps) {
-    if (!this.typing && newProps.value && typeof(newProps.value) === 'string' && this.state.toDisplay !== newProps.value) this.setState({toDisplay: newProps.value});
+    if (!this.state.typing && newProps.value && typeof(newProps.value) === 'string' && this.state.toDisplay !== newProps.value) this.setState({toDisplay: newProps.value});
   }
 
   handleOnBlur(e) {
-    this.props.onBlur(this.state.toDisplay);
-    this.typing = false;
+    if (this.props.onBlur) this.props.onBlur(this.state.toDisplay);
+    this.setState({
+      typing: false,
+      localErrorText: undefined,
+    });
   }
 
   handleOnChange(e) {
-    if (!this.typing) this.typing = true;
-    this.setState({toDisplay: e.target.value});
+    const rightInput = e.target.value.length > 0 ? this.validate(e.target.value) : true;
+    if (rightInput) {
+      if (this.props.onChange) this.props.onChange(e.target.value);
+      this.setState({toDisplay: e.target.value, typing: true});
+    } else {
+      console.error(`Inserted input, ${e.target.value}, is not a string!`);
+      this.setState({
+        localErrorText: `Inserted input, ${e.target.value}, is not a string!`,
+      });
+    }
+  }
+
+  validate(input) {
+    const re = /.*\b([a-zěščřžýáíéďňťůú]+)/i;
+    const result = re.exec(input);
+    return result[1] === input;
   }
 
 	render() {
@@ -52,8 +69,8 @@ class TextFieldNew extends React.Component{
           <TextField
             floatingLabelText={ this.props.label }
             type={ this.props.password ? 'password' : 'text' }
-            errorText={ this.props.errorText ? this.props.errorText : this.props.warnText }
-            errorStyle={ {color: this.props.errorText ? CONSTANTS.COLORS.error : CONSTANTS.COLORS.warning} }
+            errorText={ this.props.errorText ? this.props.errorText : this.props.warnText ? this.props.warnText : this.state.localErrorText }
+            errorStyle={ {color: this.props.errorText || this.state.localErrorText ? CONSTANTS.COLORS.error : CONSTANTS.COLORS.warning} }
             disabled={ this.props.disabled }
             underlineFocusStyle={ {color: CONSTANTS.COLORS.info} }
             onBlur={ this.handleOnBlur.bind(this) }

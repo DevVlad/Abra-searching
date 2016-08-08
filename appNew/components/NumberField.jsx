@@ -18,38 +18,43 @@ class NumberField extends React.Component{
 
   constructor(props) {
     super(props);
-    this.typing = false;
     this.state = {
+      typing: false,
       toDisplay: undefined
     };
   }
 
   componentWillMount() {
-    if (this.props.value && this.props.value !== this.state.toDisplay && typeof(this.props.value) === 'number') {
+    if (this.props.value && this.props.value !== parseInt(this.state.toDisplay) && typeof(this.props.value) === 'number') {
       this.setState({toDisplay: this.props.value});
     }
   }
 
-  componentWillUpdate(newProps) {
-    if (newProps.value && newProps.value !== this.state.toDisplay && typeof(newProps.value) === 'number' && !this.typing) {
+  componentWillReceiveProps(newProps) {
+    if (newProps.value && newProps.value !== parseInt(this.state.toDisplay) && typeof(newProps.value) === 'number' && !this.state.typing) {
       this.setState({toDisplay: newProps.value});
     }
   }
 
   handleOnBlur(e) {
-    this.props.onBlur(parseInt(this.state.toDisplay));
-    this.typing = false;
+    if (this.props.onBlur) this.props.onBlur(parseInt(this.state.toDisplay));
+    this.setState({
+      typing: false,
+      localErrorText: undefined,
+    });
   }
 
   handleOnChange(e) {
-    if (!this.typing) this.typing = true;
-    const rightInput = this.validate(e.target.value);
-    if (rightInput && this.typing) {
-      this.setState({toDisplay: e.target.value});
+    const rightInput = e.target.value.length > 0 ? this.validate(e.target.value) : true;
+    if (rightInput) {
+      if (this.props.onChange) this.props.onChange(parseInt(e.target.value));
+      this.setState({toDisplay: e.target.value, typing: true});
     } else {
       console.error(`Inserted input, ${e.target.value}, is not a number!`);
+      this.setState({
+        localErrorText: `Inserted input, ${e.target.value}, is not a number!`,
+      });
     }
-
   }
 
   validate(input) {
@@ -63,8 +68,8 @@ class NumberField extends React.Component{
       <div id={`numberfield_${this.props.alias}`}>
           <TextField
             floatingLabelText={ this.props.label }
-            errorText={ this.props.errorText ? this.props.errorText : this.props.warnText }
-            errorStyle={ {color: this.props.errorText ? CONSTANTS.COLORS.error : CONSTANTS.COLORS.warning} }
+            errorText={ this.props.errorText ? this.props.errorText : this.props.warnText ? this.props.warnText : this.state.localErrorText }
+            errorStyle={ {color: this.props.errorText || this.state.localErrorText ? CONSTANTS.COLORS.error : CONSTANTS.COLORS.warning} }
             disabled={ this.props.disabled }
             underlineFocusStyle={ {color: CONSTANTS.COLORS.info} }
             onBlur={ this.handleOnBlur.bind(this) }

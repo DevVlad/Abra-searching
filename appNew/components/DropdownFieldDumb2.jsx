@@ -152,6 +152,7 @@ class DropdownFieldDumb extends React.Component{
       if (this.props.onBlur) this.props.onBlur(e);
       this.setState({
         toDisplay: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
+        text: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
         deleteMode: false,
         menuShow: false,
         typing: false,

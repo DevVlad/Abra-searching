@@ -52,6 +52,14 @@ const testValueDuck = {
 		return  getTestId(state)
 	},
 
+	getValueOfNumberField: createSelector(getOwnState, x => {
+		if (x === undefined) {
+			return undefined;
+		} else {
+			return x.get('numberField');
+		};
+	}),
+
 	getValueFroSelectField: createSelector(getOwnState, x => {
 		if (x === undefined) {
 			return undefined;
