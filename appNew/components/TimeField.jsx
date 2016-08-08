@@ -33,8 +33,10 @@ class TimeField extends React.Component{
 
   constructor(props) {
     super(props);
-    this.state = {toDisplay: ''};
-    this.typing = false;
+    this.state = {
+      toDisplay: '',
+      typing: false,
+    };
   }
 
   giveMeTime(elem) {
@@ -68,7 +70,7 @@ class TimeField extends React.Component{
   }
 
   componentWillUpdate(newProps) {
-    if (!this.typing && newProps.value) {
+    if (!this.state.typing && newProps.value) {
       const momentTime = this.getFormatedTime(e);
       if (this.state.toDisplay !== momentTime) {
         this.initTime = newProps.value;
@@ -79,13 +81,14 @@ class TimeField extends React.Component{
 
   handleOnBlur(e) {
     const elem = e.target.value;
-    this.typing = false;
     if (elem) {
       const outputDate = this.giveMeTime(elem);
       const momentTime = this.getFormatedTime(outputDate);
       this.initTime = outputDate;
       this.props.onBlur(outputDate);
-      if (this.state.toDisplay !== momentTime) this.setState({toDisplay: momentTime});
+      if (this.state.toDisplay !== momentTime) this.setState({toDisplay: momentTime, typing: false});
+    } else {
+      this.setState({typing: false});
     }
 
   }
@@ -95,16 +98,15 @@ class TimeField extends React.Component{
   }
 
   handleOnChange(e) {
-    this.typing = true;
-    this.setState({toDisplay: e.target.value});
+    this.setState({toDisplay: e.target.value, typing: true});
   }
 
   handleOnChangeOfTimePicker(e) {
-    this.typing = false;
     const momentTime = this.getFormatedTime(e);
-    if (this.state.toDisplay !== momentTime) this.setState({toDisplay: momentTime});
+    if (this.state.toDisplay !== momentTime) this.setState({toDisplay: momentTime, typing: false});
     this.initTime = e;
-    this.props.onBlur(e);
+    if (this.props.onBlur) this.props.onBlur(e);
+    if (this.state.typing) this.setState({typing: false});
   }
 
   handleOnKeyDown(e) {

@@ -14,7 +14,6 @@ import DateField from './DateField.jsx';
 import ButtonField from './ButtonField.jsx';
 import FloatingButtonField from './FloatingButtonField.jsx';
 import ToggleField from './ToggleField.jsx';
-import DropdownField from './DropdownField.jsx';
 import NumberField from './NumberField.jsx';
 import TextareaField from './TextareaField.jsx';
 
