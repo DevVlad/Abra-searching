@@ -27,23 +27,17 @@ class ButtonField extends React.Component{
 
   handleError() {
     if (this.props.errorText || this.props.warnText) {
-      const notifMsg = this.props.errorText ? this.props.errorText : this.props.warnText;
-      const color = this.props.errorText ? CONSTANTS.COLORS.error : CONSTANTS.COLORS.warning;
       return (
         <TextFieldUnderline
           id={`${this.props.alias}_errorTexting`}
           style={ {
-            position: 'relative',
-            bottom: 1,
             fontSize: 12,
-            lineHeight: '12px',
-            color: { color },
             transition: transitions.easeOut(),
-            transform: 'translateY(-20px)',
-            width: 'inhereit'
+            transform: 'translateY(-35px)',
+            width: '0px'
           } }
-          errorText={ notifMsg }
-          disabled
+          errorStyle= { {color: this.props.errorText ? CONSTANTS.COLORS.error : CONSTANTS.COLORS.warning} }
+          errorText={ this.props.errorText ? this.props.errorText : this.props.warnText }
         />
       );
     }

@@ -111,10 +111,10 @@ class App extends React.Component{
 				<CheckboxField
 					alias='checkbox'
 					label='checkbox1'
-					checkedIcon={<SvgIcon>
-				    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
-						</SvgIcon>}
-					uncheckedIcon={<ActionFavoriteBorder />}
+					// checkedIcon={<SvgIcon>
+				  //   <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+					// 	</SvgIcon>}
+					// uncheckedIcon={<ActionFavoriteBorder />}
 					onChange={ this.setValueForCheckbox.bind(this) }
 					onBlur={ (x) => console.log('Checkbox onBlur()', x) }
 					value={ this.props.valueOfCheckbox }
@@ -123,7 +123,6 @@ class App extends React.Component{
 				<TextField
 					alias='textfield'
 					label='TextField'
-					errorText=''
 					disabled={false}
 					onBlur={ (x) => {
 						if (this.props.valueOfTextfield !== x) this.setValue('textfield', x);
@@ -196,7 +195,6 @@ class App extends React.Component{
 					disabled={ false }
 					onChange={ (x) => console.log('ToggleField onChange', x) }
 					onBlur={ (x) => console.log('ToggleField onBlur', x) }
-					warnText='sdfosfosfo'
 				/>
 				<br/>
 				<div id='druhacast'>
