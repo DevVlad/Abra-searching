@@ -10,6 +10,7 @@ import propTypes from 'material-ui/utils/propTypes';
 import warning from 'warning';
 import deprecated from 'material-ui/utils/deprecatedPropType';
 
+// Added in case of menu icon - must be here, otherwise couses problems with state and has inappropriate behaviour
 import CONSTANTS from './CONSTANTS.jsx';
 import SvgIcon from 'material-ui/SvgIcon';
 
@@ -238,13 +239,13 @@ class AbstractAutoComplete extends Component {
         searchText: nextProps.searchText,
       });
     }
-    if (nextProps.open && this.state.open !== nextProps.open && nextProps.dataSource.length > 1) {
-      this.setState({
-        open: nextProps.open,
-        anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
-      });
-      setTimeout(() => { this.focus() }, 0);
-    }
+    // if (nextProps.open && this.state.open !== nextProps.open && nextProps.dataSource.length > 1) {
+    //   this.setState({
+    //     open: nextProps.open,
+    //     anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
+    //   });
+    //   setTimeout(() => { this.focus() }, 0);
+    // }
   }
 
   componentWillUnmount() {
@@ -298,12 +299,13 @@ class AbstractAutoComplete extends Component {
     const index = parseInt(child.key, 10);
     const chosenRequest = dataSource[index];
     const searchText = this.chosenRequestText(chosenRequest);
-    this.saveInput = searchText;
+    // this.saveInput = searchText;
 
     this.timerTouchTapCloseId = setTimeout(() => {
       this.timerTouchTapCloseId = null;
 
       this.setState({
+        saveInput: searchText,
         searchText: searchText,
       });
       this.close();
@@ -356,23 +358,24 @@ class AbstractAutoComplete extends Component {
     }
   };
 
+  // Added becouse of icon to show menu and to be able to react on click ability
   handleOnClick = (e) => {
-    if (this.state.open) {
+    if (this.props.menuShouldAppear) this.props.menuShouldAppear(this.state.open ? false : true);
+    if (e !== 'icon') {
       this.setState({
-        open: false,
-        focusTextField: true,
-        searchText: this.saveInput,
-      });
-      setTimeout(() => { this.focus() }, 0);
-    } else if (!this.state.open && this.requestsList && this.requestsList.length > 1) {
-      this.saveInput = this.state.searchText;
-      this.setState({
-        open: true,
-        searchText: '',
+        open: this.state.open ? false : true,
         anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
+        saveInput: !this.state.open ? this.state.searchText : undefined,
+        searchText: this.state.open ? this.state.saveInput : '',
+      });
+    } else {
+      this.setState({
+        open: this.state.open ? false : true,
+        anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
+        saveInput: this.state.saveInput !== this.state.value ? this.state.saveInput : undefined,
       });
     }
-    if (this.props.onClick) this.props.onClick(e);
+    this.state.open ? setTimeout(() => { this.blur() }, 0) : setTimeout(() => { this.focus() }, 0);
   };
 
   handleChange = (event) => {
@@ -396,7 +399,7 @@ class AbstractAutoComplete extends Component {
   handleBlur = (event) => {
     if (this.state.focusTextField && this.timerTouchTapCloseId === null) {
       // Added becouse of inappropriate blur behaviour
-      if (this.state.searchText !== this.saveInput || !this.saveInput) {
+      if (this.state.searchText !== this.state.saveInput || !this.state.saveInput) {
         this.setState({
           searchText: this.props.searchText,
           open: false,
@@ -571,7 +574,7 @@ class AbstractAutoComplete extends Component {
         <MenuIcon
             style={ {width: '20px', height: '20px', transform: 'translate(+236px, -35px)'} }
             hoverColor={ CONSTANTS.COLORS.normal }
-            onClick={ this.handleOnClick }
+            onClick={ () => {this.handleOnClick('icon')} }
         />
         <Popover
           style={styles.popover}

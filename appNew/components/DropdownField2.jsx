@@ -4,6 +4,7 @@ import DropdownFieldDumb2 from './DropdownFieldDumb2.jsx';
 import SvgIcon from 'material-ui/SvgIcon';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 import AbstractAutoComplete from './AbstractAutoComplete.jsx';
+import Immutable from 'immutable';
 
 import DropdownFieldDuck from '../redux/ducks/dropdownfieldDuck.jsx';
 
@@ -35,20 +36,19 @@ class DropdownField extends React.Component{
 
   constructor(props) {
     super(props);
-    this.list = [];
+    this.state = {
+      list: []
+    };
   }
 
-  componentWillMount() {
-    this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
-  }
-
-  shouldComponentUpdate(newProps) {
+  shouldComponentUpdate(newProps, nextState) {
     if ((newProps.data !== this.props.data && newProps.data.size > 0) ||
     (newProps.value && newProps.value !== this.props.value) ||
-    (newProps.entity && this.list[0] !== newProps.entity) ||
+    (newProps.entity && this.state.list[0] !== newProps.entity) ||
     (!newProps.value && this.props.value) ||
     (this.props.errorText !== newProps.errorText || this.props.errorTextLocale !== newProps.errorTextLocale ) ||
-    (this.props.warnText !== newProps.warnText)
+    (this.props.warnText !== newProps.warnText) ||
+    (!Immutable.is(Immutable.fromJS(nextState.list), Immutable.fromJS(this.state.list)))
     ) {
       return true;
     } else {
@@ -58,11 +58,12 @@ class DropdownField extends React.Component{
 
   componentWillUpdate(newProps) {
     if (newProps.entity) {
-      this.list = [];
-      this.list.push(newProps.entity);
+      let list = [];
+      list.push(newProps.entity);
+      this.setState({list});
       this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
-    } else if (newProps.data) {
-      this.list = newProps.data.toJS();
+    } else if (newProps.data && !Immutable.is(Immutable.fromJS(this.props.data), Immutable.fromJS(newProps.data))) {
+      this.setState({list: newProps.data.toJS()});
     }
   }
 
@@ -97,13 +98,19 @@ class DropdownField extends React.Component{
     if (this.props.onBlur) this.props.onBlur(e);
   }
 
+  menuShouldAppear(e) {
+    if (e === true) {
+      this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
+    }
+  }
+
   render() {
     return (
       <div id={`DropdownFieldCleverNEW_${this.props.alias}`}>
         <DropdownFieldDumb2
           alias={ this.props.alias }
           label={ this.props.label }
-          data={ this.list }
+          data={ this.state.list }
           errorText={ this.props.errorText ? this.props.errorText : this.props.errorTextLocale }
           warnText={ this.props.warnText }
           onChange={ this.props.onChange.bind(this) }
@@ -117,6 +124,7 @@ class DropdownField extends React.Component{
           enableDev={ true }
           entity={ this.props.entity ? this.props.entity : null }
           notIncludedInData={ this.handleIncoming.bind(this) }
+          menuShouldAppear={ this.menuShouldAppear.bind(this) }
           />
       </div>
     );
