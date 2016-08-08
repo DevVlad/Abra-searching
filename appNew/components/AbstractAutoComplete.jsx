@@ -16,7 +16,7 @@ import SvgIcon from 'material-ui/SvgIcon';
 
 const MenuIcon = (props) => (
   <SvgIcon {...props} color={ CONSTANTS.COLORS.disabled }>
-    <path d="M7 10l5 5 5-5z" />
+    <path d="M4 7.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5S5.5 9.83 5.5 9 4.83 7.5 4 7.5zm10 0c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm-5 0c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5S9.83 7.5 9 7.5z"/>
   </SvgIcon>
 );
 
@@ -347,7 +347,7 @@ class AbstractAutoComplete extends Component {
       case 'down':
         event.preventDefault();
         this.setState({
-          open: true,
+          open: this.requestsList.length > 1 ? true : false,
           focusTextField: false,
           anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
         });
@@ -360,7 +360,6 @@ class AbstractAutoComplete extends Component {
 
   // Added becouse of icon to show menu and to be able to react on click ability
   handleOnClick = (e) => {
-    if (this.props.menuShouldAppear) this.props.menuShouldAppear(this.state.open ? false : true);
     if (e !== 'icon') {
       this.setState({
         open: this.state.open ? false : true,
@@ -368,14 +367,15 @@ class AbstractAutoComplete extends Component {
         saveInput: !this.state.open ? this.state.searchText : undefined,
         searchText: this.state.open ? this.state.saveInput : '',
       });
+      this.state.open ? setTimeout(() => { this.blur() }, 0) : setTimeout(() => { this.focus() }, 0);
     } else {
-      this.setState({
-        open: this.state.open ? false : true,
-        anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
-        saveInput: this.state.saveInput !== this.state.value ? this.state.saveInput : undefined,
-      });
+      // this.setState({
+      //   open: this.state.open ? false : true,
+      //   anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
+      //   saveInput: this.state.saveInput !== this.state.value ? this.state.saveInput : undefined,
+      // });
     }
-    this.state.open ? setTimeout(() => { this.blur() }, 0) : setTimeout(() => { this.focus() }, 0);
+    if (this.props.menuShouldAppear) this.props.menuShouldAppear(this.state.open ? false : true, e === 'icon' ? true : undefined);
   };
 
   handleChange = (event) => {
@@ -572,7 +572,12 @@ class AbstractAutoComplete extends Component {
           onClick={this.handleOnClick}
         />
         <MenuIcon
-            style={ {width: '20px', height: '20px', transform: 'translate(+236px, -35px)'} }
+            style={ {
+              width: '25px',
+              height: '25px',
+              transform: 'translate(+236px, -35px)',
+              visibility: this.props.enableDev ? 'visible' : 'hidden'
+            } }
             hoverColor={ CONSTANTS.COLORS.normal }
             onClick={ () => {this.handleOnClick('icon')} }
         />

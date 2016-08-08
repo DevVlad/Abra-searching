@@ -13,9 +13,9 @@ import CONSTANTS from './CONSTANTS.jsx';
 
 import './App.css';
 
-const ClearIcon = (props) => (
-  <SvgIcon {...props}>
-    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+const AddIcon = (props) => (
+  <SvgIcon {...props} color={ CONSTANTS.COLORS.disabled }>
+    <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
   </SvgIcon>
 );
 
@@ -44,6 +44,7 @@ class DropdownField extends React.Component{
 
   shouldComponentUpdate(newProps, nextState) {
     if ((newProps.data !== this.props.data && newProps.data.size > 0) ||
+    (!newProps.data && this.props.data) ||
     (newProps.value && newProps.value !== this.props.value) ||
     (newProps.entity && this.state.list[0] !== newProps.entity) ||
     (!newProps.value && this.props.value) ||
@@ -64,7 +65,7 @@ class DropdownField extends React.Component{
       this.setState({list});
     } else if (newProps.data && !Immutable.is(Immutable.fromJS(this.props.data), Immutable.fromJS(newProps.data))) {
       this.setState({list: newProps.data.toJS()});
-    }
+    } else if (!newProps.data && newProps.errorText || newProps.errorTextLocale) this.setState({list: []});
   }
 
   handleIncoming(e) {
@@ -76,7 +77,7 @@ class DropdownField extends React.Component{
   handleTyping(e) {
     this.pom = e;
     setTimeout(() => {
-      if (e === this.pom) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
+      if (e === this.pom && !this.props.errorText && !this.props.errorTextLocale) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
     }, 150);
   }
 
@@ -84,16 +85,16 @@ class DropdownField extends React.Component{
     this.props.onChange(e.id);
   }
 
-  handleOnBLur(e) {
+  handleOnBlur(e) {
     if (this.props.errorTextLocale) this.props.dispatch(DropdownFieldDuck.setErrorMessage(this.props.alias, undefined));
-    this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['data']));
+    this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['data', 'filter']));
     if (this.props.onBlur) this.props.onBlur(e);
   }
 
-  menuShouldAppear(e) {
-    if (e === true) {
+  menuShouldAppear(e, icon) {
+    if (e === true && !icon) {
       this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
-    }
+    }else if (icon) alert('Icon for something bigger!');
   }
 
   render() {
@@ -103,11 +104,12 @@ class DropdownField extends React.Component{
           alias={ this.props.alias }
           label={ this.props.label }
           data={ this.state.list }
-          errorText={ this.props.errorText ? this.props.errorText : this.props.errorTextLocale }
+          localeError={ this.props.errorTextLocale }
+          errorText={ this.props.errorText }
           warnText={ this.props.warnText }
           onChange={ this.props.onChange.bind(this) }
           onSelect={ this.handleOnSelect.bind(this) }
-          onBlur={ this.handleOnBLur.bind(this) }
+          onBlur={ this.handleOnBlur.bind(this) }
           entityToText={ this.props.entityToText }
           entityToValue={ object => object.id }
           value={ this.props.value }
@@ -117,6 +119,12 @@ class DropdownField extends React.Component{
           entity={ this.props.entity ? this.props.entity : null }
           notIncludedInData={ this.handleIncoming.bind(this) }
           menuShouldAppear={ this.menuShouldAppear.bind(this) }
+          />
+        <AddIcon
+          style={ {...CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.second, transform: this.props.value ? 'translate(+200px, -62px)' : 'translate(+215px, -60px)'} }
+          visibility={ this.props.errorTextLocale ? 'visible' : 'hidden' }
+          hoverColor={ CONSTANTS.COLORS.pass }
+          onClick={ () => alert('Add to database.') }
           />
       </div>
     );

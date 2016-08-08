@@ -239,9 +239,9 @@ function processRequest(dataServer, filter, paging, alias, resultsToDisplay) {
 		if (getFilter(getState(), alias) === filter) {
 			const totalCount = parseInt(dataServer['@rowCount']);
 			if (totalCount === 0) {
-        const msg = `No data found on server for inserted filter: ${filter}.`
-        dispatch(DropdownFieldDuck.setErrorMessage(alias, msg))
+        const msg = `No data found on server for inserted: ${filter}. Do you want to create the new record? If so, press +.`;
         dispatch(DropdownFieldDuck.setDelete(alias, ['data', 'loading']));
+        dispatch(DropdownFieldDuck.setErrorMessage(alias, msg));
 			} else {
 					if (paging + 20 > totalCount)  {
 						dispatch(setLimit(dataServer.kontakt, alias, true, resultsToDisplay, paging, totalCount > paging+ dataServer.kontakt.length));

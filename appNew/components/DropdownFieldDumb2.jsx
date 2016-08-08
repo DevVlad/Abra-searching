@@ -160,6 +160,22 @@ class DropdownFieldDumb extends React.Component{
     }
   }
 
+  handleOnBlurMenu(e) {
+    if (this.state.InMenuMode) {
+      if (this.state.toDisplay !== this.state.text) {
+        if (this.state.deleteMode) {
+          this.setState({
+            toDisplay: '',
+            text: ''
+          });
+        } else {
+          this.setState({toDisplay: this.state.text});
+        }
+      }
+      if (this.props.OnBlurMenu) this.props.onBlurMenu(e);
+    }
+  }
+
   handleOnSelect(e) {
     const output = this.props.entityToValue(e);
     if (this.props.onChange) this.handleOnChange(output);
@@ -261,8 +277,8 @@ class DropdownFieldDumb extends React.Component{
       <div id={`DropdownFieldDumb_${this.props.alias}`}>
 	      <AbstractAutoComplete
 		        floatingLabelText={ this.props.label }
-            errorText={ this.props.errorText || this.props.warnText }
-            errorStyle={ this.props.errorText ? {color: CONSTANTS.COLORS.error} : {color: CONSTANTS.COLORS.warning} }
+            errorText={ this.props.errorText || this.props.warnText || this.props.localeError }
+            errorStyle={ this.props.errorText ? {color: CONSTANTS.COLORS.error} : this.props.localeError ? {color: CONSTANTS.COLORS.pass} : {color: CONSTANTS.COLORS.warning} }
             dataSourceConfig={ {  text: 'text', value: 'text' } }
             dataSource={ data }
             disabled={ false }
@@ -278,10 +294,12 @@ class DropdownFieldDumb extends React.Component{
             onKeyDown={ this.handleOnKeyDown.bind(this) }
             menuCloseDelay={ 0 }
             mode={ this.state.mode }
-            menuShouldAppear={ this.props.menuShouldAppear ? this.props.menuShouldAppear.bind(this) : null }
+            menuShouldAppear={ this.props.menuShouldAppear ? this.props.menuShouldAppear.bind(this) : undefined }
+            menuProps={ {onBlur: this.handleOnBlurMenu.bind(this)} }
+            enableDev={ this.props.enableDev ? this.props.enableDev : false}
 	      />
         <ClearIcon
-          style={ CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.second }
+          style={ this.props.enableDev ? CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.second : CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.first }
           visibility={ this.state.text ? 'visible' : 'hidden' }
           hoverColor={ CONSTANTS.COLORS.normal }
           onClick={ this.handleDeleteFromIcon.bind(this) }

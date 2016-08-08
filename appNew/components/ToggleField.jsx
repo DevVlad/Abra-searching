@@ -49,7 +49,7 @@ class ToggleField extends React.Component{
           style={ {
             fontSize: 12,
             transition: transitions.easeOut(),
-            transform: 'translateY(-60px)',
+            transform: 'translate(46px, -60px)',
             width: '0px',
           } }
           errorStyle= { {color: this.props.errorText ? CONSTANTS.COLORS.error : CONSTANTS.COLORS.warning} }

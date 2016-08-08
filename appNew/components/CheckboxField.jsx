@@ -47,7 +47,7 @@ class CheckboxField extends React.Component{
           style={ {
             fontSize: 12,
             transition: transitions.easeOut(),
-            transform: 'translateY(-40px)',
+            transform: 'translate(42px, -40px)',
             width: '0px',
           } }
           errorStyle= { {color: this.props.errorText ? CONSTANTS.COLORS.error : CONSTANTS.COLORS.warning} }
