@@ -57,7 +57,7 @@ const CONSTANTS = {
   },
   COMPONENT_ICONS_INLINE_STYLE: {
     first: {
-      width: '20px', height: '20px', transform: 'translateX(-20px)'
+      width: '20px', height: '20px',position: 'absolute', transform: 'translate(-20px, +35px)'
     },
     second: {
       width: '20px', height: '20px', position: 'absolute', transform: 'translate(-40px, +35px)'
