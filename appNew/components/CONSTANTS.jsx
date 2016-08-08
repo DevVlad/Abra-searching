@@ -2,10 +2,11 @@ import { red500, blue500, grey500, orange500, green500, grey900 } from 'material
 
 import ActionFavorite from 'material-ui/svg-icons/action/favorite';
 import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
+import Immutable from 'immutable';
 
 const CONSTANTS = {
   FAKEDATA: [ "Justin", "Bieber", "Is", "The", "WORST", "Singer", "Ever" ],
-  FAKEENTITY: [
+  FAKEENTITY: Immutable.fromJS([
     {
       email: "sdjosfj@dosof.cz",
       firma: "code:      585",
@@ -45,7 +46,7 @@ const CONSTANTS = {
       prijmeni: "Aipldauerová",
       tel: "515225146"
     }
-  ],
+  ]),
   COLORS: {
     info: blue500,
     error: red500,
@@ -56,7 +57,7 @@ const CONSTANTS = {
   },
   COMPONENT_ICONS_INLINE_STYLE: {
     first: {
-      width: '20px', height: '20px', transform: 'translateX(-20px)'
+      width: '20px', height: '20px',position: 'absolute', transform: 'translate(-20px, +35px)'
     },
     second: {
       width: '20px', height: '20px', position: 'absolute', transform: 'translate(-40px, +35px)'

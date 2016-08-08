@@ -112,14 +112,14 @@ class DateField extends React.Component{
 
   constructor(props) {
     super(props);
-    this.typing = false;
     this.state = {
-      toDisplay: ''
+      toDisplay: '',
+      typing: false,
     };
   }
 
   componentWillUpdate(newProps) {
-    if (newProps.value && !this.typing && newProps.locale)  {
+    if (newProps.value && !this.state.typing && newProps.locale)  {
       const newDate = Intl.DateTimeFormat(newProps.locale).format(newProps.value);
 
       if (this.state.toDisplay !== newDate && !newProps.displayFormat) {
@@ -149,7 +149,6 @@ class DateField extends React.Component{
     if (e.keyCode === 13) {
       const elem = e.target.value;
       this.newDate = parseDate(getDateParts(this.props.locale), elem);
-      this.typing = false;
       this.newDate = parseDate(getDateParts(this.props.locale), elem);
       let toDisplayValue;
       if (this.props.displayFormat) {
@@ -158,7 +157,10 @@ class DateField extends React.Component{
         toDisplayValue = Intl.DateTimeFormat(this.props.locale).format(this.newDate);
       }
       this.props.onChange(this.newDate);
-      this.setState({toDisplay: toDisplayValue});
+      this.setState({
+        toDisplay: toDisplayValue,
+        typing: false,
+      });
     }
 
   }
@@ -166,12 +168,11 @@ class DateField extends React.Component{
   handleOnBlur(e) {
     const elem = e.target.value;
     if (elem) {
-      this.typing = false;
       // const newDate = parseDate(['D', 'M', 'Y'], elem);
       this.newDate = parseDate(getDateParts(this.props.locale), elem);
       this.props.onBlur(this.newDate);
       const resultToDisplay = this.getDateFormat(this.newDate);
-      if (this.state.toDisplay !== resultToDisplay) this.setState({toDisplay: resultToDisplay});
+      if (this.state.toDisplay !== resultToDisplay) this.setState({toDisplay: resultToDisplay, typing: false});
     }
 
   }
@@ -184,8 +185,7 @@ class DateField extends React.Component{
   }
 
   handleOnChange(e) {
-    this.typing = true;
-    this.setState({toDisplay: e.target.value});
+    this.setState({toDisplay: e.target.value, typing: true});
   }
 
 	render() {

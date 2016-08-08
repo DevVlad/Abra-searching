@@ -2,12 +2,10 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-import injectTapEventPlugin from 'react-tap-event-plugin';
+
 import CONSTANTS from './CONSTANTS.jsx';
 
 import './App.css';
-
-const ErrorCondition = true;
 
 class MenuList extends React.Component{
   static propTypes = {

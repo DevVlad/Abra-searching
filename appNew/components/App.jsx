@@ -14,7 +14,6 @@ import DateField from './DateField.jsx';
 import ButtonField from './ButtonField.jsx';
 import FloatingButtonField from './FloatingButtonField.jsx';
 import ToggleField from './ToggleField.jsx';
-import DropdownField from './DropdownField.jsx';
 import NumberField from './NumberField.jsx';
 import TextareaField from './TextareaField.jsx';
 
@@ -37,7 +36,7 @@ import CONSTANTS from './CONSTANTS.jsx';
 		valueOfCheckbox: testValueDuck.getValueOfCheckbox(state),
 		valueOfTextfield: testValueDuck.getValueOfSelectField(state),
 		valueOfTimefield: testValueDuck.getValueOfTimeField(state),
-		valueOfDatefield: testValueDuck.getValueOfDateField(state)
+		valueOfDatefield: testValueDuck.getValueOfDateField(state),
 	};
 })
 class App extends React.Component{
@@ -111,10 +110,10 @@ class App extends React.Component{
 				<CheckboxField
 					alias='checkbox'
 					label='checkbox1'
-					checkedIcon={<SvgIcon>
-				    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
-						</SvgIcon>}
-					uncheckedIcon={<ActionFavoriteBorder />}
+					// checkedIcon={<SvgIcon>
+				  //   <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+					// 	</SvgIcon>}
+					// uncheckedIcon={<ActionFavoriteBorder />}
 					onChange={ this.setValueForCheckbox.bind(this) }
 					onBlur={ (x) => console.log('Checkbox onBlur()', x) }
 					value={ this.props.valueOfCheckbox }
@@ -123,7 +122,6 @@ class App extends React.Component{
 				<TextField
 					alias='textfield'
 					label='TextField'
-					errorText=''
 					disabled={false}
 					onBlur={ (x) => {
 						if (this.props.valueOfTextfield !== x) this.setValue('textfield', x);
@@ -196,7 +194,6 @@ class App extends React.Component{
 					disabled={ false }
 					onChange={ (x) => console.log('ToggleField onChange', x) }
 					onBlur={ (x) => console.log('ToggleField onBlur', x) }
-					warnText='sdfosfosfo'
 				/>
 				<br/>
 				<div id='druhacast'>
@@ -217,8 +214,7 @@ class App extends React.Component{
 						label='enter a number'
 						errorText=''
 						warnText=''
-						value={ 108 }
-						onBlur={ (x) => {console.log('numberField onBlur ', x)} }
+						value={ 27 }
 					/>
 				<br/>
 					<TextareaField
@@ -234,16 +230,14 @@ class App extends React.Component{
 							alias='dropdownDumb'
 							label='AbstractBlbej'
 							data={ [{id: 0, text: 'pondeli'}, {id: 1, text: 'utery'}] }
-							// data={ CONSTANTS.FAKEENTITY }
 							onChange={ (e) => console.log('AbstractBlbej onChange', e) }
 							onBlur={ (e) => console.log('AbstractBlbej on Blur', e) }
-							entityToText={ obj => obj.text}
-							// entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
+							entityToText={ obj => obj.text }
 							entityToValue={ object => object.id }
 							value={ 1 }
 						/>
 					<br/>
-						{/*}<DropdownField2
+						<DropdownField2
 							alias='cleverDropdown2'
 							label='clever dropdown new2'
 							entityType="kontakt"
@@ -253,7 +247,7 @@ class App extends React.Component{
 							entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
 							filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 							loadingNotify={ true }
-						/>*/}
+						/>
 				</div>
 			</div>
 		)
