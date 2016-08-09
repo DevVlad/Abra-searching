@@ -229,6 +229,7 @@ class AbstractAutoComplete extends Component {
     this.setState({
       open: this.props.open,
       searchText: this.props.searchText,
+      saveInput: this.props.searchText
     });
     this.timerTouchTapCloseId = null;
   }
@@ -239,13 +240,6 @@ class AbstractAutoComplete extends Component {
         searchText: nextProps.searchText,
       });
     }
-    // if (nextProps.open && this.state.open !== nextProps.open && nextProps.dataSource.length > 1) {
-    //   this.setState({
-    //     open: nextProps.open,
-    //     anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
-    //   });
-    //   setTimeout(() => { this.focus() }, 0);
-    // }
   }
 
   componentWillUnmount() {
@@ -253,10 +247,11 @@ class AbstractAutoComplete extends Component {
   }
 
   close() {
+    // let toState = this.props.modeDelete ? '' : this.state.saveInput;
     this.setState({
       open: false,
       anchorEl: null,
-      searchText: this.props.searchText
+      // searchText: toState//!this.props.modeDelete ? toState : this.state.searchText
     });
   }
 
@@ -404,15 +399,7 @@ class AbstractAutoComplete extends Component {
   handleBlur = (event) => {
     if (this.state.focusTextField && this.timerTouchTapCloseId === null) {
       // Added becouse of inappropriate blur behaviour
-      // if (this.state.searchText !== this.state.saveInput || !this.state.saveInput) {
-      //   console.log(this.state, this.props.searchText);
-      //   this.setState({
-      //     searchText: this.props.searchText,
-      //     open: false,
-      //   });
-      // } else {
-        this.close();
-      // }
+      this.close();
     }
 
     if (this.props.onBlur) {

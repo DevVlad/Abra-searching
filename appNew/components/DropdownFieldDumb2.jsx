@@ -148,21 +148,38 @@ class DropdownFieldDumb extends React.Component{
   handleOnBlur(e) {
     let toState, toText;
     if (!this.state.InMenuMode) {
-      toState = this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text;
-      toText = toState;
+      this.setState({
+        toDisplay: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
+        text: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
+        deleteMode: false,
+        menuShow: true,
+        typing: false
+      });
     } else {
-      toState = this.props.value ? this.state.text : '';
-      toText = this.state.text;
+      if (!this.state.typing)
+      this.setState({
+        toDisplay: this.state.toDisplay,//this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
+        // text: this.state.text,
+        deleteMode: false,
+        // menuShow: true,
+        typing: true
+      });
     }
     if (this.props.onBlur) this.props.onBlur(e);
-    this.setState({
-      toDisplay: toState,
-      text: toText,
-      deleteMode: false,
-      menuShow: false,
-      typing: false,
-    });
   }
+  // handleOnBlur(e) {
+  //   if (!this.state.InMenuMode) {
+  //     if (this.props.onBlur) this.props.onBlur(e);
+  //     this.setState({
+  //       toDisplay: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
+  //       text: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
+  //       deleteMode: false,
+  //       menuShow: false,
+  //       typing: false,
+  //       InMenuMode: false,
+  //     });
+  //   }
+  // }
 
   handleOnSelect(e) {
     const output = this.props.entityToValue(e);
@@ -172,7 +189,7 @@ class DropdownFieldDumb extends React.Component{
       typing: false,
       InMenuMode: false,
       text: this.props.entityToText(e),
-      toDisplay: this.props.entityToText(e)
+      toDisplay: this.props.entityToText(e),
     });
   }
 
@@ -203,7 +220,7 @@ class DropdownFieldDumb extends React.Component{
           toDisplay: '',
           text: '',
         });
-      } else this.setState({toDisplay: this.state.toDisplay});
+      } else this.setState({toDisplay: this.state.text});
     }
     //handle menushow on pressing arrows
     if (e.keyCode === 40 || e.keyCode == 38) {
@@ -226,7 +243,7 @@ class DropdownFieldDumb extends React.Component{
           toDisplay: '',
           text: '',
         });
-      } else this.setState({toDisplay: this.state.toDisplay});
+      } else this.setState({toDisplay: this.state.text});
     }
   }
 
@@ -269,12 +286,11 @@ class DropdownFieldDumb extends React.Component{
     let currentFilter;
     if (this.props.filter) {
       currentFilter = this.props.filter;
-    } else if (this.state.typing && !this.state.menuShow) {
+    } else if (this.state.typing) {
       currentFilter = AbstractAutoComplete.fuzzyFilter;
     } else {
       currentFilter = AbstractAutoComplete.noFilter;
     }
-
     let color;
     let errFromParent;
     if (this.props.errorText) {
@@ -307,6 +323,7 @@ class DropdownFieldDumb extends React.Component{
             onKeyDown={ this.handleOnKeyDown.bind(this) }
             menuCloseDelay={ 0 }
             modeTyping={ this.state.typing }
+            modeDelete={ this.state.deleteMode }
             menuShouldAppear={ this.props.menuShouldAppear ? this.props.menuShouldAppear.bind(this) : undefined }
             menuProps={ {
               onKeyDown: this.handleOnKeyDownMenu.bind(this)
