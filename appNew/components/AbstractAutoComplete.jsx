@@ -256,6 +256,7 @@ class AbstractAutoComplete extends Component {
     this.setState({
       open: false,
       anchorEl: null,
+      searchText: this.props.searchText
     });
   }
 
@@ -346,8 +347,12 @@ class AbstractAutoComplete extends Component {
 
       case 'down':
         event.preventDefault();
+        let decide;
+        if (this.requestsList.length >= 1 && this.props.modeTyping) {
+          decide = true;
+        } else decide = false;
         this.setState({
-          open: this.requestsList.length > 1 ? true : false,
+          open: this.props.enableDev ? decide : true,
           focusTextField: false,
           anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
         });
@@ -360,7 +365,7 @@ class AbstractAutoComplete extends Component {
 
   // Added becouse of icon to show menu and to be able to react on click ability
   handleOnClick = (e) => {
-    if (e !== 'icon') {
+    if (e !== 'icon' && !this.props.cleverExt) {
       this.setState({
         open: this.state.open ? false : true,
         anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
@@ -399,14 +404,15 @@ class AbstractAutoComplete extends Component {
   handleBlur = (event) => {
     if (this.state.focusTextField && this.timerTouchTapCloseId === null) {
       // Added becouse of inappropriate blur behaviour
-      if (this.state.searchText !== this.state.saveInput || !this.state.saveInput) {
-        this.setState({
-          searchText: this.props.searchText,
-          open: false,
-        });
-      } else {
+      // if (this.state.searchText !== this.state.saveInput || !this.state.saveInput) {
+      //   console.log(this.state, this.props.searchText);
+      //   this.setState({
+      //     searchText: this.props.searchText,
+      //     open: false,
+      //   });
+      // } else {
         this.close();
-      }
+      // }
     }
 
     if (this.props.onBlur) {

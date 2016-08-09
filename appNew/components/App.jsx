@@ -229,7 +229,7 @@ class App extends React.Component{
 					<AbstractBlbej
 							alias='dropdownDumb'
 							label='AbstractBlbej'
-							data={ [{id: 0, text: 'pondeli'}, {id: 1, text: 'utery'}] }
+							data={ [{id: 0, text: 'pondeli'}, {id: 1, text: 'utery'}, {id: 2, text: 'streda'}, {id: 3, text: 'ctvrtek'}] }
 							onChange={ (e) => console.log('AbstractBlbej onChange', e) }
 							onBlur={ (e) => console.log('AbstractBlbej on Blur', e) }
 							entityToText={ obj => obj.text }
@@ -247,6 +247,7 @@ class App extends React.Component{
 							entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
 							filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 							loadingNotify={ true }
+							allowNew={ true }
 						/>
 				</div>
 			</div>

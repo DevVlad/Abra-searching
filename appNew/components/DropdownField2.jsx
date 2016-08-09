@@ -33,6 +33,7 @@ class DropdownField extends React.Component{
     filterToCondition: PropTypes.func,
     loadingNotify: PropTypes.bool,
     value: PropTypes.number,
+    allowNew: PropTypes.bool,
   };
 
   constructor(props) {
@@ -65,7 +66,10 @@ class DropdownField extends React.Component{
       this.setState({list});
     } else if (newProps.data && !Immutable.is(Immutable.fromJS(this.props.data), Immutable.fromJS(newProps.data))) {
       this.setState({list: newProps.data.toJS()});
-    } else if (!newProps.data && newProps.errorText || newProps.errorTextLocale) this.setState({list: []});
+    } else if (newProps.errorText || newProps.errorTextLocale) {
+      this.setState({list: newProps.data ? newProps.data.toJS() : []});
+      if (newProps.data.size > 0) this.props.dispatch(DropdownFieldDuck.setErrorMessage(this.props.alias, undefined));
+    }
   }
 
   handleIncoming(e) {
@@ -76,35 +80,50 @@ class DropdownField extends React.Component{
 
   handleTyping(e) {
     this.pom = e;
+    if (this.state.list) this.setState({list: []});
     setTimeout(() => {
-      if (e === this.pom && !this.props.errorText && !this.props.errorTextLocale) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
+      if (e === this.pom && !this.props.errorText) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
     }, 150);
   }
 
   handleOnSelect(e) {
     this.props.onChange(e.id);
+    this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['data']));
   }
 
   handleOnBlur(e) {
     if (this.props.errorTextLocale) this.props.dispatch(DropdownFieldDuck.setErrorMessage(this.props.alias, undefined));
-    this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['data', 'filter']));
+    this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['data']));
     if (this.props.onBlur) this.props.onBlur(e);
   }
 
   menuShouldAppear(e, icon) {
-    if (e === true && !icon) {
-      this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition('a'), this.props.alias));
-    }else if (icon) alert('Icon for something bigger!');
+    if (icon) alert('Icon for something bigger!');
   }
 
   render() {
+    let localNtf = {};
+    if (this.props.errorTextLocale && !this.props.warnText && !this.props.errorText) {
+      if (this.props.allowNew) {
+        localNtf = {
+          text: `${this.props.errorTextLocale} Do You want to create the record in database?`,
+          color: CONSTANTS.COLORS.pass
+        };
+      } else {
+        localNtf = {
+          text: this.props.errorTextLocale,
+          color: CONSTANTS.COLORS.error
+        };
+      }
+    }
+    
     return (
       <div id={`DropdownFieldCleverNEW_${this.props.alias}`}>
         <DropdownFieldDumb2
           alias={ this.props.alias }
           label={ this.props.label }
           data={ this.state.list }
-          localeError={ this.props.errorTextLocale }
+          localeError={ localNtf }
           errorText={ this.props.errorText }
           warnText={ this.props.warnText }
           onChange={ this.props.onChange.bind(this) }
@@ -119,10 +138,11 @@ class DropdownField extends React.Component{
           entity={ this.props.entity ? this.props.entity : null }
           notIncludedInData={ this.handleIncoming.bind(this) }
           menuShouldAppear={ this.menuShouldAppear.bind(this) }
+          cleverExt={ true }
           />
         <AddIcon
           style={ {...CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.second, transform: this.props.value ? 'translate(+200px, -62px)' : 'translate(+215px, -60px)'} }
-          visibility={ this.props.errorTextLocale ? 'visible' : 'hidden' }
+          visibility={ this.props.errorTextLocale && !this.props.errorText && !this.props.warnText && this.props.allowNew ? 'visible' : 'hidden' }
           hoverColor={ CONSTANTS.COLORS.pass }
           onClick={ () => alert('Add to database.') }
           />

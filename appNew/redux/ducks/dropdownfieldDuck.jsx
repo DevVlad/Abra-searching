@@ -239,7 +239,7 @@ function processRequest(dataServer, filter, paging, alias, resultsToDisplay) {
 		if (getFilter(getState(), alias) === filter) {
 			const totalCount = parseInt(dataServer['@rowCount']);
 			if (totalCount === 0) {
-        const msg = `No data found on server for inserted: ${filter}. Do you want to create the new record? If so, press +.`;
+        const msg = `No data found on server for inserted: "${filter}".`;
         dispatch(DropdownFieldDuck.setDelete(alias, ['data', 'loading']));
         dispatch(DropdownFieldDuck.setErrorMessage(alias, msg));
 			} else {

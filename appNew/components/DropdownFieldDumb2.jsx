@@ -78,7 +78,6 @@ class DropdownFieldDumb extends React.Component{
   componentWillMount() {
     let dataForRender = this.calculateDataForRedner(this.props, this.state);
     if (dataForRender) {
-
       this.computingDataIncomingOnProps(dataForRender, this.props, true);
       this.setState({dataForRender});
     }
@@ -87,7 +86,6 @@ class DropdownFieldDumb extends React.Component{
   componentWillReceiveProps(newProps, newState) {
     let dataForRender = this.calculateDataForRedner(newProps, this.state);
     if (dataForRender) {
-
       this.computingDataIncomingOnProps(dataForRender, newProps, !newProps.value ? true : null);
       this.setState({dataForRender});
     }
@@ -109,7 +107,7 @@ class DropdownFieldDumb extends React.Component{
     if (!dataForRender.verified && props.enableDev) {
       let pom = {};
         pom[dataForRender.value] = props.value;
-        if (props.notIncludedInData && !willmount && props.value !== this.state.controlledVal) {
+        if (props.notIncludedInData && !willmount && props.value !== this.state.controlledVal && !this.state.typing) {
           props.notIncludedInData(pom);
           this.setState({controlledVal: props.value});
         } else if (this.state.toDisplay && this.state.value && !props.value) {
@@ -148,32 +146,22 @@ class DropdownFieldDumb extends React.Component{
   }
 
   handleOnBlur(e) {
+    let toState, toText;
     if (!this.state.InMenuMode) {
-      if (this.props.onBlur) this.props.onBlur(e);
-      this.setState({
-        toDisplay: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
-        text: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
-        deleteMode: false,
-        menuShow: false,
-        typing: false,
-      });
+      toState = this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text;
+      toText = toState;
+    } else {
+      toState = this.props.value ? this.state.text : '';
+      toText = this.state.text;
     }
-  }
-
-  handleOnBlurMenu(e) {
-    if (this.state.InMenuMode) {
-      if (this.state.toDisplay !== this.state.text) {
-        if (this.state.deleteMode) {
-          this.setState({
-            toDisplay: '',
-            text: ''
-          });
-        } else {
-          this.setState({toDisplay: this.state.text});
-        }
-      }
-      if (this.props.OnBlurMenu) this.props.onBlurMenu(e);
-    }
+    if (this.props.onBlur) this.props.onBlur(e);
+    this.setState({
+      toDisplay: toState,
+      text: toText,
+      deleteMode: false,
+      menuShow: false,
+      typing: false,
+    });
   }
 
   handleOnSelect(e) {
@@ -184,6 +172,7 @@ class DropdownFieldDumb extends React.Component{
       typing: false,
       InMenuMode: false,
       text: this.props.entityToText(e),
+      toDisplay: this.props.entityToText(e)
     });
   }
 
@@ -218,13 +207,26 @@ class DropdownFieldDumb extends React.Component{
     }
     //handle menushow on pressing arrows
     if (e.keyCode === 40 || e.keyCode == 38) {
-      if (!this.state.InMenuMode) this.setState({InMenuMode: true});
+      if (!this.state.InMenuMode) {
+        this.setState({InMenuMode: true});
+      }
     }
     //handle this.deleteMode
     if (e.keyCode === 8 || e.keyCode === 46) {
       if (!this.state.deleteMode) this.setState({deleteMode: true});
     } else {
       if (this.state.toDisplay) this.setState({deleteMode: false});
+    }
+  }
+
+  handleOnKeyDownMenu(e) {
+    if (e.keyCode === 27) {
+      if (this.state.deleteMode)  {
+        this.setState({
+          toDisplay: '',
+          text: '',
+        });
+      } else this.setState({toDisplay: this.state.toDisplay});
     }
   }
 
@@ -245,7 +247,7 @@ class DropdownFieldDumb extends React.Component{
     let list;
     const resultEtv = whatIsOnEtv(props.data, props.entityToValue);
     if (!resultEtv) {
-      console.error(`resultEtv does not exist in ${props.alias}`);
+      console.error(`Wrong entity to value or wrong data inserted in: ${props.alias}!`);
     } else {
       list = props.data.map(entity => {
         typeOfValue.push(entity[resultEtv]);
@@ -273,12 +275,23 @@ class DropdownFieldDumb extends React.Component{
       currentFilter = AbstractAutoComplete.noFilter;
     }
 
+    let color;
+    let errFromParent;
+    if (this.props.errorText) {
+      color = CONSTANTS.COLORS.error;
+    } else if (this.props.warnText) {
+      color = CONSTANTS.COLORS.warning;
+    } else if (this.props.localeError) {
+      color = this.props.localeError.color;
+      errFromParent = this.props.localeError.text;
+    }
+
 		return (
       <div id={`DropdownFieldDumb_${this.props.alias}`}>
 	      <AbstractAutoComplete
 		        floatingLabelText={ this.props.label }
-            errorText={ this.props.errorText || this.props.warnText || this.props.localeError }
-            errorStyle={ this.props.errorText ? {color: CONSTANTS.COLORS.error} : this.props.localeError ? {color: CONSTANTS.COLORS.pass} : {color: CONSTANTS.COLORS.warning} }
+            errorText={ this.props.errorText || this.props.warnText || errFromParent }
+            errorStyle={ {color: color} }
             dataSourceConfig={ {  text: 'text', value: 'text' } }
             dataSource={ data }
             disabled={ false }
@@ -293,10 +306,13 @@ class DropdownFieldDumb extends React.Component{
             onFocus={ this.props.onFocus ? this.props.onFocus(this) : () => {} }
             onKeyDown={ this.handleOnKeyDown.bind(this) }
             menuCloseDelay={ 0 }
-            mode={ this.state.mode }
+            modeTyping={ this.state.typing }
             menuShouldAppear={ this.props.menuShouldAppear ? this.props.menuShouldAppear.bind(this) : undefined }
-            menuProps={ {onBlur: this.handleOnBlurMenu.bind(this)} }
+            menuProps={ {
+              onKeyDown: this.handleOnKeyDownMenu.bind(this)
+            } }
             enableDev={ this.props.enableDev ? this.props.enableDev : false}
+            cleverExt={ this.props.cleverExt }
 	      />
         <ClearIcon
           style={ this.props.enableDev ? CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.second : CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.first }
