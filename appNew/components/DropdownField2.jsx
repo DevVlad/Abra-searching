@@ -80,9 +80,10 @@ class DropdownField extends React.Component{
 
   handleTyping(e) {
     this.pom = e;
-    if (this.state.list) this.setState({list: []});
     setTimeout(() => {
-      if (e === this.pom && !this.props.errorText) this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
+      if (e === this.pom && !this.props.errorText) {
+        this.props.dispatch(DropdownFieldDuck.setDataForMenu(this.props.entityType, this.props.filterToCondition(e), this.props.alias));
+      }
     }, 150);
   }
 
@@ -116,7 +117,7 @@ class DropdownField extends React.Component{
         };
       }
     }
-    
+
     return (
       <div id={`DropdownFieldCleverNEW_${this.props.alias}`}>
         <DropdownFieldDumb2

@@ -153,20 +153,18 @@ class DropdownFieldDumb extends React.Component{
         text: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
         deleteMode: false,
         menuShow: true,
-        typing: false
+        // typing: false
       });
     } else {
-      if (!this.state.typing)
       this.setState({
-        toDisplay: this.state.toDisplay,//this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
-        // text: this.state.text,
+        toDisplay: this.state.toDisplay,
         deleteMode: false,
-        // menuShow: true,
-        typing: true
+        // typing: false, //true
       });
     }
     if (this.props.onBlur) this.props.onBlur(e);
   }
+
   // handleOnBlur(e) {
   //   if (!this.state.InMenuMode) {
   //     if (this.props.onBlur) this.props.onBlur(e);
@@ -180,6 +178,16 @@ class DropdownFieldDumb extends React.Component{
   //     });
   //   }
   // }
+
+  handleMenuBlur(e) {
+    // if (this.state.text && this.state.toDisplay != this.state.text) {
+    //   this.setState({
+    //     toDisplay: !this.state.deleteMode ? this.state.text : this.state.toDisplay ? this.state.text : '',
+    //     text: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
+    //     typing: false
+    //   });
+    // }
+  }
 
   handleOnSelect(e) {
     const output = this.props.entityToValue(e);
@@ -326,7 +334,8 @@ class DropdownFieldDumb extends React.Component{
             modeDelete={ this.state.deleteMode }
             menuShouldAppear={ this.props.menuShouldAppear ? this.props.menuShouldAppear.bind(this) : undefined }
             menuProps={ {
-              onKeyDown: this.handleOnKeyDownMenu.bind(this)
+              onKeyDown: this.handleOnKeyDownMenu.bind(this),
+              onBlur: this.handleMenuBlur.bind(this)
             } }
             enableDev={ this.props.enableDev ? this.props.enableDev : false}
             cleverExt={ this.props.cleverExt }
