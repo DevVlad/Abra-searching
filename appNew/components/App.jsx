@@ -257,7 +257,7 @@ class App extends React.Component{
 							entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
 							filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 							loadingNotify={ true }
-							allowNew={ false }
+							allowNew={ true }
 						/>
 				</div>
 			</div>

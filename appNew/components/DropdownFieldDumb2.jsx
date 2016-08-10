@@ -284,8 +284,7 @@ class DropdownFieldDumb extends React.Component{
       currentFilter = AbstractAutoComplete.noFilter;
     }
 
-    let color;
-    let errFromParent;
+    let color, errFromParent;
     if (this.props.errorText) {
       color = CONSTANTS.COLORS.error;
     } else if (this.props.warnText) {
@@ -312,9 +311,9 @@ class DropdownFieldDumb extends React.Component{
             searchText={ this.state.toDisplay }
             onBlur={ this.handleOnBlur.bind(this) }
             onNewRequest={ this.handleOnSelect.bind(this) }
-            onFocus={ this.props.onFocus ? this.props.onFocus(this) : () => {} }
             onKeyDown={ this.handleOnKeyDown.bind(this) }
             menuCloseDelay={ 0 }
+            modeTyping={ this.state.typing }
             menuShouldAppear={ this.props.menuShouldAppear ? this.props.menuShouldAppear.bind(this) : undefined }
             menuProps={ {
               onKeyDown: this.handleOnKeyDownMenu.bind(this)
