@@ -146,6 +146,7 @@ class DropdownFieldDumb extends React.Component{
   }
 
   handleOnBlur(e) {
+  	console.log('DropdownFieldDumb: handleOnBlur');
     let toState, toText;
     if (!this.state.InMenuMode) {
       if (this.props.onBlur) this.props.onBlur(e);
@@ -179,7 +180,13 @@ class DropdownFieldDumb extends React.Component{
   //   }
   // }
 
-  handleMenuBlur(e) {
+  handleMenuClose(e) {
+  	console.log('DropdownFieldDumb: handleMenuClose !!!');
+	// if (!this.state.toDisplay && this.state.deleteMode) {
+	// 	this.setState({ toDisplay: '', text: '' });
+	// }
+	  this.setState({ toDisplay: this.state.text ? this.state.text : ''});
+
     // if (this.state.text && this.state.toDisplay != this.state.text) {
     //   this.setState({
     //     toDisplay: !this.state.deleteMode ? this.state.text : this.state.toDisplay ? this.state.text : '',
@@ -335,10 +342,11 @@ class DropdownFieldDumb extends React.Component{
             modeDelete={ this.state.deleteMode }
             menuShouldAppear={ this.props.menuShouldAppear ? this.props.menuShouldAppear.bind(this) : undefined }
             menuProps={ {
-              onKeyDown: this.handleOnKeyDownMenu.bind(this),
-              onBlur: this.handleMenuBlur.bind(this)
+              onKeyDown: this.handleOnKeyDownMenu.bind(this)
             } }
+			onCloseMenu={this.handleMenuClose.bind(this)}
             enableDev={ this.props.enableDev ? this.props.enableDev : false}
+
             // cleverExt={ this.props.enableDev }
 	      />
         <ClearIcon

@@ -36,7 +36,7 @@ import CONSTANTS from './CONSTANTS.jsx';
 		valueOfCheckbox: testValueDuck.getValueOfCheckbox(state),
 		valueOfTextfield: testValueDuck.getValueOfSelectField(state),
 		valueOfTimefield: testValueDuck.getValueOfTimeField(state),
-		valueOfDatefield: testValueDuck.getValueOfDateField(state),
+		valueOfDatefield: testValueDuck.getValueOfDateField(state)
 	};
 })
 class App extends React.Component{
@@ -228,8 +228,16 @@ class App extends React.Component{
 				<br/>
 					<AbstractBlbej
 							alias='dropdownDumb'
-							label='AbstractBlbej'
-							data={ [{id: 0, text: 'pondeli'}, {id: 1, text: 'utery'}, {id: 2, text: 'streda'}, {id: 3, text: 'ctvrtek'}] }
+							label='Den v týdnu'
+							data={[
+								{id: 0, text: 'pondělí'},
+								{id: 1, text: 'útery'},
+								{id: 2, text: 'středa'},
+								{id: 3, text: 'čtvrtek'},
+								{id: 4, text: 'pátek'},
+								{id: 5, text: 'sobota'},
+								{id: 6, text: 'neděle'}
+							]}
 							onChange={ (e) => console.log('AbstractBlbej onChange', e) }
 							onBlur={ (e) => console.log('AbstractBlbej on Blur', e) }
 							entityToText={ obj => obj.text }
@@ -239,7 +247,7 @@ class App extends React.Component{
 					<br/>
 						<DropdownField2
 							alias='cleverDropdown2'
-							label='clever dropdown new2'
+							label='Zákazník'
 							entityType="kontakt"
 							onChange={ this.changeTestValue.bind(this) }
 							onBlur={ (e) => console.log('DropdownNewClever on Blur', e) }
@@ -247,7 +255,7 @@ class App extends React.Component{
 							entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
 							filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 							loadingNotify={ true }
-							allowNew={ true }
+							allowNew={ false }
 						/>
 				</div>
 			</div>

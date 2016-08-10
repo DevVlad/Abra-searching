@@ -267,6 +267,7 @@ class AbstractAutoComplete extends Component {
     // not focusing the TextField.
     if (!this.state.focusTextField) {
       this.close();
+	  if (this.props.onCloseMenu) this.props.onCloseMenu();
     }
   };
 
