@@ -238,11 +238,13 @@ class App extends React.Component{
 								{id: 5, text: 'sobota'},
 								{id: 6, text: 'neděle'}
 							]}
-							onChange={ (e) => console.log('AbstractBlbej onChange', e) }
-							onBlur={ (e) => console.log('AbstractBlbej on Blur', e) }
 							entityToText={ obj => obj.text }
 							entityToValue={ object => object.id }
 							value={ 1 }
+							// data={ CONSTANTS.FAKEDATA }
+							// value='Is'
+							onChange={ (e) => console.log('AbstractBlbej onChange', e) }
+							onBlur={ (e) => console.log('AbstractBlbej on Blur', e) }
 						/>
 					<br/>
 						<DropdownField2
