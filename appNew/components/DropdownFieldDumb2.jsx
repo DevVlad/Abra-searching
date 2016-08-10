@@ -148,6 +148,7 @@ class DropdownFieldDumb extends React.Component{
   handleOnBlur(e) {
     let toState, toText;
     if (!this.state.InMenuMode) {
+      if (this.props.onBlur) this.props.onBlur(e);
       this.setState({
         toDisplay: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
         text: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
@@ -162,7 +163,6 @@ class DropdownFieldDumb extends React.Component{
         // typing: false, //true
       });
     }
-    if (this.props.onBlur) this.props.onBlur(e);
   }
 
   // handleOnBlur(e) {
@@ -299,6 +299,7 @@ class DropdownFieldDumb extends React.Component{
     } else {
       currentFilter = AbstractAutoComplete.noFilter;
     }
+
     let color;
     let errFromParent;
     if (this.props.errorText) {
@@ -338,7 +339,7 @@ class DropdownFieldDumb extends React.Component{
               onBlur: this.handleMenuBlur.bind(this)
             } }
             enableDev={ this.props.enableDev ? this.props.enableDev : false}
-            cleverExt={ this.props.cleverExt }
+            // cleverExt={ this.props.enableDev }
 	      />
         <ClearIcon
           style={ this.props.enableDev ? CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.second : CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.first }

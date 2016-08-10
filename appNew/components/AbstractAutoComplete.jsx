@@ -360,7 +360,7 @@ class AbstractAutoComplete extends Component {
 
   // Added becouse of icon to show menu and to be able to react on click ability
   handleOnClick = (e) => {
-    if (e !== 'icon' && !this.props.cleverExt) {
+    if (e !== 'icon' && !this.props.enableDev) {
       this.setState({
         open: this.state.open ? false : true,
         anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
