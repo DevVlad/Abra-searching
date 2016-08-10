@@ -59,7 +59,7 @@ class DropdownFieldDumb extends React.Component{
     onFocus: PropTypes.func,
     onSelect: PropTypes.func,
     onKeyDown: PropTypes.func,
-    notIncludedInData: PropTypes.func,
+    handleUnknown: PropTypes.func,
     enableDev: PropTypes.bool,
   };
 
@@ -78,7 +78,7 @@ class DropdownFieldDumb extends React.Component{
   componentWillMount() {
     let dataForRender = this.calculateDataForRedner(this.props, this.state);
     if (dataForRender) {
-      this.computingDataIncomingOnProps(dataForRender, this.props, true);
+      this.preRenderMethod(dataForRender, this.props, true);
       this.setState({dataForRender});
     }
   }
@@ -86,7 +86,7 @@ class DropdownFieldDumb extends React.Component{
   componentWillReceiveProps(newProps, newState) {
     let dataForRender = this.calculateDataForRedner(newProps, this.state);
     if (dataForRender) {
-      this.computingDataIncomingOnProps(dataForRender, newProps, !newProps.value ? true : null);
+      this.preRenderMethod(dataForRender, newProps, !newProps.value ? true : null);
       this.setState({dataForRender});
     }
   }
@@ -95,21 +95,21 @@ class DropdownFieldDumb extends React.Component{
     if (newProps.value && newProps.value !== this.props.value) {
       let dataForRender = this.calculateDataForRedner(newProps, this.state);
       if (dataForRender) {
-        this.computingDataIncomingOnProps(dataForRender, newProps);
+        this.preRenderMethod(dataForRender, newProps);
         this.setState({dataForRender});
       }
     }
 
   }
 
-  computingDataIncomingOnProps(dataForRender, props, willmount) {
+  preRenderMethod(dataForRender, props, willmount) {
     //deciding about inserted vale - if any
     if (!dataForRender.verified && props.enableDev) {
       let pom = {};
         pom[dataForRender.value] = props.value;
-        if (props.notIncludedInData && !willmount && props.value !== this.state.controlledVal && !this.state.typing) {
-          props.notIncludedInData(pom);
+        if (props.handleUnknown && !willmount && props.value !== this.state.controlledVal && !this.state.typing) {
           this.setState({controlledVal: props.value});
+          props.handleUnknown(pom);
         } else if (this.state.toDisplay && this.state.value && !props.value) {
           this.setState({toDisplay: '', value: undefined, text: ''});
         }
@@ -146,54 +146,26 @@ class DropdownFieldDumb extends React.Component{
   }
 
   handleOnBlur(e) {
-  	console.log('DropdownFieldDumb: handleOnBlur');
-    let toState, toText;
     if (!this.state.InMenuMode) {
       if (this.props.onBlur) this.props.onBlur(e);
       this.setState({
         toDisplay: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
         text: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
         deleteMode: false,
-        menuShow: true,
-        // typing: false
-      });
-    } else {
-      this.setState({
-        toDisplay: this.state.toDisplay,
-        deleteMode: false,
-        // typing: false, //true
+        menuShow: false,
+        InMenuMode: false,
       });
     }
   }
 
-  // handleOnBlur(e) {
-  //   if (!this.state.InMenuMode) {
-  //     if (this.props.onBlur) this.props.onBlur(e);
-  //     this.setState({
-  //       toDisplay: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
-  //       text: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
-  //       deleteMode: false,
-  //       menuShow: false,
-  //       typing: false,
-  //       InMenuMode: false,
-  //     });
-  //   }
-  // }
-
-  handleMenuClose(e) {
-  	console.log('DropdownFieldDumb: handleMenuClose !!!');
-	// if (!this.state.toDisplay && this.state.deleteMode) {
-	// 	this.setState({ toDisplay: '', text: '' });
-	// }
-	  this.setState({ toDisplay: this.state.text ? this.state.text : ''});
-
-    // if (this.state.text && this.state.toDisplay != this.state.text) {
-    //   this.setState({
-    //     toDisplay: !this.state.deleteMode ? this.state.text : this.state.toDisplay ? this.state.text : '',
-    //     text: this.state.deleteMode && !this.state.toDisplay ? '' : this.state.text,
-    //     typing: false
-    //   });
-    // }
+  handleOnCloseMenu(e) {
+	  this.setState({
+      toDisplay: this.state.deleteMode ? '' : this.state.text ? this.state.text : '',
+      text: this.state.deleteMode ? '' : this.state.text,
+      InMenuMode: false,
+      typing: false
+    });
+    if (this.props.enableDev && this.props.onCloseMenu) this.props.onCloseMenu(true);
   }
 
   handleOnSelect(e) {
@@ -212,7 +184,7 @@ class DropdownFieldDumb extends React.Component{
     this.setState({
       toDisplay: text,
       value: value,
-      text
+      text: text
     });
   }
 
@@ -326,7 +298,7 @@ class DropdownFieldDumb extends React.Component{
             errorStyle={ {color: color} }
             dataSourceConfig={ {  text: 'text', value: 'text' } }
             dataSource={ data }
-            disabled={ false }
+            disabled={ this.props.disabled ? this.props.disabled : false }
             open={ this.state.menuShow }
             ref={ `DropdownFieldDumb_${this.props.alias}` }
             filter={ currentFilter }
@@ -338,16 +310,12 @@ class DropdownFieldDumb extends React.Component{
             onFocus={ this.props.onFocus ? this.props.onFocus(this) : () => {} }
             onKeyDown={ this.handleOnKeyDown.bind(this) }
             menuCloseDelay={ 0 }
-            modeTyping={ this.state.typing }
-            modeDelete={ this.state.deleteMode }
             menuShouldAppear={ this.props.menuShouldAppear ? this.props.menuShouldAppear.bind(this) : undefined }
             menuProps={ {
               onKeyDown: this.handleOnKeyDownMenu.bind(this)
             } }
-			onCloseMenu={this.handleMenuClose.bind(this)}
+            onCloseMenu={ this.handleOnCloseMenu.bind(this) }
             enableDev={ this.props.enableDev ? this.props.enableDev : false}
-
-            // cleverExt={ this.props.enableDev }
 	      />
         <ClearIcon
           style={ this.props.enableDev ? CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.second : CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.first }

@@ -10,7 +10,7 @@ const FIND_ENTITY_FROM_ID = 'FIND_ENTITY_FROM_ID';
 const SET_FILTER_MODE = 'SET_FILTER_MODE';
 const SET_FILTER = 'SET_FILTER';
 const DELETE = 'DELETE';
-const SET_ERROR_MSG = 'SET_ERROR_MSG';
+const SET_NO_DATA_ERROR = 'SET_NO_DATA_ERROR';
 
 const getAliasState = (state, alias) => state.getIn(['dropdown', alias]);
 
@@ -46,9 +46,12 @@ const DropdownFieldDuck = {
   		};
   	},
 
-  	setValueOfEntityId(entity, id, alias) {
+  	setValueOfEntityId(entityType, id, alias) {
   		return dispatch => {
-          serviceRequestOnInsertedId(id).then(dataServer => dispatch(DropdownFieldDuck.setEntityToText(dataServer.winstrom.kontakt[0], alias)));
+          serviceRequestOnInsertedId(id).then(dataServer => {
+            dispatch(DropdownFieldDuck.setEntityToText(dataServer.winstrom[entityType][0], alias));
+            //  dispatch(DropdownFieldDuck.setEntityToText(dataServer.winstrom.kontakt[0], alias));
+           });
   			};
   	},
 
@@ -99,11 +102,11 @@ const DropdownFieldDuck = {
   		};
   	},
 
-    setErrorMessage(alias, msg) {
+    setError(alias, bool) {
       return {
-        type: SET_ERROR_MSG,
+        type: SET_NO_DATA_ERROR,
         alias,
-        msg
+        bool
       };
     },
 
@@ -144,8 +147,8 @@ const DropdownFieldDuck = {
           });
           return obj;
 
-        case SET_ERROR_MSG:
-          return state.setIn([action.alias, 'errorText'], action.msg);
+        case SET_NO_DATA_ERROR:
+          return state.setIn([action.alias, 'noDataFound'], action.bool);
 
         default:
           return state;
@@ -161,7 +164,7 @@ const DropdownFieldDuck = {
     },
 
     getEntityfromId(state, alias) {
-      return getValueOfEntityFromId(state, alias);
+      return getEntityfromId(state, alias);
     },
 
     getData: createSelector(getAliasState, x => {
@@ -176,20 +179,20 @@ const DropdownFieldDuck = {
       return getLoading(state, alias);
     },
 
-    getErrorText(state, alias) {
-      return getErrorText(state, alias);
+    getError(state, alias) {
+      return getError(state, alias);
     }
 };
 
-const getErrorText = createSelector(getAliasState, x => {
+const getError = createSelector(getAliasState, x => {
 	if (x === undefined) {
 		return undefined;
 	} else {
-		return x.get('errorText');
+		return x.get('noDataFound');
 	};
 });
 
-const getValueOfEntityFromId = createSelector(getAliasState, x => {
+const getEntityfromId = createSelector(getAliasState, x => {
 	if (x === undefined) {
 		return undefined;
 	} else {
@@ -239,9 +242,8 @@ function processRequest(dataServer, filter, paging, alias, resultsToDisplay) {
 		if (getFilter(getState(), alias) === filter) {
 			const totalCount = parseInt(dataServer['@rowCount']);
 			if (totalCount === 0) {
-        const msg = `No data found on server for inserted: "${filter}".`;
         dispatch(DropdownFieldDuck.setDelete(alias, ['data', 'loading']));
-        dispatch(DropdownFieldDuck.setErrorMessage(alias, msg));
+        dispatch(DropdownFieldDuck.setError(alias, true));
 			} else {
 					if (paging + 20 > totalCount)  {
 						dispatch(setLimit(dataServer.kontakt, alias, true, resultsToDisplay, paging, totalCount > paging+ dataServer.kontakt.length));
@@ -310,7 +312,7 @@ function serviceRequestOnChangeInput(filter, paging) {
   		if (!err) {
   			resolve(res.body);
   		} else {
-  			console.log('Error ApiService - ContactDropdown: ', err);
+  			console.error('Error ApiService - ContactDropdown: ', err);
   		}
   	})
 	});
@@ -331,7 +333,7 @@ function serviceRequestOnInsertedId(initId) {
 			if (!err) {
 				resolve(res.body);
 			} else {
-				console.log('Error ApiService - ContactDropdown: ', err);
+				console.error('Error ApiService - ContactDropdown: ', err);
 			}
 		})
 	});

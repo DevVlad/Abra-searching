@@ -2,13 +2,11 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import DropdownFieldDumb2 from './DropdownFieldDumb2.jsx';
 import SvgIcon from 'material-ui/SvgIcon';
-import RefreshIndicator from 'material-ui/RefreshIndicator';
+// import RefreshIndicator from 'material-ui/RefreshIndicator';
 import AbstractAutoComplete from './AbstractAutoComplete.jsx';
 import Immutable from 'immutable';
-import _ from 'lodash';
 
 import DropdownFieldDuck from '../redux/ducks/dropdownfieldDuck.jsx';
-
 import CONSTANTS from './CONSTANTS.jsx';
 
 import './App.css';
@@ -44,18 +42,24 @@ class DropdownField extends React.Component{
   }
 
   shouldComponentUpdate(newProps, nextState) {
-    if ((newProps.data !== this.props.data && newProps.data.size > 0) ||
+    if ((!Immutable.is(newProps.data, this.props.data) && newProps.data.size > 0) ||
     (!newProps.data && this.props.data) ||
     (newProps.value && newProps.value !== this.props.value) ||
     (newProps.entity && this.state.list[0] !== newProps.entity) ||
     (!newProps.value && this.props.value) ||
-    (this.props.errorText !== newProps.errorText || this.props.errorTextLocale !== newProps.errorTextLocale ) ||
+    (this.props.errorText !== newProps.errorText || this.props.localeError !== newProps.localeError ) ||
     (this.props.warnText !== newProps.warnText) ||
     (!Immutable.is(Immutable.fromJS(nextState.list), Immutable.fromJS(this.state.list)))
     ) {
       return true;
     } else {
       return false;
+    }
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (this.props.data && newProps.data && !Immutable.is(this.props.data, newProps.data)) {
+      if (newProps.data.size === 0) this.setState({list: []});
     }
   }
 
@@ -66,13 +70,13 @@ class DropdownField extends React.Component{
       this.setState({list});
     } else if (newProps.data && !Immutable.is(Immutable.fromJS(this.props.data), Immutable.fromJS(newProps.data))) {
       this.setState({list: newProps.data.toJS()});
-    } else if (newProps.errorText || newProps.errorTextLocale) {
+    } else if (newProps.errorText || newProps.localeError) {
       this.setState({list: newProps.data ? newProps.data.toJS() : []});
-      if (newProps.data.size > 0) this.props.dispatch(DropdownFieldDuck.setErrorMessage(this.props.alias, undefined));
+      if (newProps.data.size > 0) this.props.dispatch(DropdownFieldDuck.setError(this.props.alias, undefined));
     }
   }
 
-  handleIncoming(e) {
+  handleUnknownId(e) {
     if (e.id) {
       this.props.dispatch(DropdownFieldDuck.setValueOfEntityId(this.props.entityType, e.id, this.props.alias));
     }
@@ -93,7 +97,7 @@ class DropdownField extends React.Component{
   }
 
   handleOnBlur(e) {
-    if (this.props.errorTextLocale) this.props.dispatch(DropdownFieldDuck.setErrorMessage(this.props.alias, undefined));
+    if (this.props.localeError) this.props.dispatch(DropdownFieldDuck.setError(this.props.alias, undefined));
     this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['data']));
     if (this.props.onBlur) this.props.onBlur(e);
   }
@@ -102,20 +106,18 @@ class DropdownField extends React.Component{
     if (icon) alert('Icon for something bigger!');
   }
 
+  onCloseMenu(e) {
+    this.props.dispatch(DropdownFieldDuck.setDelete(this.props.alias, ['data']));
+  }
+
   render() {
     let localNtf = {};
-    if (this.props.errorTextLocale && !this.props.warnText && !this.props.errorText) {
-      if (this.props.allowNew) {
-        localNtf = {
-          text: `${this.props.errorTextLocale} Do You want to create the record in database?`,
-          color: CONSTANTS.COLORS.pass
-        };
-      } else {
-        localNtf = {
-          text: this.props.errorTextLocale,
-          color: CONSTANTS.COLORS.error
-        };
-      }
+    if (this.props.localeError && !this.props.warnText && !this.props.errorText) {
+      const msg = `${this.props.alias}: No data found on Server!`;
+      localNtf = {
+        text: !this.props.allowNew ? msg : `${msg} Do You want to create the record in database?`,
+        color: !this.props.allowNew ? CONSTANTS.COLORS.error : CONSTANTS.COLORS.pass
+      };
     }
 
     return (
@@ -137,15 +139,15 @@ class DropdownField extends React.Component{
           filter={ AbstractAutoComplete.noFilter }
           enableDev={ true }
           entity={ this.props.entity ? this.props.entity : null }
-          notIncludedInData={ this.handleIncoming.bind(this) }
+          handleUnknown={ this.handleUnknownId.bind(this) }
           menuShouldAppear={ this.menuShouldAppear.bind(this) }
-          cleverExt={ true }
+          onCloseMenu={ this.onCloseMenu.bind(this) }
           />
         <AddIcon
           style={ {...CONSTANTS.COMPONENT_ICONS_INLINE_STYLE.second, transform: this.props.value ? 'translate(+200px, -62px)' : 'translate(+215px, -60px)'} }
-          visibility={ this.props.errorTextLocale && !this.props.errorText && !this.props.warnText && this.props.allowNew ? 'visible' : 'hidden' }
+          visibility={ this.props.localeError && !this.props.errorText && !this.props.warnText && this.props.allowNew ? 'visible' : 'hidden' }
           hoverColor={ CONSTANTS.COLORS.pass }
-          onClick={ () => alert('Add to database.') }
+          onClick={ () => alert(`Add to database: ${this.props.filter}`) }
           />
       </div>
     );
@@ -159,7 +161,7 @@ function mapStateToProps(state, props) {
     data: DropdownFieldDuck.getData(state, props.alias),
     // loading: DropdownFieldDuck.getLoading(state, props.alias),
     entity: DropdownFieldDuck.getEntityfromId(state, props.alias),
-    errorTextLocale: DropdownFieldDuck.getErrorText(state, props.alias),
+    localeError: DropdownFieldDuck.getError(state, props.alias),
   };
 };
 
