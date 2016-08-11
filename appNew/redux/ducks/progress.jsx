@@ -14,8 +14,8 @@ const getProgress = state => state.get('progress');
 const Progress = {
 
 	/*
-	* SELECTORS
-	*/
+	 * SELECTORS
+	 */
 
 	isStarting: createSelector(getProgress, progress => progress.get('starting')),
 	isStarted: createSelector(getProgress, progress => progress.get('started')),
@@ -27,8 +27,8 @@ const Progress = {
 	getCountOfStarts: createSelector(getProgress, progress => progress.get('countOfStarts')),
 
 	/*
-	* ACTIONS
-	*/
+	 * ACTIONS
+	 */
 
 	start(value = 1) {
 		return (dispatch, getState) => {
@@ -68,7 +68,7 @@ const Progress = {
 
 	setBarEnd() {
 		return (dispatch, getState) => {
-			dispatch ({
+			dispatch({
 				type: SET_BAR_END,
 				barEnd: Progress.getCounterValue(getState()),
 				valueOfProgress: 100 - (Progress.getCounterValue(getState()) / Progress.getCountOfStarts(getState())) * 100
@@ -120,33 +120,33 @@ const Progress = {
 		};
 	},
 
-/*
-* REDUCER
-*/
+	/*
+	 * REDUCER
+	 */
 
-	reducer(state = Immutable.fromJS({counter: 0, barEndPoint: 0, progressBarPercent: 0, countOfStarts: 0}), action) {
-	  switch (action.type) {
+	reducer(state = Immutable.fromJS({ counter: 0, barEndPoint: 0, progressBarPercent: 0, countOfStarts: 0 }), action) {
+		switch (action.type) {
 
-		  case SET_STARTING:
-			  return state.set('starting', action.starting).set('startTimer', action.timer);
+			case SET_STARTING:
+				return state.set('starting', action.starting).set('startTimer', action.timer);
 
-		  case SET_STARTED:
-			  let newState = state;
-			  if (action.started) {
-				  newState = newState.set('starting', false);
-			  } else {
-				  newState = newState.set('stopTimer', 0).set('barEndPoint', 0).set('progressBarPercent', 0).set('countOfStarts', 0);
-			  }
-			  return newState.set('started', action.started).set('startTimer', undefined);
+			case SET_STARTED:
+				let newState = state;
+				if (action.started) {
+					newState = newState.set('starting', false);
+				} else {
+					newState = newState.set('stopTimer', 0).set('barEndPoint', 0).set('progressBarPercent', 0).set('countOfStarts', 0);
+				}
+				return newState.set('started', action.started).set('startTimer', undefined);
 
-		  case SET_STOP_TIMER:
-			  return state.set('stopTimer', action.stopTimer);
+			case SET_STOP_TIMER:
+				return state.set('stopTimer', action.stopTimer);
 
-		  case INC_COUNTER:
-			  return state.updateIn(['counter'], x => x + action.value).updateIn(['countOfStarts'], x => x + action.value);
+			case INC_COUNTER:
+				return state.updateIn(['counter'], x => x + action.value).updateIn(['countOfStarts'], x => x + action.value);
 
-		  case DEC_COUNTER:
-			  return state.updateIn(['counter'], x => {
+			case DEC_COUNTER:
+				return state.updateIn(['counter'], x => {
 					let val = 0;
 					x > 0 ? val = x - action.value : val;
 					return val;
@@ -158,9 +158,10 @@ const Progress = {
 			case SET_BAR_END:
 				return state.set('barEndPoint', action.barEnd).set('progressBarPercent', action.valueOfProgress);
 
-		  default:
-	        return state;
-	  };
+			default:
+				return state;
+		}
+		;
 	}
 
 };

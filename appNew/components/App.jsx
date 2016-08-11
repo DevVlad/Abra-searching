@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-import DropdownFieldOld from './DropdownFieldOld.jsx';
 import Loading from './Loading.jsx';
 import testValueDuck from '../redux/ducks/testValueDuck.js';
 import Progress from '../redux/ducks/progress.jsx';
@@ -88,16 +87,6 @@ class App extends React.Component{
 				<button onClick={ this.handleStart10.bind(this) }>Start 10</button>
 				<button onClick={ this.handleStop.bind(this) }>Stop()</button>
 				<button onClick={ this.handleStop10.bind(this) }>Stop 10</button>
-				<DropdownFieldOld
-					alias='a'
-					label='clever dropdown old a'
-					entityName="kontakt"
-					onChange={ this.changeTestValue.bind(this) }
-					entityId={ this.props.testId }
-					entityToText={ object => [object.jmeno, object.prijmeni].join(' ') }
-					filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
-					loadingNotify={ true }
-				/>
 				<br/>
 				<Loading />
 				<MenuList
@@ -239,7 +228,7 @@ class App extends React.Component{
 								{id: 6, text: 'neděle'}
 							]}
 							entityToText={ obj => obj.text }
-							entityToValue={ object => object.id }
+							entityToValue={ obj => obj.id }
 							value={ 1 }
 							// data={ CONSTANTS.FAKEDATA }
 							// value='Is'
@@ -257,7 +246,7 @@ class App extends React.Component{
 							entityToText={ object => [object.jmeno, object.prijmeni].join(' ').trim() }
 							filterToCondition={ text => ({type: 'comp', operator: 'like', left: 'jmeno', right: text}) }
 							loadingNotify={ true }
-							allowNew={ true }
+							onNewRecord={ text => alert(`Create new record: ${text}`) }
 						/>
 				</div>
 			</div>

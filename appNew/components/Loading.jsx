@@ -13,36 +13,36 @@ class Loading extends React.Component {
 	};
 
 	componentWillUpdate(newProps) {
-    if (newProps.isStarting) this.toDisplay = 10;
-    if (newProps.progress && this.toDisplay < newProps.progressBar && !newProps.isStarting) {
-      this.toDisplay = newProps.progressBar;
-    }
-  }
+		if (newProps.isStarting) this.toDisplay = 10;
+		if (newProps.progress && this.toDisplay < newProps.progressBar && !newProps.isStarting) {
+			this.toDisplay = newProps.progressBar;
+		}
+	}
 
-  render() {
+	render() {
 		let style = {
-      height: '3px',
-      width: `${this.toDisplay}%`,
-      background: '-webkit-linear-gradient(-45deg, rgba(197,222,234,1) 0%,rgba(138,187,215,1) 41%,rgba(138,187,215,1) 41%,rgba(6,109,171,1) 83%)',
-      transition: 'width 400ms ease-in, height 400ms linear',
-      position: 'absolute',
-    };
+			height: '3px',
+			width: `${this.toDisplay}%`,
+			background: '-webkit-linear-gradient(-45deg, rgba(197,222,234,1) 0%,rgba(138,187,215,1) 41%,rgba(138,187,215,1) 41%,rgba(6,109,171,1) 83%)',
+			transition: 'width 400ms ease-in, height 400ms linear',
+			position: 'absolute',
+		};
 
 		if (this.toDisplay === 100) {
-			setTimeout( () => {
-        this.toDisplay = 0;
-        this.setState({});
+			setTimeout(() => {
+				this.toDisplay = 0;
+				this.setState({});
 			}, 600);
 		}
 
-    if (this.toDisplay > 0) {
+		if (this.toDisplay > 0) {
 			return (
-					<div style={style} className='ProgressBar'></div>
+				<div style={style} className='ProgressBar'></div>
 			);
-    } else return null;
-  }
+		} else return null;
+	}
 
-};
+}
 
 function mapStateToProps(state) {
 	if (Progress.isStarted(state) !== undefined) {
@@ -50,13 +50,13 @@ function mapStateToProps(state) {
 			progress: Progress.isStarted(state),
 			progressBar: Progress.getProgressBarPercent(state),
 			barEndPoint: Progress.getBarEndPoint(state),
-      isStarting: Progress.isStarting(state)
+			isStarting: Progress.isStarting(state)
 		};
 	} else {
-		return {isStarting: Progress.isStarting(state)};
+		return { isStarting: Progress.isStarting(state) };
 	}
 
-};
+}
 
 const appConnect = connect(mapStateToProps)(Loading);
 export default appConnect;

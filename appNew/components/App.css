@@ -1,22 +1,21 @@
 .anime-enter {
-  opacity: 0.01;
-  height: 0px;
-  transition: all 0.5s ease-in-out
+	opacity: 0.01;
+	height: 0px;
+	transition: all 0.5s ease-in-out
 }
 
-
 .anime-enter.anime-enter-active {
-  opacity: 1;
-  height: inherit;
+	opacity: 1;
+	height: inherit;
 }
 
 .anime-leave {
-  opacity: 0.1;
-  transition: opacity 0.01s ease-in-out;
+	opacity: 0.1;
+	transition: opacity 0.01s ease-in-out;
 }
 
 .anime-leave.anime-leave-active {
-  opacity: 0;
+	opacity: 0;
 
 }
 
@@ -31,19 +30,19 @@
 }*/
 
 #loading {
-  position: absolute;
-  top: 40px;
-  left: 700px;
+	position: absolute;
+	top: 40px;
+	left: 700px;
 }
 
 .progressBar {
-  position: absolute;
-  top: 0px;
-  left: 0px;
+	position: absolute;
+	top: 0px;
+	left: 0px;
 }
 
 #druhacast {
-  position: absolute;
-  top: 20px;
-  left: 500px;
+	position: absolute;
+	top: 20px;
+	left: 500px;
 }

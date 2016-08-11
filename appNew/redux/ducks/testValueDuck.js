@@ -16,7 +16,7 @@ const getTestId = createSelector(getOwnState, x => {
 		return undefined;
 	} else {
 		return x.get('testId');
-	};
+	}
 });
 
 const testValueDuck = {
@@ -29,7 +29,8 @@ const testValueDuck = {
 				return state.set(action.alias, action.text);
 			default:
 				return state;
-		};
+		}
+		;
 	},
 
 	setValue(alias, text) {
@@ -49,7 +50,7 @@ const testValueDuck = {
 	},
 
 	getTestState(state) {
-		return  getTestId(state)
+		return getTestId(state)
 	},
 
 	getValueOfNumberField: createSelector(getOwnState, x => {
@@ -57,7 +58,8 @@ const testValueDuck = {
 			return undefined;
 		} else {
 			return x.get('numberField');
-		};
+		}
+		;
 	}),
 
 	getValueFroSelectField: createSelector(getOwnState, x => {
@@ -65,7 +67,8 @@ const testValueDuck = {
 			return undefined;
 		} else {
 			return x.get('textForSelectField');
-		};
+		}
+		;
 	}),
 
 	getValueOfCheckbox: createSelector(getOwnState, x => {
@@ -73,7 +76,8 @@ const testValueDuck = {
 			return undefined;
 		} else {
 			return x.get('checkbox');
-		};
+		}
+		;
 	}),
 
 	getValueOfSelectField: createSelector(getOwnState, x => {
@@ -81,7 +85,8 @@ const testValueDuck = {
 			return undefined;
 		} else {
 			return x.get('textfield');
-		};
+		}
+		;
 	}),
 
 	getValueOfTimeField: createSelector(getOwnState, x => {
@@ -89,7 +94,8 @@ const testValueDuck = {
 			return undefined;
 		} else {
 			return x.get('timefield');
-		};
+		}
+		;
 	}),
 
 	getValueOfDateField: createSelector(getOwnState, x => {
@@ -97,7 +103,7 @@ const testValueDuck = {
 			return undefined;
 		} else {
 			return x.get('datefield');
-		};
+		}
 	}),
 
 };

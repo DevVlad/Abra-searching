@@ -9,7 +9,7 @@
     "test": "mocha appNew/tests/*.js --compilers js:babel-register --recursive",
     "test:watch": "npm test -- --watch",
     "build": "webpack",
-    "start": "webpack-dev-server --devtool eval --progress --hot --colors --content-base app",
+    "start": "webpack-dev-server --devtool eval --progress --hot --colors --content-base appNew",
     "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js",
     "validate": "npm ls",
     "commit": "git cz",
