@@ -5,7 +5,7 @@ import { shallow, mount, render } from 'enzyme';
 import DropdownFieldDumb2 from '../components/DropdownFieldDumb2.jsx';
 
 describe("<DropdownFieldDumb2 /> tests", () => {
-  it("verification of inserted data and right behaviour with inserted data", () => {
+  it("verification of inserted data and right behaviour with inserted data (data,value after 1s change of value)", () => {
     let initValue = 1;
     const initData = [
       {id: 0, text: 'pondělí'},
